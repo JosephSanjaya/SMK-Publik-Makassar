@@ -14,11 +14,14 @@ object MataPelajaran {
 
     data class Detail(
 
+            @PropertyName("id")
+            var id: String? = null,
+
             @PropertyName("nama")
             var nama: String? = null,
 
-            @PropertyName("despripsi")
-            var despripsi: String? = null,
+            @PropertyName("deskripsi")
+            var deskripsi: String? = null,
 
             @PropertyName("materi")
             var materi: String? = null,

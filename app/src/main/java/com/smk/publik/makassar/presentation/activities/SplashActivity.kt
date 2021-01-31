@@ -2,11 +2,10 @@ package com.smk.publik.makassar.presentation.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import by.kirich1409.viewbindingdelegate.viewBinding
 import com.blankj.utilcode.util.ActivityUtils
 import com.smk.publik.makassar.R
-import com.smk.publik.makassar.databinding.ActivitySplashBinding
 import com.smk.publik.makassar.datastore.User
+import com.smk.publik.makassar.presentation.activities.account.AccountActivity
 import com.smk.publik.makassar.presentation.observer.UserObserver
 import com.smk.publik.makassar.presentation.viewmodel.UserViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel

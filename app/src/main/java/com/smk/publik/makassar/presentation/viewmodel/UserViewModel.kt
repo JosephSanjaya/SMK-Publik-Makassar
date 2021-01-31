@@ -59,9 +59,9 @@ class UserViewModel(
     val emailVerify: LiveData<State<Boolean>> get() = _emailVerify
 
     fun resetEmailVerifyState() = _emailVerify.postValue(State.Idle())
-    fun sendEmailVerification() {
+    fun sendEmailVerification(user: FirebaseUser?) {
         viewModelScope.launch {
-            repository.sendEmailVerification().catch { _emailVerify.postValue(State.Failed(it)) }
+            repository.sendEmailVerification(user).catch { _emailVerify.postValue(State.Failed(it)) }
                 .collect { _emailVerify.postValue(it) }
         }
     }

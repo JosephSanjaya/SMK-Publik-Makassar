@@ -60,7 +60,7 @@ class MataPelajaranObserver(
         fun onFetchMataPelajaranIdle() {}
         fun onFetchMataPelajaranLoading() {}
         fun onFetchMataPelajaranFailed(e: Throwable) {}
-        fun onFetchMataPelajaranSuccess(data: List<MataPelajaran>) {}
+        fun onFetchMataPelajaranSuccess(data: List<MataPelajaran.Detail>) {}
 
         fun onUploadMateriIdle() {}
         fun onUploadMateriLoading() {}

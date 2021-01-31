@@ -24,7 +24,14 @@
     <string name="button_label_role_guru">Guru</string>
     <string name="button_label_role_admin">Admin</string>
     <string name="button_label_role_umum">Umum</string>
+    <string name="button_label_continue">lanjut  ></string>
+    <string name="button_label_skip">Lewati</string>
     <string name="label_nama">Nama</string>
     <string name="label_nomor">No. Telfon</string>
     <string name="label_mata_pelajaran">Mata Pelajaran</string>
+    <string name="desc_verifikasi">Verifikasi akun akan dikirimkan melalui email sudah anda masukan. Cek kembali email anda.</string>
+    <string name="button_label_verifikasi">Verifikasi</string>
+    <string name="tutorial_page_1_message">Selamat datang di aplikasi</string>
+    <string name="tutorial_page_2_message">Sistem pembelajaran secara online ( E - Learning )</string>
+    <string name="tutorial_page_3_message">Belajar lebih simple dan juga efisien</string>
 </resources>

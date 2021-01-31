@@ -39,10 +39,10 @@ class MataPelajaranViewModel(
         }
     }
 
-    private val _fetchMatpel: MutableLiveData<State<List<MataPelajaran>>> = MutableLiveData()
-    val mFetchMatpel: LiveData<State<List<MataPelajaran>>> get() = _fetchMatpel
+    private val _fetchMatpel: MutableLiveData<State<List<MataPelajaran.Detail>>> = MutableLiveData()
+    val mFetchMatpel: LiveData<State<List<MataPelajaran.Detail>>> get() = _fetchMatpel
 
-    fun resetFetchMataPelajaranState() = _buatMatpel.postValue(State.Idle())
+    fun resetFetchMataPelajaranState() = _fetchMatpel.postValue(State.Idle())
     fun fetchMataPelajaran() {
         viewModelScope.launch {
             repository.getMataPelajaran().catch { _fetchMatpel.postValue(State.Failed(it)) }

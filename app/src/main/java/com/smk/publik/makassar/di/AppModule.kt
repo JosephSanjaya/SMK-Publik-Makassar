@@ -10,8 +10,10 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.smk.publik.makassar.data.repositories.MataPelajaranRepository
+import com.smk.publik.makassar.data.repositories.RegisterRepository
 import com.smk.publik.makassar.data.repositories.UserRepository
 import com.smk.publik.makassar.presentation.viewmodel.MataPelajaranViewModel
+import com.smk.publik.makassar.presentation.viewmodel.RegisterViewModel
 import com.smk.publik.makassar.presentation.viewmodel.UserViewModel
 import com.smk.publik.makassar.utils.UserSerializer
 import org.koin.android.ext.koin.androidApplication
@@ -62,6 +64,12 @@ object AppModule {
         }
         viewModel {
             UserViewModel(get())
+        }
+        single {
+            RegisterRepository(get(), get(), get())
+        }
+        viewModel {
+            RegisterViewModel(get())
         }
         single {
             MataPelajaranRepository(get(), get(), get())

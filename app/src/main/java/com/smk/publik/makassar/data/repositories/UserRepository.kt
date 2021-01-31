@@ -1,16 +1,17 @@
 package com.smk.publik.makassar.data.repositories
 
+import android.net.Uri
 import androidx.datastore.core.DataStore
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.smk.publik.makassar.datastore.User
 import com.smk.publik.makassar.domain.State
 import com.smk.publik.makassar.domain.Users
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 
 
@@ -67,12 +68,16 @@ class UserRepository(
         emit(State.Failed(it))
     }.flowOn(Dispatchers.IO)
 
-    suspend fun sendEmailVerification() = flow {
-        emit(State.Loading())
-        val result = firebaseAuth.currentUser?.sendEmailVerification()?.isSuccessful
-            ?: throw Throwable("User tidak ditemukan, silahkan login terlebih dahulu!")
-        if(!result) throw Throwable("Terjadi kesalahan, silahkan coba lagi!!")
-        else emit(State.Success(result))
+    suspend fun sendEmailVerification(user: FirebaseUser?) = callbackFlow {
+        offer(State.Loading())
+        user?.sendEmailVerification()?.addOnCompleteListener {
+            if (it.isSuccessful) {
+                offer(State.Success(true))
+            } else {
+                throw Throwable("Terjadi kesalahan, silahkan coba lagi!!")
+            }
+        } ?: throw Throwable("User tidak ditemukan, silahkan login terlebih dahulu!")
+        awaitClose {  }
     }
 
     suspend fun sendPasswordResetEmail(email: String) = flow {

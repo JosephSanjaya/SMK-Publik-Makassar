@@ -20,24 +20,21 @@ import com.smk.publik.makassar.R
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/)
  */
 
-fun View.createSnackBar(message: String? = null) = SnackbarUtils.with(this).apply {
-    if(!message.isNullOrBlank()) setMessage(message)
-}
-
 fun View.errorAnimation() {
     requestFocus()
     ViewAnimator.animate(this).pulse().duration(500).start()
 }
 
-@BindingAdapter("srcDrawable", "srcUri", "radius", "isCircular", "placeholder", "error", requireAll = false)
+@BindingAdapter("srcDrawable", "srcUri", "srcRes", "radius", "isCircular", "placeholder", "error", requireAll = false)
 fun ImageView.setupImage(
     srcDrawable: Drawable? = null,
     srcUri: String? = null,
+    @DrawableRes srcRes: Int? = null,
     radius: Float? = null,
     isCircular: Boolean? = null,
-    placeholder: Drawable? = null,
-    error: Drawable? = null,
-)  = ImageRequest.Builder(context).data(srcDrawable ?: srcUri ?: R.drawable.ic_big_logo).target(this).apply {
+    @DrawableRes placeholder: Int? = null,
+    @DrawableRes error: Int? = null,
+)  = ImageRequest.Builder(context).data(srcDrawable ?: srcUri ?: srcRes ?: R.drawable.ic_big_logo).target(this).apply {
     if (isCircular == true) CircleCropTransformation()
     else RoundedCornersTransformation(radius ?: 0f)
     if(placeholder != null) placeholder(placeholder)

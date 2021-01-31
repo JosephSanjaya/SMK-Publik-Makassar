@@ -1,16 +1,14 @@
 package com.smk.publik.makassar.utils.inline
 
+import android.app.Activity
 import android.content.Context
-import android.graphics.Color
-import android.os.Bundle
-import android.view.LayoutInflater
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.viewbinding.ViewBinding
 import com.blankj.utilcode.util.ToastUtils
 import com.google.android.material.color.MaterialColors
 import com.smk.publik.makassar.R
+import www.sanju.motiontoast.MotionToast
 
 /**
  * @Author Joseph Sanjaya on 06/12/2020,
@@ -19,7 +17,13 @@ import com.smk.publik.makassar.R
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/)
  */
 
-fun FragmentManager.replaceFragment(placeholder: Int, fragment: Fragment, bundle: Bundle? = null, isBackstack: Boolean = false, isAnimate: Boolean = false) {
+fun FragmentManager.replaceFragment(
+    placeholder: Int,
+    fragment: Fragment,
+    isBackstack: Boolean = false,
+    isAnimate: Boolean = false,
+    isInclusive: Boolean = false
+) {
     beginTransaction().apply {
         if(isBackstack) addToBackStack(null)
         if(isAnimate) setCustomAnimations(
@@ -28,22 +32,37 @@ fun FragmentManager.replaceFragment(placeholder: Int, fragment: Fragment, bundle
                 android.R.anim.slide_in_left,
                 android.R.anim.slide_out_right
         )
-        replace(placeholder, fragment.apply {
-            arguments = bundle
-        })
+        if(isInclusive) popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        replace(placeholder, fragment)
     }.commit()
 }
 
-fun Context.showErrorToast(message: String) {
-    ToastUtils.getDefaultMaker()
-        .setTopIcon(R.drawable.googleg_disabled_color_18)
-        .setBgColor(MaterialColors.getColor(this, R.attr.colorError, null))
-        .show(message)
+fun Activity.showToast(type: String, title: String, message: String) {
+    MotionToast.darkToast(this,
+        title,
+        message,
+        type,
+        MotionToast.GRAVITY_BOTTOM,
+        MotionToast.LONG_DURATION,
+        ResourcesCompat.getFont(this, R.font.poppins_regular))
 }
 
-fun Context.showSuccessToast(message: String) {
-    ToastUtils.getDefaultMaker()
-        .setTopIcon(R.drawable.googleg_disabled_color_18)
-        .setBgColor(MaterialColors.getColor(this, R.attr.colorApproved, null))
-        .show(message)
+fun Activity.showErrorToast(message: String, title: String = "Error") {
+    showToast(MotionToast.TOAST_ERROR, title, message)
+}
+
+fun Activity.showSuccessToast(message: String, title: String = "Berhasil") {
+    showToast(MotionToast.TOAST_SUCCESS, title, message)
+}
+
+fun Activity.showWarningToast(message: String, title: String = "Warning") {
+    showToast(MotionToast.TOAST_WARNING, title, message)
+}
+
+fun Activity.showInfoToast(message: String, title: String = "Informasi") {
+    showToast(MotionToast.TOAST_INFO, title, message)
+}
+
+fun Activity.showDeleteToast(message: String, title: String = "Deleted") {
+    showToast(MotionToast.TOAST_DELETE, title, message)
 }

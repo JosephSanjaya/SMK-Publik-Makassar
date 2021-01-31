@@ -41,6 +41,7 @@
                 app:backgroundTint="?attr/colorSecondary"
                 android:textColor="?attr/colorOnSecondary"
                 android:singleLine="true"
+                android:tag="siswa"
                 android:paddingStart="58dp"
                 android:onClick="@{listener}"
                 android:paddingTop="14dp"
@@ -55,6 +56,7 @@
                 android:singleLine="true"
                 android:layout_height="wrap_content"
                 android:onClick="@{listener}"
+                android:tag="guru"
                 style="@style/RolesSelectorStyleRight"
                 android:paddingStart="58dp"
                 android:paddingTop="14dp"
@@ -114,8 +116,8 @@
                         android:textColor="?attr/colorOnApproved"/>
 
                     <RadioGroup
+                        android:id="@+id/rgKelas"
                         android:layout_width="match_parent"
-                        android:checkedButton="@+id/rbKelasX"
                         android:layout_height="wrap_content">
 
                         <RadioButton

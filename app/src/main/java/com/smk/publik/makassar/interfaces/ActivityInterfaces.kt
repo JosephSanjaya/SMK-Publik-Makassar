@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
  */
 
 interface ActivityInterfaces {
-    fun onFragmentChanges(fragment: Fragment, bundle: Bundle? = null, isBackstack: Boolean = false, isAnimate: Boolean = false) {}
+    fun onFragmentChanges(fragment: Fragment, isBackstack: Boolean = false, isAnimate: Boolean = false, isInclusive: Boolean = false) {}
     fun onToolbarChanges(title: String, isBack: Boolean, isHide: Boolean) {}
     fun onPopBackStack() {}
 }

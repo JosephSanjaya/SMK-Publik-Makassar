@@ -1,6 +1,8 @@
 package com.smk.publik.makassar.data.repositories
 
 import android.net.Uri
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -26,15 +28,22 @@ class MataPelajaranRepository(
     suspend fun buatMataPelajaran(nama: String, deskripsi: String) = flow {
         emit(State.Loading())
         val push = databaseReference.child("mata_pelajaran").push()
-        push.setValue(MataPelajaran.Detail(nama, deskripsi)).await()
+        push.setValue(MataPelajaran.Detail(id = push.key, nama = nama, deskripsi = deskripsi)).await()
         emit(State.Success(push.key))
     }
 
     fun uploadMateri(file: File)= callbackFlow<State<Uri>> {
         offer(State.Loading())
         val fileUri = Uri.fromFile(file)
-        val ref = storageReference.child("materi")
+        val ref = storageReference.child("materi").child("1").child(fileUri.lastPathSegment.toString())
         val uploadTask = ref.putFile(fileUri)
+        val onCompleteListener = OnCompleteListener<Uri> {
+            if (it.isSuccessful) {
+                offer(State.Success(it.result))
+            } else {
+                throw Throwable("Gagal upload file!")
+            }
+        }
         uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {
                 task.exception?.let {
@@ -42,13 +51,8 @@ class MataPelajaranRepository(
                 }
             }
             ref.downloadUrl
-        }.addOnCompleteListener {
-            if (it.isSuccessful) {
-                val downloadUri = offer(State.Success(it.result))
-            } else {
-                throw Throwable("Gagal upload file!")
-            }
-        }
+        }.addOnCompleteListener(onCompleteListener)
+        awaitClose { uploadTask.removeOnCompleteListener {  } }
     }
 
     suspend fun tambahMateri(idMatpel : String, kelas: String, materi: MataPelajaran.Materi) = flow {
@@ -77,12 +81,12 @@ class MataPelajaranRepository(
         awaitClose { databaseReference.removeEventListener(listener) }
     }
 
-    fun getMataPelajaran() = callbackFlow<State<List<MataPelajaran>>> {
+    fun getMataPelajaran() = callbackFlow<State<List<MataPelajaran.Detail>>> {
         offer(State.Loading())
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val result = snapshot.children.mapNotNull {
-                    it.getValue(MataPelajaran::class.java)
+                    it.getValue(MataPelajaran.Detail::class.java)
                 }
                 offer(State.Success(result))
             }

@@ -1,34 +1,24 @@
 package com.smk.publik.makassar.presentation.fragments
 
-import ando.file.core.FileGlobal.OVER_LIMIT_EXCEPT_ALL
-import ando.file.core.FileUtils
-import ando.file.selector.*
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.afollestad.vvalidator.form
-import com.blankj.utilcode.constant.PermissionConstants
-import com.blankj.utilcode.util.PermissionUtils
 import com.google.firebase.auth.FirebaseUser
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.databinding.FragmentLoginBinding
-import com.smk.publik.makassar.domain.MataPelajaran
 import com.smk.publik.makassar.interfaces.ActivityInterfaces
 import com.smk.publik.makassar.interfaces.BaseOnClickView
-import com.smk.publik.makassar.presentation.observer.MataPelajaranObserver
+import com.smk.publik.makassar.presentation.activities.TutorialActivity
+import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
 import com.smk.publik.makassar.presentation.observer.UserObserver
 import com.smk.publik.makassar.presentation.viewmodel.MataPelajaranViewModel
 import com.smk.publik.makassar.presentation.viewmodel.UserViewModel
-import com.smk.publik.makassar.utils.inline.errorAnimation
-import com.smk.publik.makassar.utils.inline.makeLoadingDialog
-import com.smk.publik.makassar.utils.inline.showErrorToast
-import com.smk.publik.makassar.utils.inline.showSuccessToast
+import com.smk.publik.makassar.utils.inline.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
 
 
 /**
@@ -37,18 +27,19 @@ import java.io.File
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/)
  */
 
-class LoginFragment : Fragment(R.layout.fragment_login), BaseOnClickView, UserObserver.Interfaces, MataPelajaranObserver.Interfaces {
-    companion object {
-        const val REQUEST_CHOOSE_FILE = 10
-    }
+class LoginFragment :
+    Fragment(R.layout.fragment_login),
+    BaseOnClickView,
+    UserObserver.Interfaces
+{
 
     private val loading by lazy { requireContext().makeLoadingDialog(false) }
     private val binding by viewBinding(FragmentLoginBinding::bind)
     private var mActivityInterfaces: ActivityInterfaces? = null
     private val mViewModel: UserViewModel by viewModel()
-    private val mMatpel: MataPelajaranViewModel by viewModel()
+    private val mMateriViewModel: MataPelajaranViewModel by viewModel()
+    private val mSharedViewModel by activityViewModels<AccountSharedViewModel>()
 
-    private var mSelector: FileSelector? = null
 
     private val mValidator by lazy {
         form {
@@ -90,92 +81,15 @@ class LoginFragment : Fragment(R.layout.fragment_login), BaseOnClickView, UserOb
                     isAnimate = true
                 )
             }
-            binding.tvForgot -> chooseFile()
+            binding.tvForgot -> mMateriViewModel.buatMataPelajaran("IPS", "IPS yang juga dikenal dengan nama social studies adalah kajian mengenai manusia dengan segala aspeknya dalam sistem kehidupan bermasyarakat.")
         }
         super.onClick(p0)
     }
 
-    private fun chooseFile() {
-        PermissionUtils.permission(PermissionConstants.STORAGE).callback(object :
-            PermissionUtils.SimpleCallback {
-            override fun onGranted() {
-                val optionsImage = FileSelectOptions().apply {
-                    fileType = FileType.IMAGE
-                    fileTypeMismatchTip = "文件类型不匹配"
-                    singleFileMaxSize = 5242880
-                    singleFileMaxSizeTip = "图片最大不超过5M！"
-                    allFilesMaxSize = 10485760
-                    allFilesMaxSizeTip = "总图片大小不超过10M！"//单选条件下无效,只做单个图片大小判断
-                    fileCondition = object : FileSelectCondition {
-                        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-                            return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(
-                                uri
-                            ))
-                        }
-                    }
-                }
-                mSelector = FileSelector.with(requireContext())
-                    .setRequestCode(REQUEST_CHOOSE_FILE)
-                    .setTypeMismatchTip("文件类型不匹配")
-                    .setMinCount(1, "至少选一个文件!")
-                    .setMaxCount(10, "最多选十个文件!")
-                    .setOverLimitStrategy(OVER_LIMIT_EXCEPT_ALL)
-                    .setSingleFileMaxSize(1048576, "大小不能超过1M！")
-                    .setAllFilesMaxSize(10485760, "总大小不能超过10M！")
-                    .setMimeTypes("image/*")
-                    .applyOptions(optionsImage)
-                    .filter(object : FileSelectCondition {
-                        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-                            return when (fileType) {
-                                FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(
-                                    uri
-                                ))
-                                FileType.VIDEO -> false
-                                FileType.AUDIO -> false
-                                else -> false
-                            }
-                        }
-                    })
-                    .callback(object : FileSelectCallBack {
-                        override fun onSuccess(results: List<FileSelectResult>?) {
-                            if (!results.isNullOrEmpty()) {
-                                mMatpel.uploadMateri(File(results[0].filePath ?: ""))
-                            }
-                        }
-                        override fun onError(e: Throwable?) {
-                            requireContext().showErrorToast(e?.message.toString())
-                        }
-                    }).choose()
-            }
-
-            override fun onDenied() {
-                requireContext().showErrorToast("Mohon memberikan izin untuk mengakses penyimpanan anda, untuk dapat mengambil data!")
-            }
-        }).request()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        mSelector?.obtainResult(requestCode, resultCode, data)
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewLifecycleOwner.lifecycle.addObserver(UserObserver(this, mViewModel, viewLifecycleOwner))
-        viewLifecycleOwner.lifecycle.addObserver(
-            MataPelajaranObserver(
-                this,
-                mMatpel,
-                viewLifecycleOwner
-            )
-        )
         binding.listener = this
         super.onViewCreated(view, savedInstanceState)
-    }
-
-
-    override fun onFetchMataPelajaranSuccess(data: List<MataPelajaran>) {
-        requireContext().showSuccessToast(data.toString())
-        super.onFetchMataPelajaranSuccess(data)
     }
 
     override fun onLoginIdle() {
@@ -189,14 +103,16 @@ class LoginFragment : Fragment(R.layout.fragment_login), BaseOnClickView, UserOb
     }
 
     override fun onLoginFailed(e: Throwable) {
-        requireContext().showErrorToast(e.message.toString())
+        requireActivity().showErrorToast(e.message.toString())
         mViewModel.resetLoginState()
         super.onLoginFailed(e)
     }
 
     override fun onLoginSuccess(user: FirebaseUser?) {
-        requireContext().showSuccessToast("Success, login ${user?.uid}")
+        mSharedViewModel.mUsers.postValue(user)
         mViewModel.resetLoginState()
+        if(user?.isEmailVerified == true) TutorialActivity.newInstance()
+        else mActivityInterfaces?.onFragmentChanges(VerifikasiFragment(), isBackstack = true, isAnimate = true)
         super.onLoginSuccess(user)
     }
 
@@ -207,29 +123,14 @@ class LoginFragment : Fragment(R.layout.fragment_login), BaseOnClickView, UserOb
 
     override fun onSendForgotPasswordSuccess() {
         loading.second.dismiss()
-        requireContext().showSuccessToast("Success, silahkan cek email anda")
+        requireActivity().showSuccessToast("Success, silahkan cek email anda")
         super.onSendForgotPasswordSuccess()
     }
 
     override fun onSendForgotPasswordFailed(e: Throwable) {
         loading.second.dismiss()
-        requireContext().showErrorToast(e.message.toString())
+        requireActivity().showErrorToast(e.message.toString())
         super.onSendForgotPasswordFailed(e)
-    }
-
-    override fun onUploadMateriLoading() {
-        loading.second.show()
-        super.onUploadMateriLoading()
-    }
-
-    override fun onUploadMateriFailed(e: Throwable) {
-        requireContext().showErrorToast(e.message.toString())
-        super.onUploadMateriFailed(e)
-    }
-
-    override fun onUploadMateriSuccess(url: Uri) {
-        requireContext().showSuccessToast("Success,$url")
-        super.onUploadMateriSuccess(url)
     }
 
     override fun onAttach(context: Context) {
