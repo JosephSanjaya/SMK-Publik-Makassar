@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/menu_home">
+
+    <fragment
+        android:id="@+id/menu_home"
+        android:name="com.smk.publik.makassar.presentation.fragments.HomeFragment"
+        android:label="menu_home"
+        tools:layout="@layout/fragment_login" >
+
+        <action
+            android:id="@+id/action_home_to_matpel"
+            app:destination="@id/menu_matpel" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/menu_matpel"
+        android:name="com.smk.publik.makassar.presentation.fragments.MataPelajaranFragment"
+        android:label="menu_matpel"
+        tools:layout="@layout/fragment_register" >
+
+        <action
+            android:id="@+id/action_explore_to_absensi"
+            app:destination="@id/menu_absensi" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/menu_absensi"
+        android:name="com.smk.publik.makassar.presentation.fragments.AbsensiFragment"
+        android:label="menu_absensi"
+        tools:layout="@layout/fragment_verifikasi">
+
+        <action
+            android:id="@+id/action_absensi_to_more"
+            app:destination="@id/menu_more" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/menu_more"
+        android:name="com.smk.publik.makassar.presentation.fragments.MenuFragment"
+        android:label="menu_more"
+        tools:layout="@layout/activity_fragments"/>
+</navigation>

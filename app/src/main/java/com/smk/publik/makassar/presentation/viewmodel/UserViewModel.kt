@@ -5,9 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.data.repositories.UserRepository
 import com.smk.publik.makassar.datastore.User
 import com.smk.publik.makassar.domain.State
+import com.smk.publik.makassar.domain.Users
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -23,7 +26,7 @@ import kotlinx.coroutines.launch
 class UserViewModel(
     private val repository: UserRepository
 ) : ViewModel() {
-    val isLoggedIn: Boolean get() = repository.firebaseAuth.currentUser != null
+    val isLoggedIn: Boolean get() = Firebase.auth.currentUser != null
 
     private val _localUser: MutableLiveData<State<User?>> = MutableLiveData()
     val localUser: LiveData<State<User?>> get() = _localUser
@@ -43,16 +46,15 @@ class UserViewModel(
     fun login(email: String, password: String) = viewModelScope.launch {
         repository.login(email, password).catch { _login.postValue(State.Failed(it)) }
             .collect { _login.postValue(it) }
-        delay(100)
     }
 
-    private val _register: MutableLiveData<State<FirebaseUser?>> = MutableLiveData()
-    val register: LiveData<State<FirebaseUser?>> get() = _register
+    private val _user: MutableLiveData<State<Users?>> = MutableLiveData()
+    val mUser: LiveData<State<Users?>> get() = _user
 
-    fun resetRegisterState() = _register.postValue(State.Idle())
-    fun register(email: String, password: String) = viewModelScope.launch {
-        repository.register(email, password).catch { _register.postValue(State.Failed(it)) }
-            .collect { _register.postValue(it) }
+    fun resetGetUserData() = _user.postValue(State.Idle())
+    fun getUserData(userUID: String) = viewModelScope.launch {
+        repository.getUserData(userUID).catch { _user.postValue(State.Failed(it)) }
+            .collect { _user.postValue(it) }
     }
 
     private val _emailVerify: MutableLiveData<State<Boolean>> = MutableLiveData()
@@ -63,6 +65,17 @@ class UserViewModel(
         viewModelScope.launch {
             repository.sendEmailVerification(user).catch { _emailVerify.postValue(State.Failed(it)) }
                 .collect { _emailVerify.postValue(it) }
+        }
+    }
+
+    private val _verifyEmail: MutableLiveData<State<Boolean>> = MutableLiveData()
+    val verifyEmail: LiveData<State<Boolean>> get() = _verifyEmail
+
+    fun resetVerifyEmailState() = _emailVerify.postValue(State.Idle())
+    fun verifyEmail(user: FirebaseUser?, oobCode: String) {
+        viewModelScope.launch {
+            repository.verifyEmail(user, oobCode).catch { _verifyEmail.postValue(State.Failed(it)) }
+                .collect { _verifyEmail.postValue(it) }
         }
     }
 

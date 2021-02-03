@@ -6,14 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.StringUtils
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.databinding.FragmentVerifikasiBinding
 import com.smk.publik.makassar.interfaces.ActivityInterfaces
 import com.smk.publik.makassar.interfaces.BaseOnClickView
+import com.smk.publik.makassar.presentation.activities.account.AccountActivity
 import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
 import com.smk.publik.makassar.presentation.observer.UserObserver
 import com.smk.publik.makassar.presentation.viewmodel.UserViewModel
@@ -23,6 +28,13 @@ import com.smk.publik.makassar.utils.inline.showSuccessToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickView, UserObserver.Interfaces {
+
+    companion object {
+        fun newInstance(isFromLogin: Boolean) = VerifikasiFragment().apply {
+            arguments = bundleOf("is_from_login" to isFromLogin)
+        }
+    }
+
     private val binding by viewBinding(FragmentVerifikasiBinding::bind)
     private var mActivityInterfaces: ActivityInterfaces? = null
     private val mViewModel: UserViewModel by viewModel()
@@ -40,7 +52,8 @@ class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickVie
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.listener = this
-        binding.tvEmail.text = mSharedViewModel.mUsers.value?.email
+        mSharedViewModel.mUsers.observe(viewLifecycleOwner, { binding.tvEmail.text = it.email })
+        binding.tvLogout.isGone = !(arguments?.getBoolean("is_from_login", false) ?: false)
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -52,6 +65,11 @@ class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickVie
     override fun onClick(p0: View?) {
         when(p0) {
             binding.btnVerifikasi -> mViewModel.sendEmailVerification(mSharedViewModel.mUsers.value)
+            binding.tvLogout -> {
+                Firebase.auth.signOut()
+                ActivityUtils.startActivity(AccountActivity.createLoginIntent(requireContext()))
+                requireActivity().finish()
+            }
         }
         super.onClick(p0)
     }

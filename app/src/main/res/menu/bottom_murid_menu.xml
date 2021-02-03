@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item android:id="@+id/menu_home"
+        android:title="Beranda"
+        app:showAsAction="always"
+        android:orderInCategory="1"
+        android:icon="@drawable/ic_home"/>
+
+    <item android:id="@+id/menu_matpel"
+        android:title="Mata Pelajaran"
+        app:showAsAction="always"
+        android:orderInCategory="2"
+        android:icon="@drawable/ic_matpel"/>
+
+
+    <item android:id="@+id/menu_absensi"
+        android:title="Absensi"
+        app:showAsAction="always"
+        android:orderInCategory="2"
+        android:icon="@drawable/ic_absensi"/>
+
+    <item android:id="@+id/menu_more"
+        android:title="Menu"
+        app:showAsAction="always"
+        android:orderInCategory="2"
+        android:icon="@drawable/ic_menu"/>
+
+</menu>

@@ -14,6 +14,7 @@
     <string name="label_nis">NIS</string>
     <string name="button_label_sign_up_underline"><u>Buat sekarang</u></string>
     <string name="button_label_forgot_password">Lupa Password?</string>
+    <string name="button_label_logout">Keluar</string>
     <string name="button_label_sign_up">Daftar</string>
     <string name="button_label_sign_in">Masuk</string>
     <string name="button_label_sign_in_underline"><u>Sign in</u></string>

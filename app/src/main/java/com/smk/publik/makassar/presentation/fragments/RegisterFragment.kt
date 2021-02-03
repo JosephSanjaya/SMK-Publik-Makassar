@@ -320,7 +320,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register), BaseOnClickView,
         mViewModel.resetRegisterState()
         mSharedViewModel.mUsers.postValue(user)
         requireActivity().showSuccessToast("Success, registered ${user?.uid}")
-        mActivityInterfaces?.onFragmentChanges(VerifikasiFragment(), isBackstack = true, isAnimate = true)
+        mActivityInterfaces?.onFragmentChanges(VerifikasiFragment.newInstance(false), isBackstack = true, isAnimate = true)
         super.onRegisterSuccess(user)
     }
 

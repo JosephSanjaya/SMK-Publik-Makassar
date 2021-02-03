@@ -7,18 +7,18 @@ plugins {
     id 'kotlin-android'
     id "kotlin-kapt"
 }
+apply from: "$rootDir/dependencies.gradle"
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion '30.0.3'
+    compileSdkVersion versions.compileSdk
+    buildToolsVersion versions.buildTools
 
     defaultConfig {
         applicationId "com.smk.publik.makassar"
-        minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
-
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
+        versionCode versions.versionCode
+        versionName versions.versionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
@@ -37,6 +37,10 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions.freeCompilerArgs += ["-Xopt-in=kotlin.time.ExperimentalTime"]
+        kotlinOptions.freeCompilerArgs += ["-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"]
     }
 }
 
@@ -68,16 +72,19 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    def navigation_version = "2.3.2"
+    def navigation_version = "2.3.3"
     implementation "androidx.navigation:navigation-runtime-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
     implementation 'com.google.crypto.tink:tink-android:1.5.0'
     implementation "com.github.skydoves:powerspinner:1.1.7"
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.github.florent37:arclayout:1.0.3'
     implementation 'com.airbnb.android:lottie:3.6.0'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6'
-    implementation 'androidx.datastore:datastore:1.0.0-alpha06'
+    def datastore_version = "1.0.0-alpha06"
+    implementation "androidx.datastore:datastore:$datastore_version"
+    implementation "androidx.datastore:datastore-preferences:$datastore_version"
     implementation  "com.google.protobuf:protobuf-javalite:3.11.0"
     implementation 'com.tbuonomo.andrui:viewpagerdotsindicator:4.1.2'
     implementation 'com.afollestad:vvalidator:0.5.2'
@@ -124,3 +131,5 @@ protobuf {
         }
     }
 }
+
+apply from: "$rootDir/spotless.gradle"

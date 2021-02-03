@@ -112,7 +112,7 @@ class LoginFragment :
         mSharedViewModel.mUsers.postValue(user)
         mViewModel.resetLoginState()
         if(user?.isEmailVerified == true) TutorialActivity.newInstance()
-        else mActivityInterfaces?.onFragmentChanges(VerifikasiFragment(), isBackstack = true, isAnimate = true)
+        else mActivityInterfaces?.onFragmentChanges(VerifikasiFragment.newInstance(true), isBackstack = false, isAnimate = true, isInclusive = true)
         super.onLoginSuccess(user)
     }
 

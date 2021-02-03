@@ -11,12 +11,19 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.blankj.utilcode.util.ActivityUtils
-import com.google.android.material.tabs.TabLayoutMediator
 import com.smk.publik.makassar.R
+import com.smk.publik.makassar.data.datastore.DataStoreContainer
 import com.smk.publik.makassar.databinding.ActivityTutorialBinding
+import com.smk.publik.makassar.domain.State
 import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.presentation.fragments.TutorialFragments
+import com.smk.publik.makassar.presentation.observer.DataStoreObserver
+import com.smk.publik.makassar.presentation.viewmodel.DataStoreViewModel
+import com.smk.publik.makassar.utils.inline.makeLoadingDialog
+import com.smk.publik.makassar.utils.inline.showErrorToast
 import com.smk.publik.makassar.utils.inline.showSuccessToast
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 /**
@@ -25,11 +32,14 @@ import com.smk.publik.makassar.utils.inline.showSuccessToast
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class TutorialActivity: AppCompatActivity(R.layout.activity_tutorial), BaseOnClickView   {
+class TutorialActivity: AppCompatActivity(R.layout.activity_tutorial), BaseOnClickView , DataStoreObserver.Interfaces  {
     private val binding by viewBinding(ActivityTutorialBinding::bind)
+    private val mDataStore by viewModel<DataStoreViewModel>()
+    private val loading by lazy { makeLoadingDialog(false) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(DataStoreObserver(this, mDataStore, this))
         supportActionBar?.apply {
             elevation = 0f
             title = ""
@@ -45,7 +55,7 @@ class TutorialActivity: AppCompatActivity(R.layout.activity_tutorial), BaseOnCli
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.menuLewati -> showSuccessToast("Tutorial Selesai")
+            R.id.menuLewati -> mDataStore.setTutorialState(true)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -83,6 +93,28 @@ class TutorialActivity: AppCompatActivity(R.layout.activity_tutorial), BaseOnCli
             } else showSuccessToast("Tutorial Selesai")
         }
         super.onClick(p0)
+    }
+
+    override fun onSetTutorialStateIdle() {
+        loading.second.dismiss()
+        super.onSetTutorialStateIdle()
+    }
+
+    override fun onSetTutorialStateLoading() {
+        loading.second.show()
+        super.onSetTutorialStateLoading()
+    }
+
+    override fun onSetTutorialStateSuccess(newState: Boolean) {
+        showSuccessToast("Berhasil ganti tutorial state")
+        mDataStore.resetSetTutorialState()
+        super.onSetTutorialStateSuccess(newState)
+    }
+
+    override fun onSetTutorialStateFailed(e: Throwable) {
+        showErrorToast(e.message.toString())
+        mDataStore.resetSetTutorialState()
+        super.onSetTutorialStateFailed(e)
     }
 
     companion object {

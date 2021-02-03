@@ -28,12 +28,16 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>        </activity>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".presentation.activities.account.AccountActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".presentation.activities.TutorialActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".presentation.activities.RolesActivity"
             android:screenOrientation="portrait"/>
 
         <meta-data

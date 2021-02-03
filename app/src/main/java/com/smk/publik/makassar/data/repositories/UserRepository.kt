@@ -1,11 +1,17 @@
 package com.smk.publik.makassar.data.repositories
 
-import android.net.Uri
-import androidx.datastore.core.DataStore
+import com.blankj.utilcode.util.AppUtils
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DatabaseReference
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import com.smk.publik.makassar.data.datastore.DataStoreContainer
 import com.smk.publik.makassar.datastore.User
 import com.smk.publik.makassar.domain.State
 import com.smk.publik.makassar.domain.Users
@@ -22,13 +28,11 @@ import kotlinx.coroutines.tasks.await
  */
 
 class UserRepository(
-        private val userDataStore: DataStore<User?>,
-        val firebaseAuth: FirebaseAuth,
-        private val databaseReference: DatabaseReference
+    private val dataStoreContainer: DataStoreContainer,
 ) {
     suspend fun getLocalUserData() = flow<State<User?>> {
         emit(State.Loading())
-        userDataStore.data
+        dataStoreContainer.userDataStore.data
             .catch { emit(State.Failed(it)) }
             .collect {
                 emit(State.Success(it))
@@ -36,9 +40,9 @@ class UserRepository(
     }.flowOn(Dispatchers.IO)
 
    suspend fun login(email: String, password: String) = flow {
-        val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+        val result = Firebase.auth.signInWithEmailAndPassword(email, password).await()
        emit(State.Loading())
-       userDataStore.updateData {
+       dataStoreContainer.userDataStore.updateData {
             it?.toBuilder()
                 ?.setUserId(result.user?.uid.toString())
                 ?.setUsername(email)
@@ -49,52 +53,75 @@ class UserRepository(
         emit(State.Failed(it))
     }.flowOn(Dispatchers.IO)
 
-    suspend fun register(email: String, password: String) = flow {
-        emit(State.Loading())
-        val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-        databaseReference.child("users").child(result.user?.uid.toString()).setValue(
-            Users(
-                email, password
-            )
-        ).await()
-        userDataStore.updateData {
-            it?.toBuilder()
-                ?.setUserId(result.user?.uid.toString())
-                ?.setUsername(email)
-                ?.build()
+    suspend fun getUserData(userUID: String) = callbackFlow<State<Users?>>{
+        offer(State.Loading())
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val result = snapshot.getValue(Users::class.java)
+                offer(State.Success(result))
+            }
+            override fun onCancelled(error: DatabaseError) {
+                offer(State.Failed(error.toException()))
+            }
         }
-        emit(State.Success(result.user))
-    }.catch {
-        emit(State.Failed(it))
-    }.flowOn(Dispatchers.IO)
+        Firebase.database.reference.child("users").child(userUID).addListenerForSingleValueEvent(
+            listener
+        )
+        awaitClose { Firebase.database.reference.removeEventListener(listener) }
+    }
 
     suspend fun sendEmailVerification(user: FirebaseUser?) = callbackFlow {
         offer(State.Loading())
-        user?.sendEmailVerification()?.addOnCompleteListener {
+        user?.sendEmailVerification(
+            ActionCodeSettings.newBuilder()
+                .setHandleCodeInApp(true)
+                .setAndroidPackageName(AppUtils.getAppPackageName(), true, "1.0")
+                .setUrl("https://smkpublikmakassar.page.link/verify?uid=${user.uid}")
+                .build()
+        )?.addOnCompleteListener {
             if (it.isSuccessful) {
                 offer(State.Success(true))
             } else {
-                throw Throwable("Terjadi kesalahan, silahkan coba lagi!!")
+                Throwable(it.exception).let { throwable ->
+                    Firebase.crashlytics.recordException(throwable)
+                    offer(State.Failed<Boolean>(throwable))
+                }
             }
-        } ?: throw Throwable("User tidak ditemukan, silahkan login terlebih dahulu!")
+        } ?: offer(State.Failed<Boolean>(Throwable("User tidak ditemukan, silahkan login terlebih dahulu!")))
+        awaitClose {  }
+    }
+
+    suspend fun verifyEmail(user: FirebaseUser?, oobCode: String) = callbackFlow {
+        offer(State.Loading())
+        Firebase.auth.applyActionCode(oobCode).addOnCompleteListener {
+            if (it.isSuccessful) {
+                user?.reload()
+                offer(State.Success(true))
+            } else {
+                Throwable(it.exception).let { throwable ->
+                    Firebase.crashlytics.recordException(throwable)
+                    offer(State.Failed<Boolean>(throwable))
+                }
+            }
+        }
         awaitClose {  }
     }
 
     suspend fun sendPasswordResetEmail(email: String) = flow {
         emit(State.Loading())
-        val result = firebaseAuth.sendPasswordResetEmail(email).isSuccessful
+        val result = Firebase.auth.sendPasswordResetEmail(email).isSuccessful
         emit(State.Success(result))
     }
 
     suspend fun verifyPasswordResetCode(code: String) = flow {
         emit(State.Loading())
-        val verify = firebaseAuth.verifyPasswordResetCode(code).await()
+        val verify = Firebase.auth.verifyPasswordResetCode(code).await()
         emit(State.Success(verify))
     }
 
     suspend fun changePassword(code: String, password: String) = flow {
         emit(State.Loading())
-        val result = firebaseAuth.confirmPasswordReset(code, password).isSuccessful
+        val result = Firebase.auth.confirmPasswordReset(code, password).isSuccessful
         if(result) emit(State.Success(result))
         else throw Throwable("Terjadi kesalahan, silahkan coba lagi!")
     }

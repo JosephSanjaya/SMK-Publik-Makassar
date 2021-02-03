@@ -1,6 +1,20 @@
 package com.smk.publik.makassar.presentation.activities
 
+import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
+import by.kirich1409.viewbindingdelegate.viewBinding
+import com.blankj.utilcode.util.ActivityUtils
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.smk.publik.makassar.R
+import com.smk.publik.makassar.databinding.ActivityBottomNavBinding
+import com.smk.publik.makassar.domain.Users
+import com.smk.publik.makassar.presentation.observer.UserObserver
+import com.smk.publik.makassar.presentation.viewmodel.UserViewModel
+import com.smk.publik.makassar.utils.inline.makeLoadingDialog
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 /**
@@ -9,6 +23,38 @@ import androidx.appcompat.app.AppCompatActivity
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/)
  */
 
-class RolesActivity : AppCompatActivity() {
+class RolesActivity : AppCompatActivity(R.layout.activity_bottom_nav), UserObserver.Interfaces {
+    companion object {
+        fun newInstance() = ActivityUtils.startActivity(RolesActivity::class.java)
+    }
+    private val mViewModel: UserViewModel by viewModel()
+    private val loading by lazy { makeLoadingDialog(false) }
 
+    private val binding by viewBinding(ActivityBottomNavBinding::bind)
+    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+        super.onCreate(savedInstanceState, persistentState)
+        lifecycle.addObserver(UserObserver(this, mViewModel, this))
+        mViewModel.getUserData(Firebase.auth.currentUser?.uid ?: "")
+    }
+
+    override fun onGetUserDataIdle() {
+        loading.second.dismiss()
+        super.onGetUserDataIdle()
+    }
+
+    override fun onGetUserDataLoading() {
+        loading.second.show()
+        super.onGetUserDataLoading()
+    }
+
+    override fun onGetUserDataSuccess(user: Users?) {
+        mViewModel.resetGetUserData()
+        super.onGetUserDataSuccess(user)
+    }
+
+    override fun onGetUserDataFailed(e: Throwable) {
+        mViewModel.resetGetUserData()
+        loading.second.dismiss()
+        super.onGetUserDataFailed(e)
+    }
 }

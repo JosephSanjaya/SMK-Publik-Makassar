@@ -14,11 +14,14 @@ import androidx.lifecycle.MutableLiveData
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.blankj.utilcode.constant.PermissionConstants
 import com.blankj.utilcode.util.PermissionUtils
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.databinding.ActivityFragmentsBinding
 import com.smk.publik.makassar.interfaces.ActivityInterfaces
 import com.smk.publik.makassar.presentation.fragments.LoginFragment
 import com.smk.publik.makassar.presentation.fragments.RegisterFragment
+import com.smk.publik.makassar.presentation.fragments.VerifikasiFragment
 import com.smk.publik.makassar.presentation.observer.MataPelajaranObserver
 import com.smk.publik.makassar.presentation.viewmodel.MataPelajaranViewModel
 import com.smk.publik.makassar.utils.inline.makeLoadingDialog
@@ -47,7 +50,6 @@ class AccountActivity :
     private val binding by viewBinding(ActivityFragmentsBinding::bind)
     private val mSharedViewModel by viewModels<AccountSharedViewModel>()
     private val mType: MutableLiveData<Type> = MutableLiveData(Type.LOGIN)
-    private var mSelector: FileSelector? = null
     private val mMatpel: MataPelajaranViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +63,10 @@ class AccountActivity :
             when(it) {
                 Type.LOGIN -> onFragmentChanges(LoginFragment(), isBackstack = false)
                 Type.REGISTER -> onFragmentChanges(RegisterFragment(), isBackstack = false)
+                Type.VERIFY -> {
+                    mSharedViewModel.mUsers.postValue(Firebase.auth.currentUser)
+                    onFragmentChanges(VerifikasiFragment.newInstance(true), isBackstack = false)
+                }
                 else -> onToolbarChanges("Forgot Password", true, isHide = true)
             }
         })
@@ -116,35 +122,6 @@ class AccountActivity :
         return super.onSupportNavigateUp()
     }
 
-    fun chooseFile() {
-        PermissionUtils.permission(PermissionConstants.STORAGE).callback(object :
-            PermissionUtils.SimpleCallback {
-            override fun onGranted() {
-                mSelector = FileSelector.with(this@AccountActivity)
-                    .setRequestCode(REQUEST_CHOOSE_FILE)
-                    .setTypeMismatchTip("文件类型不匹配")
-                    .setMinCount(1, "至少选一个文件!")
-                    .setMaxCount(10, "最多选十个文件!")
-                    .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_ALL)
-                    .setSingleFileMaxSize(1048576, "大小不能超过1M！")
-                    .setAllFilesMaxSize(10485760, "总大小不能超过10M！")
-                    .setMimeTypes("image/*")
-                    .filter(this@AccountActivity)
-                    .callback(this@AccountActivity)
-                    .choose()
-            }
-            override fun onDenied() {
-                showErrorToast("Mohon memberikan izin untuk mengakses penyimpanan anda, untuk dapat mengambil data!")
-            }
-        }).request()
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        mSelector?.obtainResult(requestCode, resultCode, data)
-    }
-
     override fun onError(e: Throwable?) {
         showErrorToast(e?.message.toString())
     }
@@ -176,7 +153,7 @@ class AccountActivity :
         const val REQUEST_CHOOSE_FILE = 10
         const val TYPE_EXTRA = "type"
         enum class Type {
-            LOGIN, REGISTER, FORGOT
+            LOGIN, REGISTER, FORGOT, VERIFY
         }
 
         fun createLoginIntent(context: Context) : Intent = Intent(context, AccountActivity::class.java).apply {
@@ -189,6 +166,9 @@ class AccountActivity :
 
         fun createForgotIntent(context: Context) : Intent = Intent(context, AccountActivity::class.java).apply {
             putExtra(TYPE_EXTRA, Type.FORGOT)
+        }
+        fun createVerifyIntent(context: Context) : Intent = Intent(context, AccountActivity::class.java).apply {
+            putExtra(TYPE_EXTRA, Type.VERIFY)
         }
     }
 

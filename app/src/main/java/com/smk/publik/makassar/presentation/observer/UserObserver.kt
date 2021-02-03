@@ -7,6 +7,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import com.google.firebase.auth.FirebaseUser
 import com.smk.publik.makassar.datastore.User
 import com.smk.publik.makassar.domain.State
+import com.smk.publik.makassar.domain.Users
 import com.smk.publik.makassar.presentation.viewmodel.UserViewModel
 
 /**
@@ -30,14 +31,6 @@ class UserObserver(
                 is State.Failed -> view.onLocalUserFailed(it.throwable)
             }
         })
-        viewModel.register.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onRegisterIdle()
-                is State.Loading -> view.onRegisterLoading()
-                is State.Success -> view.onRegisterSuccess(it.data)
-                is State.Failed -> view.onRegisterFailed(it.throwable)
-            }
-        })
         viewModel.emailVerify.observe(owner, {
             when(it) {
                 is State.Idle -> view.onSendingEmailVerificationIdle()
@@ -46,12 +39,28 @@ class UserObserver(
                 is State.Failed -> view.onSendingEmailVerificationFailed(it.throwable)
             }
         })
+        viewModel.verifyEmail.observe(owner, {
+            when(it) {
+                is State.Idle -> view.onVerifyEmailIdle()
+                is State.Loading -> view.onVerifyEmailLoading()
+                is State.Success -> view.onVerifyEmailSuccess()
+                is State.Failed -> view.onVerifyEmailFailed(it.throwable)
+            }
+        })
         viewModel.login.observe(owner, {
             when(it) {
                 is State.Idle -> view.onLoginIdle()
                 is State.Loading -> view.onLoginLoading()
                 is State.Success -> view.onLoginSuccess(it.data)
                 is State.Failed -> view.onLoginFailed(it.throwable)
+            }
+        })
+        viewModel.mUser.observe(owner, {
+            when(it) {
+                is State.Idle -> view.onGetUserDataIdle()
+                is State.Loading -> view.onGetUserDataLoading()
+                is State.Success -> view.onGetUserDataSuccess(it.data)
+                is State.Failed -> view.onGetUserDataFailed(it.throwable)
             }
         })
         viewModel.sendForgot.observe(owner, {
@@ -86,15 +95,20 @@ class UserObserver(
         fun onLocalUserFailed(e: Throwable) {}
         fun onLocalUserSuccess(user: User?) {}
 
-        fun onRegisterIdle() {}
-        fun onRegisterLoading() {}
-        fun onRegisterFailed(e: Throwable) {}
-        fun onRegisterSuccess(user: FirebaseUser?) {}
+        fun onGetUserDataIdle() {}
+        fun onGetUserDataLoading() {}
+        fun onGetUserDataFailed(e: Throwable) {}
+        fun onGetUserDataSuccess(user: Users?) {}
 
         fun onSendingEmailVerificationIdle() {}
         fun onSendingEmailVerificationLoading() {}
         fun onSendingEmailVerificationFailed(e: Throwable) {}
         fun onSendingEmailVerificationSuccess() {}
+
+        fun onVerifyEmailIdle() {}
+        fun onVerifyEmailLoading() {}
+        fun onVerifyEmailFailed(e: Throwable) {}
+        fun onVerifyEmailSuccess() {}
 
         fun onLoginIdle() {}
         fun onLoginLoading() {}

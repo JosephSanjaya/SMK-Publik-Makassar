@@ -2,7 +2,7 @@ package com.smk.publik.makassar
 
 import ando.file.core.FileOperator
 import androidx.multidex.MultiDexApplication
-import com.smk.publik.makassar.di.AppModule
+import com.smk.publik.makassar.di.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -20,7 +20,12 @@ class MakassarApplication : MultiDexApplication() {
         startKoin{
             androidLogger()
             androidContext(this@MakassarApplication)
-            modules(AppModule.dataStore)
+            modules(
+                DataStoreDI.modules,
+                UserDI.modules,
+                RegisterDI.modules,
+                MataPelajaranDI.modules
+            )
         }
         FileOperator.init(this,BuildConfig.DEBUG)
         super.onCreate()
