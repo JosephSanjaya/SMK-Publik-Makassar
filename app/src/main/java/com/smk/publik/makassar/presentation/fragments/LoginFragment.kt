@@ -20,7 +20,6 @@ import com.smk.publik.makassar.presentation.viewmodel.UserViewModel
 import com.smk.publik.makassar.utils.inline.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
 /**
  * @Author Joseph Sanjaya on 27/12/2020,
  * @Github (https://github.com/JosephSanjaya}),
