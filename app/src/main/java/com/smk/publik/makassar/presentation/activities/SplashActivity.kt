@@ -1,7 +1,6 @@
 package com.smk.publik.makassar.presentation.activities
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.blankj.utilcode.util.ActivityUtils
 import com.google.firebase.auth.ktx.auth
@@ -10,10 +9,10 @@ import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.presentation.activities.account.AccountActivity
-import com.smk.publik.makassar.presentation.observer.DataStoreObserver
-import com.smk.publik.makassar.presentation.observer.UserObserver
-import com.smk.publik.makassar.presentation.viewmodel.DataStoreViewModel
-import com.smk.publik.makassar.presentation.viewmodel.UserViewModel
+import com.smk.publik.makassar.core.presentation.DataStoreObserver
+import com.smk.publik.makassar.account.presentation.UserObserver
+import com.smk.publik.makassar.core.presentation.DataStoreViewModel
+import com.smk.publik.makassar.account.presentation.UserViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**

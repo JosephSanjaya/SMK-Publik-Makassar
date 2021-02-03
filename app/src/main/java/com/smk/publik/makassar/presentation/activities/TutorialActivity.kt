@@ -12,17 +12,14 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.blankj.utilcode.util.ActivityUtils
 import com.smk.publik.makassar.R
-import com.smk.publik.makassar.data.datastore.DataStoreContainer
 import com.smk.publik.makassar.databinding.ActivityTutorialBinding
-import com.smk.publik.makassar.domain.State
 import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.presentation.fragments.TutorialFragments
-import com.smk.publik.makassar.presentation.observer.DataStoreObserver
-import com.smk.publik.makassar.presentation.viewmodel.DataStoreViewModel
-import com.smk.publik.makassar.utils.inline.makeLoadingDialog
-import com.smk.publik.makassar.utils.inline.showErrorToast
-import com.smk.publik.makassar.utils.inline.showSuccessToast
-import org.koin.android.ext.android.inject
+import com.smk.publik.makassar.core.presentation.DataStoreObserver
+import com.smk.publik.makassar.core.presentation.DataStoreViewModel
+import com.smk.publik.makassar.inline.makeLoadingDialog
+import com.smk.publik.makassar.inline.showErrorToast
+import com.smk.publik.makassar.inline.showSuccessToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 

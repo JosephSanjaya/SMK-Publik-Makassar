@@ -2,7 +2,10 @@ package com.smk.publik.makassar
 
 import ando.file.core.FileOperator
 import androidx.multidex.MultiDexApplication
-import com.smk.publik.makassar.di.*
+import com.smk.publik.makassar.account.di.RegisterDI
+import com.smk.publik.makassar.account.di.UserDI
+import com.smk.publik.makassar.core.di.DataStoreDI
+import com.smk.publik.makassar.matapelajaran.di.MataPelajaranDI
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

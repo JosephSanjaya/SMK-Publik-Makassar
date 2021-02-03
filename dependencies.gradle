@@ -9,7 +9,7 @@ ext.versions = [
         spotlessGradle : '5.9.0',
         versionPlugin : '0.28.0',
         koin : '2.2.0',
-        coroutines : '1.4.2-native-mt',
+        coroutines : '1.4.2',
         lifecycle : '2.2.0',
         navigation : '2.3.3',
         dataStore : '1.0.0-alpha06',

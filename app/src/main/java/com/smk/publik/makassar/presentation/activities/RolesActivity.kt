@@ -3,17 +3,16 @@ package com.smk.publik.makassar.presentation.activities
 import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.blankj.utilcode.util.ActivityUtils
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.databinding.ActivityBottomNavBinding
-import com.smk.publik.makassar.domain.Users
-import com.smk.publik.makassar.presentation.observer.UserObserver
-import com.smk.publik.makassar.presentation.viewmodel.UserViewModel
-import com.smk.publik.makassar.utils.inline.makeLoadingDialog
+import com.smk.publik.makassar.account.domain.Users
+import com.smk.publik.makassar.account.presentation.UserObserver
+import com.smk.publik.makassar.account.presentation.UserViewModel
+import com.smk.publik.makassar.inline.makeLoadingDialog
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 

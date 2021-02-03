@@ -1,6 +1,5 @@
 package com.smk.publik.makassar.presentation.activities.account
 
-import ando.file.core.FileGlobal
 import ando.file.core.FileUtils
 import ando.file.selector.*
 import android.content.Context
@@ -12,8 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.blankj.utilcode.constant.PermissionConstants
-import com.blankj.utilcode.util.PermissionUtils
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.R
@@ -22,12 +19,12 @@ import com.smk.publik.makassar.interfaces.ActivityInterfaces
 import com.smk.publik.makassar.presentation.fragments.LoginFragment
 import com.smk.publik.makassar.presentation.fragments.RegisterFragment
 import com.smk.publik.makassar.presentation.fragments.VerifikasiFragment
-import com.smk.publik.makassar.presentation.observer.MataPelajaranObserver
-import com.smk.publik.makassar.presentation.viewmodel.MataPelajaranViewModel
-import com.smk.publik.makassar.utils.inline.makeLoadingDialog
-import com.smk.publik.makassar.utils.inline.replaceFragment
-import com.smk.publik.makassar.utils.inline.showErrorToast
-import com.smk.publik.makassar.utils.inline.showSuccessToast
+import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranObserver
+import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranViewModel
+import com.smk.publik.makassar.inline.makeLoadingDialog
+import com.smk.publik.makassar.inline.replaceFragment
+import com.smk.publik.makassar.inline.showErrorToast
+import com.smk.publik.makassar.inline.showSuccessToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 

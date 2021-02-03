@@ -10,14 +10,17 @@ import com.afollestad.vvalidator.form
 import com.google.firebase.auth.FirebaseUser
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.databinding.FragmentLoginBinding
+import com.smk.publik.makassar.inline.errorAnimation
+import com.smk.publik.makassar.inline.makeLoadingDialog
+import com.smk.publik.makassar.inline.showErrorToast
+import com.smk.publik.makassar.inline.showSuccessToast
 import com.smk.publik.makassar.interfaces.ActivityInterfaces
 import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.presentation.activities.TutorialActivity
 import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
-import com.smk.publik.makassar.presentation.observer.UserObserver
-import com.smk.publik.makassar.presentation.viewmodel.MataPelajaranViewModel
-import com.smk.publik.makassar.presentation.viewmodel.UserViewModel
-import com.smk.publik.makassar.utils.inline.*
+import com.smk.publik.makassar.account.presentation.UserObserver
+import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranViewModel
+import com.smk.publik.makassar.account.presentation.UserViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**

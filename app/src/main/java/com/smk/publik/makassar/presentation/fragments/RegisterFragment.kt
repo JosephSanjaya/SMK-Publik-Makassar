@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.RadioGroup
-import androidx.activity.viewModels
 import androidx.databinding.ObservableBoolean
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -18,26 +17,25 @@ import androidx.lifecycle.MutableLiveData
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.afollestad.vvalidator.form
 import com.afollestad.vvalidator.util.onTextChanged
-import com.blankj.utilcode.util.SnackbarUtils
 import com.blankj.utilcode.util.StringUtils
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.firebase.auth.FirebaseUser
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.databinding.FragmentRegisterBinding
-import com.smk.publik.makassar.domain.MataPelajaran
-import com.smk.publik.makassar.domain.Users
+import com.smk.publik.makassar.matapelajaran.domain.MataPelajaran
+import com.smk.publik.makassar.account.domain.Users
 import com.smk.publik.makassar.interfaces.ActivityInterfaces
 import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
-import com.smk.publik.makassar.presentation.observer.MataPelajaranObserver
-import com.smk.publik.makassar.presentation.observer.RegisterObserver
-import com.smk.publik.makassar.presentation.viewmodel.MataPelajaranViewModel
-import com.smk.publik.makassar.presentation.viewmodel.RegisterViewModel
-import com.smk.publik.makassar.utils.inline.errorAnimation
-import com.smk.publik.makassar.utils.inline.makeLoadingDialog
-import com.smk.publik.makassar.utils.inline.showErrorToast
-import com.smk.publik.makassar.utils.inline.showSuccessToast
+import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranObserver
+import com.smk.publik.makassar.account.presentation.RegisterObserver
+import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranViewModel
+import com.smk.publik.makassar.account.presentation.RegisterViewModel
+import com.smk.publik.makassar.inline.errorAnimation
+import com.smk.publik.makassar.inline.makeLoadingDialog
+import com.smk.publik.makassar.inline.showErrorToast
+import com.smk.publik.makassar.inline.showSuccessToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 

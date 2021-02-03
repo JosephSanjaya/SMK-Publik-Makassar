@@ -1,2 +1,5 @@
+include ':matapelajaran'
+include ':account'
+include ':core'
 include ':app'
 rootProject.name = "SMK Publik Makassar"

@@ -20,11 +20,11 @@ import com.smk.publik.makassar.interfaces.ActivityInterfaces
 import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.presentation.activities.account.AccountActivity
 import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
-import com.smk.publik.makassar.presentation.observer.UserObserver
-import com.smk.publik.makassar.presentation.viewmodel.UserViewModel
-import com.smk.publik.makassar.utils.inline.makeLoadingDialog
-import com.smk.publik.makassar.utils.inline.showErrorToast
-import com.smk.publik.makassar.utils.inline.showSuccessToast
+import com.smk.publik.makassar.account.presentation.UserObserver
+import com.smk.publik.makassar.account.presentation.UserViewModel
+import com.smk.publik.makassar.inline.makeLoadingDialog
+import com.smk.publik.makassar.inline.showErrorToast
+import com.smk.publik.makassar.inline.showSuccessToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickView, UserObserver.Interfaces {
