@@ -1,7 +1,8 @@
 package com.smk.publik.makassar.account.di
 
-import com.smk.publik.makassar.account.data.RegisterRepository
+import com.smk.publik.makassar.account.data.VerifyRepository
 import com.smk.publik.makassar.account.presentation.register.RegisterViewModel
+import com.smk.publik.makassar.account.presentation.verify.VerifyViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -11,13 +12,13 @@ import org.koin.dsl.module
  * @Github (https://github.com/JosephSanjaya),
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
-object RegisterDI {
+object VerifyDI {
     val modules = module {
         single {
-            RegisterRepository()
+            VerifyRepository()
         }
         viewModel {
-            RegisterViewModel(get())
+            VerifyViewModel(get())
         }
     }
 }

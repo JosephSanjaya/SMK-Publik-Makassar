@@ -14,6 +14,12 @@ import java.math.BigInteger
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
+/*
+ * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
+ * @Github (https://github.com/JosephSanjaya),
+ * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
+ */
+
 fun getCompressedImageCacheDir(): String {
     val path = "${getCacheDir().absolutePath}/image/"
     val file = File(path)

@@ -5,7 +5,7 @@ ext.versions = [
         targetSdk : 30,
         versionCode : 1,
         versionName : '1.0',
-        kotlin : '1.4.21',
+        kotlin : '1.4.30',
         spotlessGradle : '5.9.0',
         versionPlugin : '0.28.0',
         koin : '2.2.0',

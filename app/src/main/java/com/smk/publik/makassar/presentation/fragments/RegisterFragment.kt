@@ -29,9 +29,9 @@ import com.smk.publik.makassar.interfaces.ActivityInterfaces
 import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
 import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranObserver
-import com.smk.publik.makassar.account.presentation.RegisterObserver
+import com.smk.publik.makassar.account.presentation.register.RegisterObserver
 import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranViewModel
-import com.smk.publik.makassar.account.presentation.RegisterViewModel
+import com.smk.publik.makassar.account.presentation.register.RegisterViewModel
 import com.smk.publik.makassar.inline.errorAnimation
 import com.smk.publik.makassar.inline.makeLoadingDialog
 import com.smk.publik.makassar.inline.showErrorToast
@@ -39,10 +39,10 @@ import com.smk.publik.makassar.inline.showSuccessToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-/**
- * @Author Joseph Sanjaya on 27/12/2020,
- * @Github (https://github.com/JosephSanjaya}),
- * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/)
+/*
+ * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
+ * @Github (https://github.com/JosephSanjaya),
+ * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
 class RegisterFragment : Fragment(R.layout.fragment_register), BaseOnClickView,

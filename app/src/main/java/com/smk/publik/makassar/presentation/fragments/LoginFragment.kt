@@ -13,20 +13,19 @@ import com.smk.publik.makassar.databinding.FragmentLoginBinding
 import com.smk.publik.makassar.inline.errorAnimation
 import com.smk.publik.makassar.inline.makeLoadingDialog
 import com.smk.publik.makassar.inline.showErrorToast
-import com.smk.publik.makassar.inline.showSuccessToast
 import com.smk.publik.makassar.interfaces.ActivityInterfaces
 import com.smk.publik.makassar.interfaces.BaseOnClickView
-import com.smk.publik.makassar.presentation.activities.TutorialActivity
 import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
-import com.smk.publik.makassar.account.presentation.UserObserver
+import com.smk.publik.makassar.account.presentation.user.UserObserver
 import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranViewModel
-import com.smk.publik.makassar.account.presentation.UserViewModel
+import com.smk.publik.makassar.account.presentation.user.UserViewModel
+import com.smk.publik.makassar.presentation.activities.RolesActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-/**
- * @Author Joseph Sanjaya on 27/12/2020,
- * @Github (https://github.com/JosephSanjaya}),
- * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/)
+/*
+ * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
+ * @Github (https://github.com/JosephSanjaya),
+ * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
 class LoginFragment :
@@ -113,26 +112,9 @@ class LoginFragment :
     override fun onLoginSuccess(user: FirebaseUser?) {
         mSharedViewModel.mUsers.postValue(user)
         mViewModel.resetLoginState()
-        if(user?.isEmailVerified == true) TutorialActivity.newInstance()
+        if(user?.isEmailVerified == true) RolesActivity.newInstance()
         else mActivityInterfaces?.onFragmentChanges(VerifikasiFragment.newInstance(true), isBackstack = false, isAnimate = true, isInclusive = true)
         super.onLoginSuccess(user)
-    }
-
-    override fun onSendForgotPasswordLoading() {
-        loading.second.show()
-        super.onSendForgotPasswordLoading()
-    }
-
-    override fun onSendForgotPasswordSuccess() {
-        loading.second.dismiss()
-        requireActivity().showSuccessToast("Success, silahkan cek email anda")
-        super.onSendForgotPasswordSuccess()
-    }
-
-    override fun onSendForgotPasswordFailed(e: Throwable) {
-        loading.second.dismiss()
-        requireActivity().showErrorToast(e.message.toString())
-        super.onSendForgotPasswordFailed(e)
     }
 
     override fun onAttach(context: Context) {

@@ -28,11 +28,10 @@ import com.smk.publik.makassar.inline.showSuccessToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 
-/**
- * @Author Joseph Sanjaya on 20/12/2020,
- * @Company (PT. Solusi Finansialku Indonesia),
+/*
+ * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
  * @Github (https://github.com/JosephSanjaya),
- * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/)
+ * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
 class AccountActivity :
@@ -51,6 +50,7 @@ class AccountActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
         setupObserver()
         getIntentData(intent)
     }

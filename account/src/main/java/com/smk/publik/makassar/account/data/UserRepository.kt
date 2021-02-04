@@ -14,34 +14,37 @@ import com.smk.publik.makassar.core.datastore.DataStoreContainer
 import com.smk.publik.makassar.datastore.User
 import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.account.domain.Users
+import com.smk.publik.makassar.core.utils.closeExceptionThrow
+import com.smk.publik.makassar.core.utils.offerSafe
+import com.smk.publik.makassar.core.utils.offerSafeClose
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 
-
-/**
- * @Author Joseph Sanjaya on 31/12/2020,
- * @Github (https://github.com/JosephSanjaya}),
- * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/)
+/*
+ * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
+ * @Github (https://github.com/JosephSanjaya),
+ * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
 class UserRepository(
     private val dataStoreContainer: DataStoreContainer,
 ) {
-    suspend fun getLocalUserData() = flow<State<User?>> {
+    suspend fun getLocalUserData() = flow {
         emit(State.Loading())
         dataStoreContainer.userDataStore.data
-            .catch { emit(State.Failed(it)) }
+            .catch { throw it }
             .collect {
                 emit(State.Success(it))
             }
     }.flowOn(Dispatchers.IO)
 
-   suspend fun login(email: String, password: String) = flow {
+    suspend fun login(email: String, password: String) = flow {
         val result = Firebase.auth.signInWithEmailAndPassword(email, password).await()
-       emit(State.Loading())
-       dataStoreContainer.userDataStore.updateData {
+        emit(State.Loading())
+        dataStoreContainer.userDataStore.updateData {
             it?.toBuilder()
                 ?.setUserId(result.user?.uid.toString())
                 ?.setUsername(email)
@@ -49,80 +52,40 @@ class UserRepository(
         }
         emit(State.Success(result.user))
     }.catch {
-        emit(State.Failed(it))
+        throw it
     }.flowOn(Dispatchers.IO)
 
-    suspend fun getUserData(userUID: String) = callbackFlow<State<Users?>>{
-        offer(State.Loading())
+    @ExperimentalCoroutinesApi
+    suspend fun reloadCurrentUser() = callbackFlow<State<Boolean>> {
+        offerSafe(State.Loading())
+        Firebase.auth.currentUser?.reload()?.addOnCompleteListener {
+            if (it.isSuccessful) {
+                offerSafeClose(State.Success(true))
+            } else {
+                closeExceptionThrow(Throwable(it.exception))
+            }
+        } ?: run {
+            Throwable("User tidak ditemukan, silahkan login terlebih dahulu!").let {
+                closeExceptionThrow(Throwable(it))
+            }
+        }
+        awaitClose()
+    }
+
+    @ExperimentalCoroutinesApi
+    suspend fun getUserData(userUID: String) = callbackFlow<State<Users?>> {
+        offerSafe(State.Loading())
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val result = snapshot.getValue(Users::class.java)
-                offer(State.Success(result))
+                offerSafeClose(State.Success(result))
             }
             override fun onCancelled(error: DatabaseError) {
-                offer(State.Failed(error.toException()))
+                closeExceptionThrow(error.toException())
             }
         }
-        Firebase.database.reference.child("users").child(userUID).addListenerForSingleValueEvent(
-            listener
-        )
+        Firebase.database.reference.child("users").child(userUID).addListenerForSingleValueEvent(listener)
         awaitClose { Firebase.database.reference.removeEventListener(listener) }
-    }
-
-    suspend fun sendEmailVerification(user: FirebaseUser?) = callbackFlow {
-        offer(State.Loading())
-        user?.sendEmailVerification(
-            ActionCodeSettings.newBuilder()
-                .setHandleCodeInApp(true)
-                .setAndroidPackageName(AppUtils.getAppPackageName(), true, "1.0")
-                .setUrl("https://smkpublikmakassar.page.link/verify?uid=${user.uid}")
-                .build()
-        )?.addOnCompleteListener {
-            if (it.isSuccessful) {
-                offer(State.Success(true))
-            } else {
-                Throwable(it.exception).let { throwable ->
-                    Firebase.crashlytics.recordException(throwable)
-                    offer(State.Failed<Boolean>(throwable))
-                }
-            }
-        } ?: offer(State.Failed<Boolean>(Throwable("User tidak ditemukan, silahkan login terlebih dahulu!")))
-        awaitClose {  }
-    }
-
-    suspend fun verifyEmail(user: FirebaseUser?, oobCode: String) = callbackFlow {
-        offer(State.Loading())
-        Firebase.auth.applyActionCode(oobCode).addOnCompleteListener {
-            if (it.isSuccessful) {
-                user?.reload()
-                offer(State.Success(true))
-            } else {
-                Throwable(it.exception).let { throwable ->
-                    Firebase.crashlytics.recordException(throwable)
-                    offer(State.Failed<Boolean>(throwable))
-                }
-            }
-        }
-        awaitClose {  }
-    }
-
-    suspend fun sendPasswordResetEmail(email: String) = flow {
-        emit(State.Loading())
-        val result = Firebase.auth.sendPasswordResetEmail(email).isSuccessful
-        emit(State.Success(result))
-    }
-
-    suspend fun verifyPasswordResetCode(code: String) = flow {
-        emit(State.Loading())
-        val verify = Firebase.auth.verifyPasswordResetCode(code).await()
-        emit(State.Success(verify))
-    }
-
-    suspend fun changePassword(code: String, password: String) = flow {
-        emit(State.Loading())
-        val result = Firebase.auth.confirmPasswordReset(code, password).isSuccessful
-        if(result) emit(State.Success(result))
-        else throw Throwable("Terjadi kesalahan, silahkan coba lagi!")
     }
 
 }

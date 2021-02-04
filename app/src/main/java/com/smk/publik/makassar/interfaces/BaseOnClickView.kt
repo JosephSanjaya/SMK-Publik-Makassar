@@ -4,10 +4,10 @@ import android.view.View
 import com.github.florent37.viewanimator.ViewAnimator
 
 
-/**
- * @Author Joseph Sanjaya on 27/12/2020,
- * @Github (https://github.com/JosephSanjaya}),
- * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/)
+/*
+ * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
+ * @Github (https://github.com/JosephSanjaya),
+ * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
 interface BaseOnClickView : View.OnClickListener {

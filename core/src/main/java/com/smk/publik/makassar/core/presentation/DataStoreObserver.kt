@@ -6,11 +6,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.smk.publik.makassar.core.domain.State
 
-/**
- * @Author Joseph Sanjaya on 20/12/2020,
- * @Company (PT. Solusi Finansialku Indonesia),
+/*
+ * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
  * @Github (https://github.com/JosephSanjaya),
- * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/)
+ * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
 class DataStoreObserver(

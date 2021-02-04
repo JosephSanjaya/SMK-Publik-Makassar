@@ -11,17 +11,25 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 
+/*
+ * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
+ * @Github (https://github.com/JosephSanjaya),
+ * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
+ */
+
 class RegisterRepository {
 
     suspend fun register(email: String, password: String, data: Users) = flow {
         emit(State.Loading())
         val result = Firebase.auth.createUserWithEmailAndPassword(email, password).await()
         Firebase.database.reference.child("users").child(result.user?.uid.toString()).setValue(
-            data
+            data.apply {
+                id = result.user?.uid
+            }
         ).await()
         emit(State.Success(result.user))
     }.catch {
-        emit(State.Failed(it))
+        throw it
     }.flowOn(Dispatchers.IO)
 
 }

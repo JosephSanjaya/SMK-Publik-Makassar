@@ -23,8 +23,8 @@ import com.smk.publik.makassar.inline.showSuccessToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-/**
- * @Author Joseph Sanjaya, S.T., M.Kom. on 28,January,2021
+/*
+ * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
  * @Github (https://github.com/JosephSanjaya),
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
@@ -36,6 +36,7 @@ class TutorialActivity: AppCompatActivity(R.layout.activity_tutorial), BaseOnCli
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
         lifecycle.addObserver(DataStoreObserver(this, mDataStore, this))
         supportActionBar?.apply {
             elevation = 0f

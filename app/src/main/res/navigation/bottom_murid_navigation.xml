@@ -3,45 +3,45 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/menu_home">
+    app:startDestination="@id/home">
 
     <fragment
-        android:id="@+id/menu_home"
+        android:id="@+id/home"
         android:name="com.smk.publik.makassar.presentation.fragments.HomeFragment"
-        android:label="menu_home"
-        tools:layout="@layout/fragment_login" >
+        android:label="Beranda"
+        tools:layout="@layout/fragment_home" >
 
         <action
             android:id="@+id/action_home_to_matpel"
-            app:destination="@id/menu_matpel" />
+            app:destination="@id/matpel" />
     </fragment>
 
     <fragment
-        android:id="@+id/menu_matpel"
+        android:id="@+id/matpel"
         android:name="com.smk.publik.makassar.presentation.fragments.MataPelajaranFragment"
-        android:label="menu_matpel"
-        tools:layout="@layout/fragment_register" >
+        android:label="Mata Pelajaran"
+        tools:layout="@layout/fragment_home" >
 
         <action
             android:id="@+id/action_explore_to_absensi"
-            app:destination="@id/menu_absensi" />
+            app:destination="@id/absensi" />
     </fragment>
 
     <fragment
-        android:id="@+id/menu_absensi"
+        android:id="@+id/absensi"
         android:name="com.smk.publik.makassar.presentation.fragments.AbsensiFragment"
-        android:label="menu_absensi"
-        tools:layout="@layout/fragment_verifikasi">
+        android:label="Absensi"
+        tools:layout="@layout/fragment_home">
 
         <action
-            android:id="@+id/action_absensi_to_more"
-            app:destination="@id/menu_more" />
+            android:id="@+id/absensi"
+            app:destination="@id/more" />
 
     </fragment>
 
     <fragment
-        android:id="@+id/menu_more"
+        android:id="@+id/more"
         android:name="com.smk.publik.makassar.presentation.fragments.MenuFragment"
-        android:label="menu_more"
-        tools:layout="@layout/activity_fragments"/>
+        android:label="Menu"
+        tools:layout="@layout/fragment_home"/>
 </navigation>

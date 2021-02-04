@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id "com.google.protobuf"
     id 'kotlin-android'
+    id 'kotlinx-serialization'
     id 'kotlin-kapt'
 }
 
@@ -36,6 +37,7 @@ android {
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
     api "org.jetbrains.kotlin:kotlin-reflect:${versions.kotlin}"
+    api "org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1"
     api 'androidx.core:core-ktx:1.3.2'
     api 'androidx.appcompat:appcompat:1.2.0'
     api "androidx.collection:collection-ktx:1.1.0"
@@ -67,6 +69,7 @@ dependencies {
     api 'com.google.crypto.tink:tink-android:1.5.0'
     api 'com.squareup.retrofit2:retrofit:2.9.0'
 
+    api 'com.orhanobut:logger:2.2.0'
     api "androidx.datastore:datastore:$versions.dataStore"
     api "androidx.datastore:datastore-preferences:$versions.dataStore"
     api  "com.google.protobuf:protobuf-javalite:3.11.0"

@@ -20,14 +20,22 @@ import com.smk.publik.makassar.interfaces.ActivityInterfaces
 import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.presentation.activities.account.AccountActivity
 import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
-import com.smk.publik.makassar.account.presentation.UserObserver
-import com.smk.publik.makassar.account.presentation.UserViewModel
+import com.smk.publik.makassar.account.presentation.user.UserObserver
+import com.smk.publik.makassar.account.presentation.user.UserViewModel
+import com.smk.publik.makassar.account.presentation.verify.VerifyObserver
+import com.smk.publik.makassar.account.presentation.verify.VerifyViewModel
 import com.smk.publik.makassar.inline.makeLoadingDialog
 import com.smk.publik.makassar.inline.showErrorToast
 import com.smk.publik.makassar.inline.showSuccessToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickView, UserObserver.Interfaces {
+/*
+ * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
+ * @Github (https://github.com/JosephSanjaya),
+ * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
+ */
+
+class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickView, VerifyObserver.Interfaces {
 
     companion object {
         fun newInstance(isFromLogin: Boolean) = VerifikasiFragment().apply {
@@ -37,7 +45,7 @@ class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickVie
 
     private val binding by viewBinding(FragmentVerifikasiBinding::bind)
     private var mActivityInterfaces: ActivityInterfaces? = null
-    private val mViewModel: UserViewModel by viewModel()
+    private val mViewModel: VerifyViewModel by viewModel()
     private val loading by lazy { requireContext().makeLoadingDialog(false) }
     private val mSharedViewModel by activityViewModels<AccountSharedViewModel>()
 
@@ -46,7 +54,7 @@ class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickVie
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewLifecycleOwner.lifecycle.addObserver(UserObserver(this, mViewModel, viewLifecycleOwner))
+        viewLifecycleOwner.lifecycle.addObserver(VerifyObserver(this, mViewModel, viewLifecycleOwner))
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 

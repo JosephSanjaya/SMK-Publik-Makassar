@@ -14,10 +14,10 @@ import com.github.florent37.viewanimator.ViewAnimator
 import com.smk.publik.makassar.R
 
 
-/**
- * @Author Joseph Sanjaya on 31/12/2020,
- * @Github (https://github.com/JosephSanjaya}),
- * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/)
+/*
+ * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
+ * @Github (https://github.com/JosephSanjaya),
+ * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
 fun View.errorAnimation() {

@@ -12,11 +12,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.databinding.DialogLoadingBinding
 
-
-/**
- * @Author Joseph Sanjaya on 31/12/2020,
- * @Github (https://github.com/JosephSanjaya}),
- * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/)
+/*
+ * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
+ * @Github (https://github.com/JosephSanjaya),
+ * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
 /**
