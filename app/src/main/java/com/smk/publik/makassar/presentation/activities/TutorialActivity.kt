@@ -2,6 +2,7 @@ package com.smk.publik.makassar.presentation.activities
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,15 +13,11 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.blankj.utilcode.util.ActivityUtils
 import com.smk.publik.makassar.R
+import com.smk.publik.makassar.core.utils.isLandingPageOpened
 import com.smk.publik.makassar.databinding.ActivityTutorialBinding
 import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.presentation.fragments.TutorialFragments
-import com.smk.publik.makassar.core.presentation.DataStoreObserver
-import com.smk.publik.makassar.core.presentation.DataStoreViewModel
-import com.smk.publik.makassar.inline.makeLoadingDialog
-import com.smk.publik.makassar.inline.showErrorToast
-import com.smk.publik.makassar.inline.showSuccessToast
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.ext.android.inject
 
 
 /*
@@ -29,15 +26,14 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class TutorialActivity: AppCompatActivity(R.layout.activity_tutorial), BaseOnClickView , DataStoreObserver.Interfaces  {
+class TutorialActivity: AppCompatActivity(R.layout.activity_tutorial), BaseOnClickView {
+
     private val binding by viewBinding(ActivityTutorialBinding::bind)
-    private val mDataStore by viewModel<DataStoreViewModel>()
-    private val loading by lazy { makeLoadingDialog(false) }
+    private val mSharedPreferences by inject<SharedPreferences>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
-        lifecycle.addObserver(DataStoreObserver(this, mDataStore, this))
         supportActionBar?.apply {
             elevation = 0f
             title = ""
@@ -53,9 +49,15 @@ class TutorialActivity: AppCompatActivity(R.layout.activity_tutorial), BaseOnCli
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.menuLewati -> mDataStore.setTutorialState(true)
+            R.id.menuLewati -> next()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun next() {
+        mSharedPreferences.isLandingPageOpened = true
+        RolesActivity.newInstance()
+        finish()
     }
 
     private fun setupTabLayout() {
@@ -88,31 +90,9 @@ class TutorialActivity: AppCompatActivity(R.layout.activity_tutorial), BaseOnCli
         when(p0) {
             binding.btnContinue -> if(binding.vpTutorial.currentItem < 2) {
                 binding.vpTutorial.currentItem += 1
-            } else showSuccessToast("Tutorial Selesai")
+            } else next()
         }
         super.onClick(p0)
-    }
-
-    override fun onSetTutorialStateIdle() {
-        loading.second.dismiss()
-        super.onSetTutorialStateIdle()
-    }
-
-    override fun onSetTutorialStateLoading() {
-        loading.second.show()
-        super.onSetTutorialStateLoading()
-    }
-
-    override fun onSetTutorialStateSuccess(newState: Boolean) {
-        showSuccessToast("Berhasil ganti tutorial state")
-        mDataStore.resetSetTutorialState()
-        super.onSetTutorialStateSuccess(newState)
-    }
-
-    override fun onSetTutorialStateFailed(e: Throwable) {
-        showErrorToast(e.message.toString())
-        mDataStore.resetSetTutorialState()
-        super.onSetTutorialStateFailed(e)
     }
 
     companion object {

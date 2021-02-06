@@ -1,5 +1,6 @@
 package com.smk.publik.makassar.presentation.activities
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.blankj.utilcode.util.ActivityUtils
@@ -9,13 +10,16 @@ import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
 import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.R
-import com.smk.publik.makassar.presentation.activities.account.AccountActivity
-import com.smk.publik.makassar.core.presentation.DataStoreObserver
+import com.smk.publik.makassar.account.domain.Users
 import com.smk.publik.makassar.account.presentation.user.UserObserver
-import com.smk.publik.makassar.core.presentation.DataStoreViewModel
 import com.smk.publik.makassar.account.presentation.user.UserViewModel
 import com.smk.publik.makassar.account.presentation.verify.VerifyObserver
 import com.smk.publik.makassar.account.presentation.verify.VerifyViewModel
+import com.smk.publik.makassar.core.utils.isLandingPageOpened
+import com.smk.publik.makassar.inline.showErrorToast
+import com.smk.publik.makassar.inline.showSuccessToast
+import com.smk.publik.makassar.presentation.activities.account.AccountActivity
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /*
@@ -27,26 +31,38 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class SplashActivity :
     AppCompatActivity(R.layout.activity_splash),
     UserObserver.Interfaces,
-    VerifyObserver.Interfaces,
-    DataStoreObserver.Interfaces
+    VerifyObserver.Interfaces
 {
 
+    private val mSharedPreferences by inject<SharedPreferences>()
     private val mViewModel: UserViewModel by viewModel()
     private val mVerifyViewModel: VerifyViewModel by viewModel()
-    private val mDataStore: DataStoreViewModel by viewModel()
     private var mCurrentUser: FirebaseUser? = null
     private var isVerified = false
+    private var isNeedVerified = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(UserObserver(this, mViewModel, this))
         lifecycle.addObserver(VerifyObserver(this, mVerifyViewModel, this))
-        lifecycle.addObserver(DataStoreObserver(this, mDataStore, this))
         mViewModel.reloadCurrentUser()
     }
 
     override fun onReloadSuccess() {
         mCurrentUser = Firebase.auth.currentUser
+        mCurrentUser?.uid?.let {
+            mViewModel.getUserData(it)
+        } ?: onReloadFailed(Throwable("Uid salah!"))
+        super.onReloadSuccess()
+    }
+
+    override fun onReloadFailed(e: Throwable) {
+        ActivityUtils.startActivity(AccountActivity.createLoginIntent(this))
+        finish()
+        super.onReloadFailed(e)
+    }
+
+    override fun onGetUserDataSuccess(user: Users?) {
         if (mCurrentUser != null) {
             Firebase.dynamicLinks.getDynamicLink(intent).addOnSuccessListener {
                 if (it != null && !isVerified) {
@@ -62,25 +78,32 @@ class SplashActivity :
             ActivityUtils.startActivity(AccountActivity.createLoginIntent(this))
             finish()
         }
-        super.onReloadSuccess()
+        super.onGetUserDataSuccess(user)
     }
 
-    override fun onReloadFailed(e: Throwable) {
-        Firebase.crashlytics.recordException(e)
+    override fun onGetUserDataFailed(e: Throwable) {
         ActivityUtils.startActivity(AccountActivity.createLoginIntent(this))
         finish()
-        super.onReloadFailed(e)
+        super.onGetUserDataFailed(e)
     }
 
     override fun onVerifyEmailFailed(e: Throwable) {
+        showErrorToast("Kode verifikasi salah atau sudah kadaluarsa!")
         isVerified = false
+        isNeedVerified = false
         onVerifyEmailSuccess()
         super.onVerifyEmailFailed(e)
+    }
+
+    override fun onVerifyEmailLoading() {
+        isNeedVerified = true
+        super.onVerifyEmailLoading()
     }
 
     override fun onVerifyEmailSuccess() {
         if(!isVerified) {
             isVerified = true
+            if(isNeedVerified) showSuccessToast("Verifikasi Email Berhasil!")
             mViewModel.reloadCurrentUser()
         }
         else {
@@ -92,25 +115,12 @@ class SplashActivity :
 
     private fun next() {
         when (mCurrentUser?.isEmailVerified) {
-            true -> mDataStore.getTutorialState()
-            false -> {
-                finish()
-                ActivityUtils.startActivity(AccountActivity.createVerifyIntent(this))
+            true -> when(mSharedPreferences.isLandingPageOpened) {
+                true -> RolesActivity.newInstance()
+                false -> TutorialActivity.newInstance()
             }
+            false -> ActivityUtils.startActivity(AccountActivity.createVerifyIntent(this))
         }
-    }
-
-    override fun onGetTutorialStateSuccess(state: Boolean) {
-        if (state) TutorialActivity.newInstance()
-        else RolesActivity.newInstance()
-        finish()
-        super.onGetTutorialStateSuccess(state)
-    }
-
-    override fun onGetTutorialStateFailed(e: Throwable) {
-        TutorialActivity.newInstance()
-        finish()
-        Firebase.crashlytics.recordException(e)
-        super.onGetTutorialStateFailed(e)
+        ActivityUtils.finishAllActivities(true)
     }
 }

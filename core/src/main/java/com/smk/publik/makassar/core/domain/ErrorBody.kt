@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
  */
 
 @Serializable
-data class ErrorResponse(
+data class ErrorBody(
 
     @SerialName("message")
     val message: String? = null,

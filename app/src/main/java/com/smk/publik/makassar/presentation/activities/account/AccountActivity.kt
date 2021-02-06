@@ -62,7 +62,7 @@ class AccountActivity :
                 Type.REGISTER -> onFragmentChanges(RegisterFragment(), isBackstack = false)
                 Type.VERIFY -> {
                     mSharedViewModel.mUsers.postValue(Firebase.auth.currentUser)
-                    onFragmentChanges(VerifikasiFragment.newInstance(true), isBackstack = false)
+                    onFragmentChanges(VerifikasiFragment(), isBackstack = false)
                 }
                 else -> onToolbarChanges("Forgot Password", true, isHide = true)
             }

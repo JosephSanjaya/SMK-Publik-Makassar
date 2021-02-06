@@ -37,12 +37,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickView, VerifyObserver.Interfaces {
 
-    companion object {
-        fun newInstance(isFromLogin: Boolean) = VerifikasiFragment().apply {
-            arguments = bundleOf("is_from_login" to isFromLogin)
-        }
-    }
-
     private val binding by viewBinding(FragmentVerifikasiBinding::bind)
     private var mActivityInterfaces: ActivityInterfaces? = null
     private val mViewModel: VerifyViewModel by viewModel()
@@ -61,7 +55,6 @@ class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickVie
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.listener = this
         mSharedViewModel.mUsers.observe(viewLifecycleOwner, { binding.tvEmail.text = it.email })
-        binding.tvLogout.isGone = !(arguments?.getBoolean("is_from_login", false) ?: false)
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -99,7 +92,6 @@ class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickVie
     override fun onSendingEmailVerificationSuccess() {
         requireActivity().showSuccessToast("Link berhasil dikirimkan, silahkan cek email anda!")
         mViewModel.resetEmailVerifyState()
-        mActivityInterfaces?.onFragmentChanges(LoginFragment(), isAnimate = true, isInclusive = true)
         super.onSendingEmailVerificationSuccess()
     }
 

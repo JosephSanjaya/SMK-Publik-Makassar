@@ -11,6 +11,7 @@ import org.koin.dsl.module
  * @Github (https://github.com/JosephSanjaya),
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
+
 object UserDI {
     val modules = module {
         single {

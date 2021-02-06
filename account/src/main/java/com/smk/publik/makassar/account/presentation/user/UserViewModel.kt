@@ -23,16 +23,6 @@ import kotlinx.coroutines.launch
 class UserViewModel(
     private val repository: UserRepository
 ) : BaseViewModel() {
-    val isLoggedIn: Boolean get() = Firebase.auth.currentUser != null
-
-    private val _localUser: MutableLiveData<State<User?>> = MutableLiveData()
-    val localUser: LiveData<State<User?>> get() = _localUser
-
-    fun resetLocalUserState() = _login.postValue(State.Idle())
-    fun getLocalUserData() = defaultScope.launch {
-        repository.getLocalUserData().catch { _localUser.postValue(State.Failed(getHttpException(it))) }
-            .collect { _localUser.postValue(it) }
-    }
 
     private val _login: MutableLiveData<State<FirebaseUser?>> = MutableLiveData()
     val login: LiveData<State<FirebaseUser?>> get() = _login

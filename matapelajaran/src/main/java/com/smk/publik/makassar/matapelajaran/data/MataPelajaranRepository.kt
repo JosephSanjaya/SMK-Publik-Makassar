@@ -9,7 +9,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.smk.publik.makassar.core.domain.State
-import com.smk.publik.makassar.core.utils.closeExceptionThrow
+import com.smk.publik.makassar.core.utils.closeException
 import com.smk.publik.makassar.core.utils.offerSafe
 import com.smk.publik.makassar.core.utils.offerSafeClose
 import com.smk.publik.makassar.matapelajaran.domain.MataPelajaran
@@ -40,12 +40,12 @@ class MataPelajaranRepository {
             if (it.isSuccessful) {
                 offerSafeClose(State.Success(it.result))
             } else {
-                closeExceptionThrow(Throwable("Gagal upload file!"))
+                closeException(Throwable("Gagal upload file!"))
             }
         }
         uploadTask.continueWithTask { task ->
             if (!task.isSuccessful) {
-                closeExceptionThrow(Throwable(task.exception))
+                closeException(Throwable(task.exception))
             }
             ref.downloadUrl
         }.addOnCompleteListener(onCompleteListener)
@@ -72,7 +72,7 @@ class MataPelajaranRepository {
                 offerSafeClose(State.Success(result))
             }
             override fun onCancelled(error: DatabaseError) {
-                closeExceptionThrow(error.toException())
+                closeException(error.toException())
             }
         }
         Firebase.database.reference.child("mata_pelajaran").child(idMatpel).child("materi").child(kelas).addListenerForSingleValueEvent(listener)
@@ -90,7 +90,7 @@ class MataPelajaranRepository {
                 offerSafeClose(State.Success(result))
             }
             override fun onCancelled(error: DatabaseError) {
-                closeExceptionThrow(error.toException())
+                closeException(error.toException())
             }
         }
         Firebase.database.reference.child("mata_pelajaran").addListenerForSingleValueEvent(listener)

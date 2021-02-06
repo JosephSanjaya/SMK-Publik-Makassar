@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.orhanobut.logger.Logger
-import com.smk.publik.makassar.core.domain.ErrorResponse
+import com.smk.publik.makassar.core.domain.ErrorBody
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +33,7 @@ abstract class BaseViewModel : ViewModel() {
     fun getHttpException(e: Throwable): Throwable {
         val exception = when(e) {
             is HttpException -> {
-                val errorResponse: ErrorResponse? = Json.decodeFromString(e.response()?.errorBody()?.charStream().toString())
+                val errorResponse: ErrorBody? = Json.decodeFromString(e.response()?.errorBody()?.charStream().toString())
                 Throwable(cause = e, message = errorResponse?.message.toString())
             }
             else -> e

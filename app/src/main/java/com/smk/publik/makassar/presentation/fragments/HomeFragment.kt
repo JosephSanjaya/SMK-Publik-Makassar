@@ -1,6 +1,7 @@
 package com.smk.publik.makassar.presentation.fragments
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,11 +13,13 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.account.domain.Users
+import com.smk.publik.makassar.account.domain.users
 import com.smk.publik.makassar.account.presentation.user.UserObserver
 import com.smk.publik.makassar.account.presentation.user.UserViewModel
 import com.smk.publik.makassar.databinding.FragmentHomeBinding
 import com.smk.publik.makassar.inline.makeLoadingDialog
 import com.smk.publik.makassar.interfaces.ActivityInterfaces
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /*
@@ -26,10 +29,13 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  */
 
 class HomeFragment: Fragment(R.layout.fragment_home), UserObserver.Interfaces {
+
+    private val mSharedPreferences by inject<SharedPreferences>()
     private var mActivityInterfaces: ActivityInterfaces? = null
     private val binding by viewBinding(FragmentHomeBinding::bind)
     private val mViewModel: UserViewModel by viewModel()
     private val loading by lazy { requireContext().makeLoadingDialog(false) }
+    private var mUsers: Users? = null
 
     override fun onStart() {
         mActivityInterfaces?.onToolbarChanges("", false, isHide = false)
@@ -41,13 +47,16 @@ class HomeFragment: Fragment(R.layout.fragment_home), UserObserver.Interfaces {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        mUsers = mSharedPreferences.users
         lifecycle.addObserver(UserObserver(this, mViewModel, this))
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mViewModel.getUserData(Firebase.auth.currentUser?.uid ?: "")
+        binding.tvName.text = mUsers?.nama
+        binding.tvRoles.text = StringUtils.upperFirstLetter(mUsers?.roles)
+//        mViewModel.getUserData(Firebase.auth.currentUser?.uid ?: "")
     }
 
     override fun onAttach(context: Context) {

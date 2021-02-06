@@ -8,6 +8,7 @@ import androidx.datastore.preferences.createDataStore
 import com.google.crypto.tink.Aead
 import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.core.utils.UserSerializer
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -40,6 +41,8 @@ class DataStoreContainer(context: Context, aead: Aead) {
         emit(State.Loading())
         flagsDataStore.data.map {
             it[TUTORIAL_FLAG]
+        }.catch {
+            throw it
         }.collect {
             emit(State.Success(it ?: false))
         }
@@ -47,6 +50,7 @@ class DataStoreContainer(context: Context, aead: Aead) {
 
     fun setTutorialState(state: Boolean) = flow {
         emit(State.Loading())
+        flagsDataStore.edit {  }
         flagsDataStore.edit {
             it[TUTORIAL_FLAG] = state
         }

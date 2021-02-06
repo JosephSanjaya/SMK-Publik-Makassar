@@ -5,7 +5,6 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.google.firebase.auth.FirebaseUser
-import com.smk.publik.makassar.datastore.User
 import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.account.domain.Users
 
@@ -21,14 +20,6 @@ class UserObserver(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
-        viewModel.localUser.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onLocalUserIdle()
-                is State.Loading -> view.onLocalUserLoading()
-                is State.Success -> view.onLocalUserSuccess(it.data)
-                is State.Failed -> view.onLocalUserFailed(it.throwable)
-            }
-        })
         viewModel.reload.observe(owner, {
             when(it) {
                 is State.Idle -> view.onReloadIdle()
@@ -56,11 +47,6 @@ class UserObserver(
     }
 
     interface Interfaces {
-        fun onLocalUserIdle() {}
-        fun onLocalUserLoading() {}
-        fun onLocalUserFailed(e: Throwable) {}
-        fun onLocalUserSuccess(user: User?) {}
-
         fun onGetUserDataIdle() {}
         fun onGetUserDataLoading() {}
         fun onGetUserDataFailed(e: Throwable) {}

@@ -17,6 +17,7 @@ import androidx.lifecycle.MutableLiveData
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.afollestad.vvalidator.form
 import com.afollestad.vvalidator.util.onTextChanged
+import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.StringUtils
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
@@ -36,6 +37,7 @@ import com.smk.publik.makassar.inline.errorAnimation
 import com.smk.publik.makassar.inline.makeLoadingDialog
 import com.smk.publik.makassar.inline.showErrorToast
 import com.smk.publik.makassar.inline.showSuccessToast
+import com.smk.publik.makassar.presentation.activities.account.AccountActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -45,8 +47,12 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class RegisterFragment : Fragment(R.layout.fragment_register), BaseOnClickView,
-    RegisterObserver.Interfaces, MataPelajaranObserver.Interfaces {
+class RegisterFragment :
+    Fragment(R.layout.fragment_register),
+    BaseOnClickView,
+    RegisterObserver.Interfaces,
+    MataPelajaranObserver.Interfaces
+{
 
     private val loading by lazy { requireContext().makeLoadingDialog(false) }
     private val binding by viewBinding(FragmentRegisterBinding::bind)
@@ -318,7 +324,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register), BaseOnClickView,
         mViewModel.resetRegisterState()
         mSharedViewModel.mUsers.postValue(user)
         requireActivity().showSuccessToast("Success, registered ${user?.uid}")
-        mActivityInterfaces?.onFragmentChanges(VerifikasiFragment.newInstance(false), isBackstack = true, isAnimate = true)
+        ActivityUtils.startActivity(AccountActivity.createVerifyIntent(requireContext()))
+        ActivityUtils.finishAllActivities(true)
         super.onRegisterSuccess(user)
     }
 

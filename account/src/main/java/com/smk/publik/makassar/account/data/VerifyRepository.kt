@@ -7,7 +7,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.core.domain.State
-import com.smk.publik.makassar.core.utils.closeExceptionThrow
+import com.smk.publik.makassar.core.utils.closeException
 import com.smk.publik.makassar.core.utils.offerSafe
 import com.smk.publik.makassar.core.utils.offerSafeClose
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,9 +35,9 @@ class VerifyRepository {
             if (it.isSuccessful) {
                 offerSafeClose(State.Success(true))
             } else {
-                closeExceptionThrow(Throwable(it.exception))
+                closeException(Throwable(it.exception))
             }
-        } ?: closeExceptionThrow(Throwable("User tidak ditemukan, silahkan login terlebih dahulu!"))
+        } ?: closeException(Throwable("User tidak ditemukan, silahkan login terlebih dahulu!"))
         awaitClose()
     }
 
@@ -49,7 +49,7 @@ class VerifyRepository {
                 user?.reload()
                 offerSafeClose(State.Success(true))
             } else {
-                closeExceptionThrow(Throwable(it.exception))
+                closeException(Throwable(it.exception))
             }
         }
         awaitClose()

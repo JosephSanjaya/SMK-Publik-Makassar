@@ -8,6 +8,7 @@ import com.smk.publik.makassar.account.di.PasswordDI
 import com.smk.publik.makassar.account.di.RegisterDI
 import com.smk.publik.makassar.account.di.UserDI
 import com.smk.publik.makassar.account.di.VerifyDI
+import com.smk.publik.makassar.core.di.CoreDI
 import com.smk.publik.makassar.core.di.DataStoreDI
 import com.smk.publik.makassar.matapelajaran.di.MataPelajaranDI
 import org.koin.android.ext.koin.androidContext
@@ -30,6 +31,7 @@ class MakassarApplication : MultiDexApplication() {
             androidContext(this@MakassarApplication)
             modules(
                 DataStoreDI.modules,
+                CoreDI.modules,
                 UserDI.modules,
                 RegisterDI.modules,
                 VerifyDI.modules,
