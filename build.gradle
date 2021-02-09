@@ -3,6 +3,9 @@ apply from: "$rootDir/versionsPlugin.gradle"
 
 buildscript {
     apply from: "$rootDir/dependencies.gradle"
+    ext {
+        versions.kotlin = '1.4.30'
+    }
     repositories {
         google()
         jcenter()

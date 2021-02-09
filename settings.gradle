@@ -1,3 +1,4 @@
+include ':announcement'
 include ':matapelajaran'
 include ':account'
 include ':core'

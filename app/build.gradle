@@ -47,6 +47,7 @@ dependencies {
     api project(':core')
     implementation project(':account')
     implementation project(':matapelajaran')
+    implementation project(':announcement')
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation "androidx.activity:activity-ktx:1.1.0"
     implementation "androidx.fragment:fragment-ktx:1.2.5"
@@ -75,6 +76,7 @@ dependencies {
     implementation 'com.kirich1409.viewbindingpropertydelegate:vbpd-noreflection:1.4.1'
 
     implementation 'com.github.Spikeysanju:MotionToast:1.3.3.4'
+    implementation "com.github.skydoves:balloon:1.3.1"
 
     implementation "ando.file:core:$versions.fileSelector"
     implementation "ando.file:selector:$versions.fileSelector"

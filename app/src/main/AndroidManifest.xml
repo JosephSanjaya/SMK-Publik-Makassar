@@ -39,6 +39,9 @@
         <activity
             android:name=".presentation.activities.RolesActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".presentation.activities.account.ForgotActivity"
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="preloaded_fonts"

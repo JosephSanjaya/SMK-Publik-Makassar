@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="label_tv_baloon_password_req_1">Memiliki minimal 1 huruf kecil.</string>
+    <string name="label_tv_baloon_password_req_2">Memiliki minimal 1 huruf kapital.</string>
+    <string name="label_tv_baloon_password_req_3">Terdiri dari minimal 8 karakter.</string>
+</resources>

@@ -3,5 +3,7 @@
     <attr format="color" name="colorApproved"/>
     <attr format="color" name="colorOnApproved"/>
     <attr format="color" name="colorDisabled"/>
+    <attr format="color" name="colorDisabledAlpha55"/>
     <attr format="color" name="colorOnDisabled"/>
+    <attr format="color" name="textColorDisabled"/>
 </resources>

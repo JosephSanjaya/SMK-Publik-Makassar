@@ -16,9 +16,9 @@ import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.databinding.ActivityFragmentsBinding
 import com.smk.publik.makassar.interfaces.ActivityInterfaces
-import com.smk.publik.makassar.presentation.fragments.LoginFragment
-import com.smk.publik.makassar.presentation.fragments.RegisterFragment
-import com.smk.publik.makassar.presentation.fragments.VerifikasiFragment
+import com.smk.publik.makassar.presentation.fragments.account.LoginFragment
+import com.smk.publik.makassar.presentation.fragments.account.RegisterFragment
+import com.smk.publik.makassar.presentation.fragments.account.VerifikasiFragment
 import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranObserver
 import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranViewModel
 import com.smk.publik.makassar.inline.makeLoadingDialog
@@ -52,6 +52,11 @@ class AccountActivity :
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
         setupObserver()
+        getIntentData(intent)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
         getIntentData(intent)
     }
 

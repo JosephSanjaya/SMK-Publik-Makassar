@@ -12,5 +12,7 @@
     <color name="colorError">#DE5076</color>
     <color name="colorApproved">#55CF4C</color>
     <color name="colorDisabled">#878787</color>
+    <color name="colorDisabled55">#8C878787</color>
     <color name="colorOnDisabled">#F4F4F4</color>
+    <color name="textColorDisabled">#B1B1B1</color>
 </resources>

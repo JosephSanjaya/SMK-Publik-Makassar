@@ -1,9 +1,16 @@
 package com.smk.publik.makassar.account.data
 
+import com.blankj.utilcode.util.AppUtils
+import com.blankj.utilcode.util.StringUtils
+import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.smk.publik.makassar.core.R
+import com.smk.publik.makassar.account.domain.Password
 import com.smk.publik.makassar.core.domain.State
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 
 /*
@@ -16,21 +23,60 @@ class PasswordRepository {
 
     suspend fun sendPasswordResetEmail(email: String) = flow {
         emit(State.Loading())
-        val result = Firebase.auth.sendPasswordResetEmail(email).isSuccessful
-        emit(State.Success(result))
-    }
+        Firebase.auth.sendPasswordResetEmail(email,
+            ActionCodeSettings.newBuilder()
+                .setHandleCodeInApp(true)
+                .setAndroidPackageName(AppUtils.getAppPackageName(), true, "1.0")
+                .setUrl("https://smkpublikmakassar.page.link/forgotPassword?email=${email}")
+                .build()
+            ).await()
+        emit(State.Success(true))
+    }.flowOn(Dispatchers.IO)
 
     suspend fun verifyPasswordResetCode(code: String) = flow {
         emit(State.Loading())
-        val verify = Firebase.auth.verifyPasswordResetCode(code).await()
-        emit(State.Success(verify))
-    }
+        Firebase.auth.verifyPasswordResetCode(code).await()
+        emit(State.Success(code))
+    }.flowOn(Dispatchers.IO)
 
     suspend fun changePassword(code: String, password: String) = flow {
         emit(State.Loading())
-        val result = Firebase.auth.confirmPasswordReset(code, password).isSuccessful
-        if(result) emit(State.Success(result))
-        else throw Throwable("Terjadi kesalahan, silahkan coba lagi!")
+        Firebase.auth.confirmPasswordReset(code, password).await()
+        emit(State.Success(true))
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun validatePassword(password: String) = flow {
+        val response = validatePasswordAsync(password)
+        emit(response)
+    }.flowOn(Dispatchers.IO)
+
+    private fun validatePasswordAsync(password: String): Pair<List<Password?>, Boolean> {
+        val mList: ArrayList<Password> = ArrayList()
+        var isValid = false
+        mList.apply {
+            password.let { s ->
+                if (s.any { t -> t.isLetter().and(t.isLowerCase()) }) {
+                    add(Password(R.drawable.ic_baseline_check_24, StringUtils.getString(R.string.label_tv_baloon_password_req_1), true))
+                } else {
+                    add(Password(R.drawable.ic_baseline_close_24, StringUtils.getString(R.string.label_tv_baloon_password_req_1), false))
+                }
+                if (s.any { t -> t.isUpperCase() }) {
+                    add(Password(R.drawable.ic_baseline_check_24, StringUtils.getString(R.string.label_tv_baloon_password_req_2), true))
+                } else {
+                    add(Password(R.drawable.ic_baseline_close_24, StringUtils.getString(R.string.label_tv_baloon_password_req_2), false))
+                }
+                if (s.length >= 8) {
+                    add(Password(R.drawable.ic_baseline_check_24, StringUtils.getString(R.string.label_tv_baloon_password_req_3), true))
+                } else {
+                    add(Password(R.drawable.ic_baseline_close_24, StringUtils.getString(R.string.label_tv_baloon_password_req_3), false))
+                }
+            }
+            mList.any { valid -> !valid.status }.let {
+                if (it) mList.sortByDescending { data -> !data.status }
+                isValid = !it
+            }
+            return Pair(mList, isValid)
+        }
     }
 
 }

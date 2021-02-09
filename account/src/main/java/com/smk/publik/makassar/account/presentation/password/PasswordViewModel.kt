@@ -2,7 +2,11 @@ package com.smk.publik.makassar.account.presentation.password
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
+import com.orhanobut.logger.Logger
 import com.smk.publik.makassar.account.data.PasswordRepository
+import com.smk.publik.makassar.account.domain.Password
 import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.core.presentation.BaseViewModel
 import kotlinx.coroutines.flow.catch
@@ -40,10 +44,21 @@ class PasswordViewModel(
     private val _changePassword: MutableLiveData<State<Boolean>> = MutableLiveData()
     val changePassword: LiveData<State<Boolean>> get() = _changePassword
 
-    fun resetChangePasswordState() = _sendForgot.postValue(State.Idle())
+    fun resetChangePasswordState() = _changePassword.postValue(State.Idle())
     fun changePassword(code: String, email: String) = defaultScope.launch {
-        repository.changePassword(code, email).catch { _sendForgot.postValue(State.Failed(getHttpException(it))) }
-            .collect { _sendForgot.postValue(it) }
+        repository.changePassword(code, email).catch { _changePassword.postValue(State.Failed(getHttpException(it))) }
+            .collect { _changePassword.postValue(it) }
+    }
+
+    private val _validation: MutableLiveData<Pair<List<Password?>, Boolean>> = MutableLiveData()
+    val mValidation: LiveData<Pair<List<Password?>, Boolean>> get() = _validation
+
+    fun passwordValidation(password: String) = defaultScope.launch {
+        repository.validatePassword(password).catch {
+            Firebase.crashlytics.recordException(it)
+            Logger.e(it, "Error Validasi Password")
+        }
+            .collect { _validation.postValue(it) }
     }
 
 }

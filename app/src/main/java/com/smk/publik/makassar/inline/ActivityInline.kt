@@ -2,6 +2,8 @@ package com.smk.publik.makassar.inline
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.os.Bundle
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -44,6 +46,10 @@ fun Activity.showToast(type: String, title: String, message: String) {
         MotionToast.GRAVITY_BOTTOM,
         MotionToast.LONG_DURATION,
         ResourcesCompat.getFont(this, R.font.poppins_regular))
+}
+
+fun Activity.clearIntentData() {
+    intent.replaceExtras(Intent())
 }
 
 fun Activity.showErrorToast(message: String, title: String = "Error") {

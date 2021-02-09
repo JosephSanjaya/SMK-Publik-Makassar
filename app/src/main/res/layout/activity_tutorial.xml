@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="28dp"
-                android:text="@string/button_label_continue"
+                android:text="@string/button_label_continue_with_arrow"
                 android:textAllCaps="false"
                 android:onClick="@{listener}"
                 android:textColor="?attr/colorSecondary"

@@ -10,7 +10,6 @@ import com.smk.publik.makassar.R
 import com.smk.publik.makassar.databinding.ActivityBottomNavBinding
 import com.smk.publik.makassar.interfaces.ActivityInterfaces
 
-
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
  * @Github (https://github.com/JosephSanjaya),

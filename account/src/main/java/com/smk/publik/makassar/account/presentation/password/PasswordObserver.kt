@@ -4,6 +4,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
+import com.smk.publik.makassar.account.domain.Password
 import com.smk.publik.makassar.core.domain.State
 
 /*
@@ -42,6 +43,9 @@ class PasswordObserver(
                 is State.Failed -> view.onChangePasswordFailed(it.throwable)
             }
         })
+        viewModel.mValidation.observe(owner, {
+            view.onPasswordValidated(it)
+        })
     }
 
     interface Interfaces {
@@ -59,5 +63,7 @@ class PasswordObserver(
         fun onChangePasswordLoading() {}
         fun onChangePasswordFailed(e: Throwable) {}
         fun onChangePasswordSuccess() {}
+
+        fun onPasswordValidated(result: Pair<List<Password?>, Boolean>) {}
     }
 }
