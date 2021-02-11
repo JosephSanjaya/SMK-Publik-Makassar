@@ -33,15 +33,15 @@
         android:label="Absensi"
         tools:layout="@layout/fragment_home">
 
-        <action
-            android:id="@+id/absensi"
-            app:destination="@id/more" />
+<!--        <action-->
+<!--            android:id="@+id/absensi"-->
+<!--            app:destination="@id/more" />-->
 
     </fragment>
 
-    <fragment
-        android:id="@+id/more"
-        android:name="com.smk.publik.makassar.presentation.fragments.MenuFragment"
-        android:label="Menu"
-        tools:layout="@layout/fragment_home"/>
+<!--    <fragment-->
+<!--        android:id="@+id/more"-->
+<!--        android:name="com.smk.publik.makassar.presentation.fragments.MenuFragment"-->
+<!--        android:label="Menu"-->
+<!--        tools:layout="@layout/fragment_home"/>-->
 </navigation>

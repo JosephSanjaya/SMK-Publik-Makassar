@@ -44,6 +44,14 @@ class UserObserver(
                 is State.Failed -> view.onGetUserDataFailed(it.throwable)
             }
         })
+        viewModel.logout.observe(owner, {
+            when(it) {
+                is State.Idle -> view.onLogoutIdle()
+                is State.Loading -> view.onLogoutLoading()
+                is State.Success -> view.onLogoutSuccess()
+                is State.Failed -> view.onLogoutFailed(it.throwable)
+            }
+        })
     }
 
     interface Interfaces {
@@ -61,5 +69,10 @@ class UserObserver(
         fun onLoginLoading() {}
         fun onLoginFailed(e: Throwable) {}
         fun onLoginSuccess(user: FirebaseUser?) {}
+
+        fun onLogoutIdle() {}
+        fun onLogoutLoading() {}
+        fun onLogoutFailed(e: Throwable) {}
+        fun onLogoutSuccess() {}
     }
 }

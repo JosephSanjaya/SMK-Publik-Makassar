@@ -51,4 +51,10 @@
     <string name="label_change_password_success_message">Password kamu berhasil diubah. Silahkan masuk kembali.</string>
     <string name="label_change_password_balloon_message">Password harus memenuhi beberapa ketentuan:</string>
     <string name="button_label_send">Kirim</string>
+    <string name="label_beranda_jadwal">Jadwal Pelajaran</string>
+    <string name="label_beranda_pengumuman">Pengumuman</string>
+    <string name="label_button_beranda_jadwal">Cek  Jadwal disini</string>
+    <string name="label_button_close">Tutup</string>
+    <string name="label_button_keluar">Keluar</string>
+    <string name="label_button_ok">OK</string>
 </resources>

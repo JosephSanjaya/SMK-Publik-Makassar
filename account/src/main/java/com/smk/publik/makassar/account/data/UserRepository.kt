@@ -74,4 +74,10 @@ class UserRepository(
         awaitClose()
     }
 
+    suspend fun doLogout() = flow {
+        emit(State.Loading())
+        mSharedPreferences.edit().clear().apply()
+        Firebase.auth.signOut()
+        emit(State.Success(true))
+    }
 }

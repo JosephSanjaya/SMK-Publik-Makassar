@@ -20,10 +20,10 @@
         android:orderInCategory="3"
         android:icon="@drawable/ic_absensi"/>
 
-    <item android:id="@+id/more"
-        android:title="Menu"
-        app:showAsAction="always"
-        android:orderInCategory="4"
-        android:icon="@drawable/ic_menu"/>
+<!--    <item android:id="@+id/more"-->
+<!--        android:title="Menu"-->
+<!--        app:showAsAction="always"-->
+<!--        android:orderInCategory="4"-->
+<!--        android:icon="@drawable/ic_menu"/>-->
 
 </menu>

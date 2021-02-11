@@ -20,9 +20,9 @@
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginStart="43dp"
             android:layout_marginEnd="43dp"
+            android:orientation="vertical"
             android:translationZ="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -35,18 +35,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:text="@string/label_loading"
-                tools:text="Joseph Sanjaya"
                 android:textAppearance="?attr/textAppearanceHeadline4"
-                android:textColor="?attr/colorOnApproved" />
+                android:textColor="?attr/colorOnApproved"
+                tools:text="Joseph Sanjaya" />
 
             <TextView
                 android:id="@+id/tvRoles"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_loading"
-                tools:text="Kelas X"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
-                android:textColor="?attr/colorOnApproved" />
+                android:textColor="?attr/colorOnApproved"
+                tools:text="Kelas X" />
 
         </LinearLayout>
 
@@ -54,7 +54,7 @@
         <com.github.florent37.shapeofview.shapes.ArcView
             android:id="@+id/arcView"
             android:layout_width="match_parent"
-            android:layout_height="240dp"
+            android:layout_height="205dp"
             android:elevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -73,17 +73,103 @@
         </com.github.florent37.shapeofview.shapes.ArcView>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cvJadwal"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_marginTop="50dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="17dp"
+            android:layout_marginTop="57dp"
             android:layout_marginEnd="17dp"
+            android:elevation="0dp"
+            android:onClick="@{listener}"
             app:cardCornerRadius="8dp"
-            app:cardElevation="5dp"
+            app:cardElevation="15dp"
             app:layout_constraintEnd_toEndOf="@+id/arcView"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/arcView"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="27dp"
+                android:paddingTop="22dp"
+                android:paddingEnd="27dp"
+                android:paddingBottom="16dp">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_baseline_calendar_today_24"
+                    app:tint="?attr/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tvJadwalTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="13dp"
+                    android:text="@string/label_beranda_jadwal"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    android:textColor="?attr/colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+                    app:layout_constraintStart_toEndOf="@+id/imageView2"
+                    app:layout_constraintTop_toTopOf="@+id/imageView2" />
+
+                <TextView
+                    android:id="@+id/tvJadwalSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:drawablePadding="13dp"
+                    android:text="@string/label_button_beranda_jadwal"
+                    android:textAppearance="?attr/textAppearanceBody1"
+                    android:textColor="?attr/colorPrimary"
+                    app:drawableEndCompat="@drawable/ic_baseline_chevron_right_24"
+                    app:drawableTint="?attr/colorPrimary"
+                    app:layout_constraintStart_toStartOf="@+id/tvJadwalTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/tvJadwalTitle" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:padding="26dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cvJadwal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="12dp"
+                android:text="@string/label_beranda_pengumuman"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                app:drawableStartCompat="@drawable/ic_information" />
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAnnouncement"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

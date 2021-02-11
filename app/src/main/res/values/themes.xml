@@ -5,6 +5,7 @@
         <item name="colorPrimaryVariant">@color/primaryColorVariant</item>
         <item name="colorOnPrimary">@color/primaryTextColor</item>
         <item name="android:colorBackground">@color/primaryColor</item>
+        <item name="colorControlActivated">?attr/colorSecondary</item>
         <item name="colorError">@color/colorError</item>
         <item name="colorOnError">@android:color/white</item>
         <item name="colorApproved">@color/colorApproved</item>

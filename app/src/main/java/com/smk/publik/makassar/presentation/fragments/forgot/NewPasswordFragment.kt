@@ -25,9 +25,8 @@ import com.smk.publik.makassar.inline.errorAnimation
 import com.smk.publik.makassar.inline.makeLoadingDialog
 import com.smk.publik.makassar.inline.showErrorToast
 import com.smk.publik.makassar.inline.showSuccessDialog
-import com.smk.publik.makassar.presentation.activities.account.AccountActivity
 import com.smk.publik.makassar.presentation.activities.account.ForgotActivity
-import com.smk.publik.makassar.presentation.adapter.PasswordBalloon
+import com.smk.publik.makassar.presentation.adapter.PasswordRequirementAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /*
@@ -50,8 +49,8 @@ class NewPasswordFragment: Fragment(R.layout.fragment_change_password), BaseOnCl
     private val mViewModel: PasswordViewModel by viewModel()
     private val loading by lazy { requireContext().makeLoadingDialog(false) }
     private var isPasswordValid = false
-    private val mBalloon by lazy { PasswordBalloon(requireContext(), mBalloonValidationList, viewLifecycleOwner) }
-    private val mBalloonValidationList: ArrayList<Password> = ArrayList()
+    private val mPasswordAdapter by lazy { PasswordRequirementAdapter(mPasswordReqList) }
+    private val mPasswordReqList: ArrayList<Password> = ArrayList()
 
     private val mValidator by lazy {
         form {
@@ -93,15 +92,17 @@ class NewPasswordFragment: Fragment(R.layout.fragment_change_password), BaseOnCl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.listener = this
+        binding.rvPasswordRequirement.adapter = mPasswordAdapter
         binding.etPassword.addTextChangedListener { s ->
             changeButtonState(!s.isNullOrBlank())
             mViewModel.passwordValidation(s.toString())
         }
+        mViewModel.passwordValidation("")
         super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onStart() {
-        mActivityInterfaces?.onToolbarChanges(StringUtils.getString(R.string.button_label_verifikasi), isBack = true, isHide = false)
+        mActivityInterfaces?.onToolbarChanges(StringUtils.getString(R.string.label_change_password_toolbar), isBack = true, isHide = false)
         super.onStart()
     }
 
@@ -129,14 +130,8 @@ class NewPasswordFragment: Fragment(R.layout.fragment_change_password), BaseOnCl
     }
 
     override fun onPasswordValidated(result: Pair<List<Password?>, Boolean>) {
-        mBalloon.update(result.first)
+        mPasswordAdapter.setNewInstance(result.first.filterNotNull().toMutableList())
         isPasswordValid = result.second
-        when(isPasswordValid) {
-            true -> mBalloon.dismissBalloon()
-            false -> if (!mBalloon.isBalloonShowing()) {
-                mBalloon.showBalloon(binding.etPassword)
-            }
-        }
         super.onPasswordValidated(result)
     }
 

@@ -25,6 +25,10 @@
         <item name="shapeAppearanceOverlay">@style/TextInputLayoutShape</item>
     </style>
 
+    <style name="TextInputEditTextStyle">
+        <item name="colorControlActivated">?attr/colorSecondary</item>
+    </style>
+
     <style name="TextInputLayoutShape" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">@dimen/defaultRadius</item>

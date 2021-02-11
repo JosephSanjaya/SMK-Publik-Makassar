@@ -1,5 +1,6 @@
 package com.smk.publik.makassar.account.presentation.user
 
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseUser
@@ -23,6 +24,15 @@ import kotlinx.coroutines.launch
 class UserViewModel(
     private val repository: UserRepository
 ) : BaseViewModel() {
+
+    private val _logout: MutableLiveData<State<Boolean>> = MutableLiveData()
+    val logout: LiveData<State<Boolean>> get() = _logout
+
+    fun resetLogout() = _logout.postValue(State.Idle())
+    fun doLogout() = defaultScope.launch {
+        repository.doLogout().catch { _logout.postValue(State.Failed(getHttpException(it))) }
+            .collect { _logout.postValue(it) }
+    }
 
     private val _login: MutableLiveData<State<FirebaseUser?>> = MutableLiveData()
     val login: LiveData<State<FirebaseUser?>> get() = _login

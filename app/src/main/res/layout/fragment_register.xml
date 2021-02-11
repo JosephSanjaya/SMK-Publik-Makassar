@@ -22,10 +22,10 @@
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="16dp"
             android:animateLayoutChanges="true"
-            android:layout_marginStart="35dp"
-            android:layout_marginEnd="35dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -66,10 +66,10 @@
 
         </LinearLayout>
 
-        <ScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_margin="35dp"
+            android:layout_margin="16dp"
             app:layout_constraintBottom_toTopOf="@+id/btnRegister"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -95,6 +95,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPersonName"
+                        android:theme="@style/TextInputEditTextStyle"
                         android:textColor="?attr/colorSecondary"
                         app:hintTextAppearance="?attr/textAppearanceBody1" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -182,6 +183,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="phone"
+                        android:theme="@style/TextInputEditTextStyle"
                         android:textColor="?attr/colorSecondary"
                         app:hintTextAppearance="?attr/textAppearanceBody1" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -199,6 +201,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
+                        android:theme="@style/TextInputEditTextStyle"
                         android:textColor="?attr/colorSecondary"
                         app:hintTextAppearance="?attr/textAppearanceBody1" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -216,6 +219,7 @@
                         android:id="@+id/etNUPTK"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:theme="@style/TextInputEditTextStyle"
                         android:inputType="phone"
                         android:textColor="?attr/colorSecondary"
                         app:hintTextAppearance="?attr/textAppearanceBody1" />
@@ -235,6 +239,7 @@
                         android:layout_width="match_parent"
                         android:inputType="phone"
                         android:layout_height="wrap_content"
+                        android:theme="@style/TextInputEditTextStyle"
                         android:textColor="?attr/colorSecondary"
                         app:hintTextAppearance="?attr/textAppearanceBody1" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -245,7 +250,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/label_password"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginBottom="8dp"
                     app:endIconMode="password_toggle">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -253,9 +258,23 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="?attr/colorSecondary"
+                        android:theme="@style/TextInputEditTextStyle"
                         android:inputType="textPassword"
                         app:hintTextAppearance="?attr/textAppearanceBody1" />
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvPasswordRequirement"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:orientation="vertical"
+                    tools:listitem="@layout/list_menu"
+                    android:clipToPadding="true"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginBottom="24dp"
+                    tools:itemCount="3"/>
+
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tlPasswordRepeat"
@@ -270,6 +289,7 @@
                         android:id="@+id/etPasswordRepeat"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:theme="@style/TextInputEditTextStyle"
                         android:textColor="?attr/colorSecondary"
                         android:inputType="textPassword"
                         app:hintTextAppearance="?attr/textAppearanceBody1" />
@@ -277,15 +297,15 @@
 
             </LinearLayout>
 
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="35dp"
-            android:layout_marginEnd="35dp"
-            android:layout_marginBottom="60dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:onClick="@{listener}"

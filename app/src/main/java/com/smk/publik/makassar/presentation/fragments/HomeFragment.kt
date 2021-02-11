@@ -3,11 +3,11 @@ package com.smk.publik.makassar.presentation.fragments
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.StringUtils
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -18,7 +18,10 @@ import com.smk.publik.makassar.account.presentation.user.UserObserver
 import com.smk.publik.makassar.account.presentation.user.UserViewModel
 import com.smk.publik.makassar.databinding.FragmentHomeBinding
 import com.smk.publik.makassar.inline.makeLoadingDialog
+import com.smk.publik.makassar.inline.makeOptionDialog
+import com.smk.publik.makassar.inline.showErrorToast
 import com.smk.publik.makassar.interfaces.ActivityInterfaces
+import com.smk.publik.makassar.presentation.activities.account.AccountActivity
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -29,7 +32,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  */
 
 class HomeFragment: Fragment(R.layout.fragment_home), UserObserver.Interfaces {
-
+    init {
+        setHasOptionsMenu(true)
+    }
     private val mSharedPreferences by inject<SharedPreferences>()
     private var mActivityInterfaces: ActivityInterfaces? = null
     private val binding by viewBinding(FragmentHomeBinding::bind)
@@ -37,9 +42,30 @@ class HomeFragment: Fragment(R.layout.fragment_home), UserObserver.Interfaces {
     private val loading by lazy { requireContext().makeLoadingDialog(false) }
     private var mUsers: Users? = null
 
+    private val logoutDialog by lazy { requireContext().makeOptionDialog(
+        true,
+        "Apakah anda yakin untuk keluar?",
+        positiveButtonText = StringUtils.getString(R.string.label_button_keluar),
+        positiveButtonAction = {
+            mViewModel.doLogout()
+        }
+    ) }
+
     override fun onStart() {
         mActivityInterfaces?.onToolbarChanges("", false, isHide = false)
         super.onStart()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.home_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.logout -> logoutDialog.second.show()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onCreateView(
@@ -85,6 +111,29 @@ class HomeFragment: Fragment(R.layout.fragment_home), UserObserver.Interfaces {
         mViewModel.resetGetUserData()
         loading.second.dismiss()
         super.onGetUserDataFailed(e)
+    }
+
+    override fun onLogoutIdle() {
+        loading.second.dismiss()
+        super.onLogoutIdle()
+    }
+
+    override fun onLogoutLoading() {
+        loading.second.show()
+        super.onLoginLoading()
+    }
+
+    override fun onLogoutSuccess() {
+        mViewModel.resetLogout()
+        ActivityUtils.startActivity(AccountActivity.createLoginIntent(requireContext()))
+        ActivityUtils.finishAllActivities(true)
+        super.onLogoutSuccess()
+    }
+
+    override fun onLogoutFailed(e: Throwable) {
+        mViewModel.resetLogout()
+        activity?.showErrorToast(e.message ?: "Logout Gagal!")
+        super.onLogoutFailed(e)
     }
 
     override fun onDetach() {

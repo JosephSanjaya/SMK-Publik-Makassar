@@ -23,9 +23,12 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.firebase.auth.FirebaseUser
 import com.smk.publik.makassar.R
+import com.smk.publik.makassar.account.domain.Password
 import com.smk.publik.makassar.databinding.FragmentRegisterBinding
 import com.smk.publik.makassar.matapelajaran.domain.MataPelajaran
 import com.smk.publik.makassar.account.domain.Users
+import com.smk.publik.makassar.account.presentation.password.PasswordObserver
+import com.smk.publik.makassar.account.presentation.password.PasswordViewModel
 import com.smk.publik.makassar.interfaces.ActivityInterfaces
 import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
@@ -35,6 +38,7 @@ import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranViewModel
 import com.smk.publik.makassar.account.presentation.register.RegisterViewModel
 import com.smk.publik.makassar.inline.*
 import com.smk.publik.makassar.presentation.activities.account.AccountActivity
+import com.smk.publik.makassar.presentation.adapter.PasswordRequirementAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -48,12 +52,14 @@ class RegisterFragment :
     Fragment(R.layout.fragment_register),
     BaseOnClickView,
     RegisterObserver.Interfaces,
-    MataPelajaranObserver.Interfaces
+    MataPelajaranObserver.Interfaces,
+    PasswordObserver.Interfaces
 {
 
     private val loading by lazy { requireContext().makeLoadingDialog(false) }
     private val binding by viewBinding(FragmentRegisterBinding::bind)
     private val mSharedViewModel by activityViewModels<AccountSharedViewModel>()
+    private val mPasswordViewModel: PasswordViewModel by viewModel()
 
     private var mActivityInterfaces: ActivityInterfaces? = null
     private val mViewModel: RegisterViewModel by viewModel()
@@ -64,9 +70,21 @@ class RegisterFragment :
     private val adapter by lazy {
         ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, mMateriString)
     }
+    private var isPasswordValid = false
+    private val mPasswordAdapter by lazy { PasswordRequirementAdapter(mPasswordReqList) }
+    private val mPasswordReqList: ArrayList<Password> = ArrayList()
     private val mUsers = MutableLiveData(Users())
+
     private val mValidator by lazy {
         form {
+            input(binding.etNama) {
+                isNotEmpty().description("Nama tidak boleh kosong!")
+            }.onErrors { _, errors ->
+                binding.tlNama.apply {
+                    if (!errors.isNullOrEmpty()) errorAnimation()
+                    error = errors.firstOrNull()?.description
+                }
+            }
             input(binding.etEmail) {
                 isEmail().description("Format email salah!")
                 isNotEmpty().description("Email tidak boleh kosong!")
@@ -76,9 +94,51 @@ class RegisterFragment :
                     error = errors.firstOrNull()?.description
                 }
             }
+            input(binding.etTelepon) {
+                assert("Format nomor salah!") {
+                    android.util.Patterns.PHONE.matcher(it.text).matches()
+                }
+                length().atLeast(10).description("Minimal 10 angka!")
+                isNotEmpty().description("Nomor telepon tidak boleh kosong!")
+            }.onErrors { _, errors ->
+                binding.tlTelepon.apply {
+                    if (!errors.isNullOrEmpty()) errorAnimation()
+                    error = errors.firstOrNull()?.description
+                }
+            }
+            if(isTeacher.get()) {
+                input(binding.etNUPTK) {
+                    isNotEmpty().description("NUPTK tidak boleh kosong!")
+                }.onErrors { _, errors ->
+                    binding.tlNUPTK.apply {
+                        if (!errors.isNullOrEmpty()) errorAnimation()
+                        error = errors.firstOrNull()?.description
+                    }
+                }
+                input(binding.etMatpel) {
+                    isNotEmpty().description("Mata Kuliah tidak boleh kosong!")
+                }.onErrors { _, errors ->
+                    binding.tlMatpel.apply {
+                        if (!errors.isNullOrEmpty()) errorAnimation()
+                        error = errors.firstOrNull()?.description
+                    }
+                }
+            } else {
+                input(binding.etNIS) {
+                    isNotEmpty().description("NIS tidak boleh kosong!")
+                }.onErrors { _, errors ->
+                    binding.tlNIS.apply {
+                        if (!errors.isNullOrEmpty()) errorAnimation()
+                        error = errors.firstOrNull()?.description
+                    }
+                }
+            }
             input(binding.etPassword) {
                 assert("Password tidak sama!") {
-                    it.text != binding.etPasswordRepeat.text
+                    it.text.toString().contentEquals(binding.etPasswordRepeat.text.toString())
+                }
+                assert("Password belum sesuai ketentuan!") {
+                    isPasswordValid
                 }
                 isNotEmpty().description("Password tidak boleh kosong!")
             }.onErrors { _, errors ->
@@ -89,7 +149,7 @@ class RegisterFragment :
             }
             input(binding.etPasswordRepeat) {
                 assert("Password tidak sama!") {
-                    it.text != binding.etPassword.text
+                    it.text.toString().contentEquals(binding.etPasswordRepeat.text.toString())
                 }
                 isNotEmpty().description("Password tidak boleh kosong!")
             }.onErrors { _, errors ->
@@ -121,6 +181,7 @@ class RegisterFragment :
         savedInstanceState: Bundle?
     ): View? {
         viewLifecycleOwner.lifecycle.addObserver(RegisterObserver(this, mViewModel, viewLifecycleOwner))
+        viewLifecycleOwner.lifecycle.addObserver(PasswordObserver(this, mPasswordViewModel, viewLifecycleOwner))
         viewLifecycleOwner.lifecycle.addObserver(
             MataPelajaranObserver(
                 this,
@@ -135,10 +196,12 @@ class RegisterFragment :
         setupObserver()
         binding.listener = this
         binding.etMatpel.setAdapter(adapter)
+        binding.rvPasswordRequirement.adapter = mPasswordAdapter
         setupEditTextListener()
         mUsers.postValue(mUsers.value?.apply {
             roles = "siswa"
         })
+        mPasswordViewModel.passwordValidation("")
         mMateriViewModel.fetchMataPelajaran()
         super.onViewCreated(view, savedInstanceState)
     }
@@ -178,11 +241,11 @@ class RegisterFragment :
     private fun setupObserver() {
         mUsers.observe(viewLifecycleOwner, {
             if (isTeacher.get()) {
-                val validation = listOf(it.nama, it.telepon, it.email, it.nuptk)
-                formValidation(!validation.any { valid -> valid.isNullOrBlank() && it.mataPelajaran.isNullOrEmpty() && binding.etPassword.text.isNullOrBlank() && binding.etPasswordRepeat.text.isNullOrBlank() } )
+                val validation = listOf(it.nama, it.telepon, it.email, it.nuptk, it.mataPelajaran.toString(), binding.etPassword.text.toString(), binding.etPasswordRepeat.text.toString())
+                formValidation(!validation.any { valid -> valid.isNullOrBlank() || valid == "null" })
             } else {
-                val validation = listOf(it.nama, it.telepon, it.kelas, it.email, it.nis)
-                formValidation(!validation.any { valid -> valid.isNullOrBlank() && binding.etPassword.text.isNullOrBlank() && binding.etPasswordRepeat.text.isNullOrBlank()} )
+                val validation = listOf(it.nama, it.telepon, it.kelas, it.email, it.nis, binding.etPassword.text.toString(), binding.etPasswordRepeat.text.toString())
+                formValidation(!validation.any { valid -> valid.isNullOrBlank() || valid == "null" })
             }
         })
         binding.isTeacher = isTeacher
@@ -247,6 +310,13 @@ class RegisterFragment :
                 nuptk = if(it.isBlank()) null else it
             })
         }
+        binding.etPassword.onTextChanged {
+            mPasswordViewModel.passwordValidation(it)
+            mUsers.postValue(mUsers.value)
+        }
+        binding.etPasswordRepeat.onTextChanged {
+            mUsers.postValue(mUsers.value)
+        }
     }
 
     override fun onClick(p0: View?) {
@@ -266,6 +336,12 @@ class RegisterFragment :
             })?.second?.show()
         }
         super.onClick(p0)
+    }
+
+    override fun onPasswordValidated(result: Pair<List<Password?>, Boolean>) {
+        mPasswordAdapter.setNewInstance(result.first.filterNotNull().toMutableList())
+        isPasswordValid = result.second
+        super.onPasswordValidated(result)
     }
 
     private fun clearForm() {
@@ -307,7 +383,6 @@ class RegisterFragment :
     }
 
     override fun onRegisterIdle() {
-        clearForm()
         loading.second.dismiss()
         super.onRegisterIdle()
     }

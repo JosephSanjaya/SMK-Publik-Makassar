@@ -16,6 +16,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.databinding.DialogLoadingBinding
 import com.smk.publik.makassar.databinding.DialogMessageBinding
+import com.smk.publik.makassar.databinding.DialogOptionBinding
 import io.noties.markwon.Markwon
 import java.util.*
 
@@ -112,6 +113,40 @@ fun Context.makeMessageDialog(
             text = buttonText ?: StringUtils.getString(R.string.button_label_continue)
             setOnClickListener {
                 buttonAction?.invoke()
+                second.dismiss()
+            }
+        }
+    }
+}
+
+fun Context.makeOptionDialog(
+    isCancelable: Boolean = true,
+    message: String,
+    negativeButtonText: String? = null,
+    positiveButtonText: String? = null,
+    negativeButtonAction: (() -> Unit)? = null,
+    positiveButtonAction: (() -> Unit)? = null,
+    onDismissListener: DialogInterface.OnDismissListener? = null,
+) : Pair<DialogOptionBinding, AlertDialog> {
+    return makeCustomViewDialog(
+        DialogOptionBinding::inflate,
+        isCancelable,
+        false,
+        onDismissListener
+    ).apply {
+        second.window?.setWindowAnimations(R.style.DialogAnimationScale)
+        Markwon.create(this@makeOptionDialog).setMarkdown(first.tvMessage, message)
+        first.btnCancel.apply {
+            text = negativeButtonText ?: StringUtils.getString(R.string.label_button_close)
+            setOnClickListener {
+                negativeButtonAction?.invoke()
+                second.dismiss()
+            }
+        }
+        first.btnAction.apply {
+            text = positiveButtonText ?: StringUtils.getString(R.string.label_button_ok)
+            setOnClickListener {
+                positiveButtonAction?.invoke()
                 second.dismiss()
             }
         }
