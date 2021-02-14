@@ -14,7 +14,7 @@ import org.koin.dsl.module
 object MataPelajaranDI {
     val modules = module {
         single {
-            MataPelajaranRepository()
+            MataPelajaranRepository(get())
         }
         viewModel {
             MataPelajaranViewModel(get())

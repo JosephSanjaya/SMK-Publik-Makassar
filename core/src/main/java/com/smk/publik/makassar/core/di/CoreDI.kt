@@ -1,6 +1,7 @@
 package com.smk.publik.makassar.core.di
 
 import android.content.Context
+import com.smk.publik.makassar.core.data.CommonRepository
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
@@ -16,6 +17,9 @@ object CoreDI {
     val modules = module {
         single {
             androidApplication().getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+        }
+        single {
+            CommonRepository()
         }
     }
 

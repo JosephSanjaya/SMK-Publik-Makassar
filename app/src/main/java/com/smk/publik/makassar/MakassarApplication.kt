@@ -8,6 +8,7 @@ import com.smk.publik.makassar.account.di.PasswordDI
 import com.smk.publik.makassar.account.di.RegisterDI
 import com.smk.publik.makassar.account.di.UserDI
 import com.smk.publik.makassar.account.di.VerifyDI
+import com.smk.publik.makassar.announcement.di.AnnouncementDI
 import com.smk.publik.makassar.core.di.CoreDI
 import com.smk.publik.makassar.core.di.DataStoreDI
 import com.smk.publik.makassar.matapelajaran.di.MataPelajaranDI
@@ -33,6 +34,7 @@ class MakassarApplication : MultiDexApplication() {
                 DataStoreDI.modules,
                 CoreDI.modules,
                 UserDI.modules,
+                AnnouncementDI.modules,
                 RegisterDI.modules,
                 VerifyDI.modules,
                 PasswordDI.modules,
@@ -42,4 +44,5 @@ class MakassarApplication : MultiDexApplication() {
         FileOperator.init(this, BuildConfig.DEBUG)
         super.onCreate()
     }
+
 }

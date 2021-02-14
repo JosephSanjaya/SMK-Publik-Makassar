@@ -54,7 +54,13 @@
     <string name="label_beranda_jadwal">Jadwal Pelajaran</string>
     <string name="label_beranda_pengumuman">Pengumuman</string>
     <string name="label_button_beranda_jadwal">Cek  Jadwal disini</string>
+    <string name="label_edit_profile">Ubah Profile</string>
     <string name="label_button_close">Tutup</string>
     <string name="label_button_keluar">Keluar</string>
+    <string name="label_button_back">Kembali</string>
+    <string name="label_button_save">Simpan</string>
     <string name="label_button_ok">OK</string>
+    <string name="label_chip_edit">Edit</string>
+    <string name="label_menu_change_password">Ganti Password</string>
+    <string name="label_menu_change_profile">Ganti Profil Pengguna</string>
 </resources>

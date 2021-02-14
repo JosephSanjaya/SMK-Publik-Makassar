@@ -60,6 +60,7 @@ dependencies {
     api platform('com.google.firebase:firebase-bom:25.11.0')
     api 'com.google.firebase:firebase-crashlytics-ktx'
     api 'com.google.firebase:firebase-analytics-ktx'
+    api 'com.google.firebase:firebase-messaging-ktx'
     api 'com.google.firebase:firebase-dynamic-links-ktx'
     api 'com.google.firebase:firebase-storage-ktx'
     api 'com.google.firebase:firebase-database-ktx'
@@ -68,7 +69,7 @@ dependencies {
 
     api 'com.google.crypto.tink:tink-android:1.5.0'
     api 'com.squareup.retrofit2:retrofit:2.9.0'
-    api "io.noties.markwon:core:4.6.1"
+    api 'io.noties.markwon:core:4.6.2'
 
     api 'com.orhanobut:logger:2.2.0'
     api "androidx.datastore:datastore:$versions.dataStore"

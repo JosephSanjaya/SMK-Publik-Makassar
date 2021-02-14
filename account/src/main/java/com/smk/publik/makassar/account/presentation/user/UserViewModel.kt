@@ -61,4 +61,13 @@ class UserViewModel(
             .collect { _user.postValue(it) }
     }
 
+    private val _edit: MutableLiveData<State<Users?>> = MutableLiveData()
+    val edit: LiveData<State<Users?>> get() = _edit
+
+    fun resetEdit() = _edit.postValue(State.Idle())
+    fun editUserData(newNamaValue: String, newPhoneValue: String) = defaultScope.launch {
+        repository.editUserData(newNamaValue, newPhoneValue).catch { _edit.postValue(State.Failed(getHttpException(it))) }
+            .collect { _edit.postValue(it) }
+    }
+
 }

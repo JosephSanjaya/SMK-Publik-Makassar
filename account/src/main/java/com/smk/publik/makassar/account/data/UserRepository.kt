@@ -16,10 +16,7 @@ import com.smk.publik.makassar.core.utils.offerSafeClose
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 
 /*
@@ -48,6 +45,20 @@ class UserRepository(
         Firebase.database.reference.child("users").child(userUID).addListenerForSingleValueEvent(listener)
         awaitClose { Firebase.database.reference.removeEventListener(listener) }
     }
+
+    suspend fun editUserData(newNamaValue: String, newPhoneValue: String) = flow {
+        emit(State.Loading())
+        val user = mSharedPreferences.users
+        user?.apply {
+            nama = newNamaValue
+            telepon = newPhoneValue
+        }
+        Firebase.database.reference.child("users").child(user?.id.toString()).setValue(user).await()
+        mSharedPreferences.users = user
+        emit(State.Success(user))
+    }.catch {
+        throw it
+    }.flowOn(Dispatchers.IO)
 
     suspend fun login(email: String, password: String) = flow {
         emit(State.Loading())

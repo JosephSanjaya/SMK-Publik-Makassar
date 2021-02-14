@@ -48,6 +48,7 @@ inline fun <T : ViewBinding> Context.makeCustomViewDialog(
         setOnDismissListener(onDismissListener)
         setCancelable(isCancelable)
     }.create().apply {
+        window?.setWindowAnimations(R.style.DialogAnimationScale)
         val lp = window?.attributes
         lp?.dimAmount = 0.7f
         window?.attributes = lp
@@ -107,7 +108,6 @@ fun Context.makeMessageDialog(
         false,
         onDismissListener
     ).apply {
-        second.window?.setWindowAnimations(R.style.DialogAnimationScale)
         Markwon.create(this@makeMessageDialog).setMarkdown(first.tvMessage, message)
         first.btnAction.apply {
             text = buttonText ?: StringUtils.getString(R.string.button_label_continue)
@@ -134,7 +134,6 @@ fun Context.makeOptionDialog(
         false,
         onDismissListener
     ).apply {
-        second.window?.setWindowAnimations(R.style.DialogAnimationScale)
         Markwon.create(this@makeOptionDialog).setMarkdown(first.tvMessage, message)
         first.btnCancel.apply {
             text = negativeButtonText ?: StringUtils.getString(R.string.label_button_close)

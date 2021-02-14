@@ -52,6 +52,14 @@ class UserObserver(
                 is State.Failed -> view.onLogoutFailed(it.throwable)
             }
         })
+        viewModel.edit.observe(owner, {
+            when(it) {
+                is State.Idle -> view.onEditUserDataIdle()
+                is State.Loading -> view.onEditUserDataLoading()
+                is State.Success -> view.onEditUserDataSuccess(it.data)
+                is State.Failed -> view.onEditUserDataFailed(it.throwable)
+            }
+        })
     }
 
     interface Interfaces {
@@ -59,6 +67,11 @@ class UserObserver(
         fun onGetUserDataLoading() {}
         fun onGetUserDataFailed(e: Throwable) {}
         fun onGetUserDataSuccess(user: Users?) {}
+
+        fun onEditUserDataIdle() {}
+        fun onEditUserDataLoading() {}
+        fun onEditUserDataFailed(e: Throwable) {}
+        fun onEditUserDataSuccess(user: Users?) {}
 
         fun onReloadIdle() {}
         fun onReloadLoading() {}

@@ -16,52 +16,17 @@
         android:animateLayoutChanges="true"
         android:background="@android:color/white">
 
-        <LinearLayout
-            android:id="@+id/linearLayout2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="43dp"
-            android:layout_marginEnd="43dp"
-            android:orientation="vertical"
-            android:translationZ="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/tvName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:text="@string/label_loading"
-                android:textAppearance="?attr/textAppearanceHeadline4"
-                android:textColor="?attr/colorOnApproved"
-                tools:text="Joseph Sanjaya" />
-
-            <TextView
-                android:id="@+id/tvRoles"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/label_loading"
-                android:textAppearance="?attr/textAppearanceSubtitle1"
-                android:textColor="?attr/colorOnApproved"
-                tools:text="Kelas X" />
-
-        </LinearLayout>
-
-
         <com.github.florent37.shapeofview.shapes.ArcView
             android:id="@+id/arcView"
             android:layout_width="match_parent"
-            android:layout_height="205dp"
+            android:layout_height="wrap_content"
             android:elevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shape_arc_cropDirection="outside"
-            app:shape_arc_height="20dp"
+            app:shape_arc_height="30dp"
             app:shape_arc_position="bottom">
 
             <ImageView
@@ -70,14 +35,119 @@
                 android:scaleType="centerCrop"
                 android:src="?attr/colorPrimary" />
 
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="107dp"
+                android:layout_marginStart="43dp"
+                android:layout_marginEnd="43dp"
+                android:orientation="vertical"
+                android:translationZ="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_loading"
+                        android:ellipsize="marquee"
+                        android:fadingEdge="horizontal"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:scrollHorizontally="true"
+                        android:textAppearance="?attr/textAppearanceHeadline4"
+                        android:textColor="?attr/colorOnApproved"
+                        android:maxLength="16"
+                        android:singleLine="true"
+                        tools:text="@tools:sample/lorem/random" />
+
+                    <ImageButton
+                        android:id="@+id/btnEdit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:onClick="@{listener}"
+                        android:layout_marginBottom="3dp"
+                        android:src="@drawable/ic_baseline_edit_24"
+                        android:tint="?attr/colorOnApproved"
+                        android:background="?attr/selectableItemBackground"
+                        android:padding="8dp"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvRoles"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_loading"
+                    android:textAppearance="?attr/textAppearanceSubtitle1"
+                    android:textColor="?attr/colorOnApproved"
+                    tools:text="Kelas X"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/cgMateri"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipSample"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:chipStartPadding="16dp"
+                        app:chipEndPadding="16dp"
+                        app:chipBackgroundColor="?attr/colorOnApproved"
+                        android:textColor="?attr/colorPrimary"
+                        android:textAppearance="?attr/textAppearanceCaption"
+                        android:text="IPA"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipSample2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:chipStartPadding="16dp"
+                        app:chipEndPadding="16dp"
+                        app:chipBackgroundColor="?attr/colorOnApproved"
+                        android:textColor="?attr/colorPrimary"
+                        android:textAppearance="?attr/textAppearanceCaption"
+                        android:text="IPS"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipSample3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:chipStartPadding="16dp"
+                        app:chipEndPadding="16dp"
+                        app:chipIconTint="?attr/colorPrimary"
+                        app:chipIcon="@drawable/ic_baseline_add_24"
+                        app:chipBackgroundColor="?attr/colorOnApproved"
+                        android:textColor="?attr/colorPrimary"
+                        android:textAppearance="?attr/textAppearanceCaption"
+                        android:text="Tambah"/>
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </LinearLayout>
+
+
         </com.github.florent37.shapeofview.shapes.ArcView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cvJadwal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="-65dp"
             android:layout_marginStart="17dp"
-            android:layout_marginTop="57dp"
             android:layout_marginEnd="17dp"
             android:elevation="0dp"
             android:onClick="@{listener}"
@@ -86,7 +156,7 @@
             app:layout_constraintEnd_toEndOf="@+id/arcView"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/arcView"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+            app:layout_constraintTop_toBottomOf="@+id/arcView">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout

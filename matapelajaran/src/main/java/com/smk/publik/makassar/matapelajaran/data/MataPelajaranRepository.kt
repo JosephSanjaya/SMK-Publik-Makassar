@@ -8,6 +8,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.smk.publik.makassar.core.data.CommonRepository
 import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.core.utils.closeException
 import com.smk.publik.makassar.core.utils.offerSafe
@@ -21,7 +22,7 @@ import kotlinx.coroutines.tasks.await
 import java.io.File
 
 
-class MataPelajaranRepository {
+class MataPelajaranRepository(private val commonRepository: CommonRepository) {
 
     suspend fun buatMataPelajaran(nama: String, deskripsi: String) = flow {
         emit(State.Loading())
@@ -31,26 +32,7 @@ class MataPelajaranRepository {
     }
 
     @ExperimentalCoroutinesApi
-    fun uploadMateri(file: File)= callbackFlow<State<Uri>> {
-        offerSafe(State.Loading())
-        val fileUri = Uri.fromFile(file)
-        val ref = Firebase.storage.reference.child("materi").child("1").child(fileUri.lastPathSegment.toString())
-        val uploadTask = ref.putFile(fileUri)
-        val onCompleteListener = OnCompleteListener<Uri> {
-            if (it.isSuccessful) {
-                offerSafeClose(State.Success(it.result))
-            } else {
-                closeException(Throwable("Gagal upload file!"))
-            }
-        }
-        uploadTask.continueWithTask { task ->
-            if (!task.isSuccessful) {
-                closeException(Throwable(task.exception))
-            }
-            ref.downloadUrl
-        }.addOnCompleteListener(onCompleteListener)
-        awaitClose()
-    }
+    fun uploadMateri(idMatpel: String, file: File) = commonRepository.uploadFile(Firebase.storage.reference.child("materi").child(idMatpel).child(Uri.fromFile(file).lastPathSegment.toString()), file)
 
     suspend fun tambahMateri(idMatpel : String, kelas: String, materi: MataPelajaran.Materi) = flow {
         emit(State.Loading())

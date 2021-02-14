@@ -17,7 +17,7 @@
         android:layout_marginBottom="14dp"
         android:textAppearance="?attr/textAppearanceBody1"
         tools:text="@tools:sample/lorem/random"
-        android:textColor="?attr/colorPrimary"
+        android:textColor="?attr/colorPrimaryVariant"
         tools:maxLength="200"
         android:layout_height="wrap_content"/>
 
@@ -35,7 +35,7 @@
         app:cornerRadius="@dimen/defaultRadius"
         android:insetBottom="0dp"
         android:text="@string/button_label_sign_in"
-        android:textColor="?attr/colorOnSecondary"
+        android:textColor="?attr/colorPrimaryVariant"
         app:backgroundTint="?attr/colorSecondary" />
 
 

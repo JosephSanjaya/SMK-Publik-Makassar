@@ -44,8 +44,8 @@ class MataPelajaranViewModel(
     val mUpload: LiveData<State<Uri>> get() = _upload
 
     fun resetUpload() = _buatMatpel.postValue(State.Idle())
-    fun uploadMateri(file: File) = defaultScope.launch {
-        repository.uploadMateri(file).catch { _upload.postValue(State.Failed(getHttpException(it))) }
+    fun uploadMateri(idMatpel: String, file: File) = defaultScope.launch {
+        repository.uploadMateri(idMatpel, file).catch { _upload.postValue(State.Failed(getHttpException(it))) }
             .collect { _upload.postValue(it) }
     }
 }
