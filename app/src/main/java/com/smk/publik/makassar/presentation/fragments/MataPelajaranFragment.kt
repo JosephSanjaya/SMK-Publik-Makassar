@@ -11,7 +11,8 @@ import com.smk.publik.makassar.interfaces.ActivityInterfaces
  * @Github (https://github.com/JosephSanjaya),
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
-class MataPelajaranFragment: Fragment(R.layout.fragment_home) {
+
+class MataPelajaranFragment: Fragment(R.layout.fragment_mata_palajaran) {
     private var mActivityInterfaces: ActivityInterfaces? = null
 
     override fun onStart() {

@@ -138,7 +138,11 @@ class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, 
         when(p0) {
             binding.btnEdit -> p0.showMenu(R.menu.edit_profile_menu, onMenuItemClickListener = PopupMenu.OnMenuItemClickListener {
                 when(it.itemId) {
-                    R.id.changeProfile -> editProfileDialog.second.show()
+                    R.id.changeProfile -> {
+                        editProfileDialog.first.etName.setText(mUser.value?.nama)
+                        editProfileDialog.first.etPhone.setText(mUser.value?.telepon)
+                        editProfileDialog.second.show()
+                    }
                 }
                 true
             })

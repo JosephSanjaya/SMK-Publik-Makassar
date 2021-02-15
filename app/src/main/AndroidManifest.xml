@@ -45,6 +45,9 @@
             android:name=".presentation.activities.TutorialActivity"
             android:screenOrientation="portrait"/>
         <activity
+            android:name=".presentation.activities.UmumActivity"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".presentation.activities.RolesActivity"
             android:screenOrientation="portrait"/>
         <activity

@@ -12,7 +12,7 @@ import com.smk.publik.makassar.interfaces.ActivityInterfaces
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class AbsensiFragment: Fragment(R.layout.fragment_home) {
+class AbsensiFragment: Fragment(R.layout.fragment_under_development) {
     private var mActivityInterfaces: ActivityInterfaces? = null
 
     override fun onStart() {

@@ -11,12 +11,13 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:animateLayoutChanges="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         android:background="?attr/colorPrimary">
 
         <LinearLayout
+            android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="72dp"
@@ -38,10 +39,10 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEmail"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
                     android:textColor="?attr/colorSecondary"
                     android:theme="@style/TextInputEditTextStyle"
-                    android:singleLine="true"
-                    android:layout_height="wrap_content"
                     app:hintTextAppearance="?attr/textAppearanceBody1" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -50,19 +51,19 @@
                 style="@style/TextInputLayoutStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:theme="@style/TextInputEditTextStyle"
-                android:hint="@string/label_password"
                 android:layout_marginBottom="78dp"
+                android:hint="@string/label_password"
+                android:theme="@style/TextInputEditTextStyle"
                 app:endIconMode="password_toggle"
                 app:endIconTint="?attr/colorOnApproved">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etPassword"
                     android:layout_width="match_parent"
-                    android:singleLine="true"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorSecondary"
                     android:inputType="textPassword"
+                    android:singleLine="true"
+                    android:textColor="?attr/colorSecondary"
                     app:hintTextAppearance="?attr/textAppearanceBody1" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -71,13 +72,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:onClick="@{listener}"
                 android:insetTop="0dp"
-                app:cornerRadius="@dimen/defaultRadius"
                 android:insetBottom="0dp"
+                android:onClick="@{listener}"
                 android:text="@string/button_label_sign_in"
                 android:textColor="?attr/colorOnSecondary"
-                app:backgroundTint="?attr/colorSecondary" />
+                app:backgroundTint="?attr/colorSecondary"
+                app:cornerRadius="@dimen/defaultRadius" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -89,9 +90,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="4dp"
                     android:text="@string/label_belum_punya_akun"
                     android:textAppearance="?attr/textAppearanceBody1"
-                    android:padding="4dp"
                     android:textColor="?attr/colorOnApproved"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -100,14 +101,14 @@
 
                 <TextView
                     android:id="@+id/tvSignUp"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:onClick="@{listener}"
+                    android:padding="4dp"
                     android:text="@string/button_label_sign_up_underline"
                     android:textAppearance="?attr/textAppearanceBody1"
-                    android:padding="4dp"
                     android:textColor="?attr/colorSecondary"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -119,14 +120,42 @@
 
         </LinearLayout>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUmum"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="29dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="center"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingStart="25dp"
+            android:onClick="@{listener}"
+            android:paddingTop="16dp"
+            android:paddingEnd="25dp"
+            android:paddingBottom="16dp"
+            android:text="@string/label_button_umum"
+            android:textAppearance="?attr/textAppearanceButton"
+            android:textColor="?attr/colorOnApproved"
+            app:cornerRadius="@dimen/defaultRadius"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+            app:strokeColor="?attr/colorOnApproved"
+            app:strokeWidth="1dp" />
+
+
         <TextView
             android:id="@+id/tvForgot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_label_forgot_password"
-            android:onClick="@{listener}"
-            android:textAppearance="?attr/textAppearanceBody1"
             android:layout_marginBottom="25dp"
+            android:onClick="@{listener}"
+            android:text="@string/button_label_forgot_password"
+            android:textAppearance="?attr/textAppearanceBody1"
             android:textColor="?attr/colorOnApproved"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -28,6 +28,7 @@ import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranViewModel
 import com.smk.publik.makassar.presentation.activities.RolesActivity
 import com.smk.publik.makassar.presentation.activities.TutorialActivity
+import com.smk.publik.makassar.presentation.activities.UmumActivity
 import com.smk.publik.makassar.presentation.activities.account.AccountActivity
 import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
 import com.smk.publik.makassar.presentation.activities.account.ForgotActivity
@@ -100,6 +101,7 @@ class LoginFragment :
                 binding.etEmail.text.toString(),
                 binding.etPassword.text.toString()
             )
+            binding.btnUmum -> UmumActivity.newInstance()
             binding.tvSignUp -> {
                 mActivityInterfaces?.onFragmentChanges(
                     RegisterFragment(),

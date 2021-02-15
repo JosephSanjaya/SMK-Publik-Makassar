@@ -29,6 +29,7 @@
     <string name="button_label_continue">Lanjut</string>
     <string name="button_label_skip">Lewati</string>
     <string name="label_nama">Nama</string>
+    <string name="label_search">Cari…</string>
     <string name="label_nomor">No. Telfon</string>
     <string name="label_mata_pelajaran">Mata Pelajaran</string>
     <string name="desc_verifikasi">Verifikasi akun akan dikirimkan melalui email sudah anda masukan. Cek kembali email anda.</string>
@@ -56,6 +57,7 @@
     <string name="label_button_beranda_jadwal">Cek  Jadwal disini</string>
     <string name="label_edit_profile">Ubah Profile</string>
     <string name="label_button_close">Tutup</string>
+    <string name="label_button_umum">Umum</string>
     <string name="label_button_keluar">Keluar</string>
     <string name="label_button_back">Kembali</string>
     <string name="label_button_save">Simpan</string>

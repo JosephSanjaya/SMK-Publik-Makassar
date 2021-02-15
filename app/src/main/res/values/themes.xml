@@ -2,6 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.SMKPublikMakassar" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryAlpha60">@color/primaryColor60</item>
         <item name="colorPrimaryVariant">@color/primaryColorVariant</item>
         <item name="colorOnPrimary">@color/primaryTextColor</item>
         <item name="android:colorBackground">@color/primaryColor</item>
