@@ -1,11 +1,10 @@
 package com.smk.publik.makassar.announcement.presentation
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
 import com.smk.publik.makassar.announcement.domain.Announcement
 import com.smk.publik.makassar.core.domain.State
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -19,22 +18,38 @@ class AnnouncementObserver(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
-        viewModel.create.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onCreateAnnouncementIdle()
-                is State.Loading -> view.onCreateAnnouncementLoading()
-                is State.Success -> view.onCreateAnnouncementSuccess(it.data)
-                is State.Failed -> view.onCreateAnnouncementFailed(it.throwable)
+        owner.lifecycleScope.launch {
+            viewModel.create.collect {
+                when(it) {
+                    is State.Idle -> view.onCreateAnnouncementIdle()
+                    is State.Loading -> view.onCreateAnnouncementLoading()
+                    is State.Success -> {
+                        view.onCreateAnnouncementSuccess(it.data)
+                        viewModel.resetCreate()
+                    }
+                    is State.Failed -> {
+                        view.onCreateAnnouncementFailed(it.throwable)
+                        viewModel.resetCreate()
+                    }
+                }
             }
-        })
-        viewModel.get.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onAnnouncementFetchIdle()
-                is State.Loading -> view.onAnnouncementFetching()
-                is State.Success -> view.onAnnouncementFetchSuccess(it.data)
-                is State.Failed -> view.onAnnouncementFetchFailed(it.throwable)
+        }
+        owner.lifecycleScope.launch {
+            viewModel.get.collect {
+                when(it) {
+                    is State.Idle -> view.onAnnouncementFetchIdle()
+                    is State.Loading -> view.onAnnouncementFetching()
+                    is State.Success -> {
+                        view.onAnnouncementFetchSuccess(it.data)
+                        viewModel.resetGet()
+                    }
+                    is State.Failed -> {
+                        view.onAnnouncementFetchFailed(it.throwable)
+                        viewModel.resetGet()
+                    }
+                }
             }
-        })
+        }
     }
 
     interface Interfaces {

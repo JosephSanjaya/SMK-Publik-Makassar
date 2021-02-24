@@ -1,7 +1,7 @@
 package com.smk.publik.makassar.core.presentation
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import com.smk.publik.makassar.core.datastore.DataStoreContainer
 import com.smk.publik.makassar.core.domain.State
 import kotlinx.coroutines.flow.catch
@@ -19,20 +19,26 @@ class DataStoreViewModel(
     private val container: DataStoreContainer
 ) : BaseViewModel() {
 
-    private val _tutorial: MutableLiveData<State<Boolean>> = MutableLiveData()
-    val mTutorial: LiveData<State<Boolean>> get() = _tutorial
+    private val _tutorial= MutableStateFlow<State<Boolean>>(State.Idle())
+    val mTutorial: StateFlow<State<Boolean>> get() = _tutorial
 
-    fun getTutorialState()  = defaultScope.launch {
-            container.getTutorialState().catch { _tutorial.postValue(State.Failed(getHttpException(it))) }
-                .collect { _tutorial.postValue(it) }
+    fun resetSetTutorialState() {
+        _tutorial.value = State.Idle()
     }
 
-    private val _tutorialEdit: MutableLiveData<State<Boolean>> = MutableLiveData()
-    val mTutorialEdit: LiveData<State<Boolean>> get() = _tutorialEdit
+    fun getTutorialState()  = defaultScope.launch {
+            container.getTutorialState().catch { _tutorial.emit(State.Failed(getHttpException(it))) }
+                .collect { _tutorial.emit(it) }
+    }
 
-    fun resetSetTutorialState() = _tutorialEdit.postValue(State.Idle())
+    private val _tutorialEdit= MutableStateFlow<State<Boolean>>(State.Idle())
+    val mTutorialEdit: StateFlow<State<Boolean>> get() = _tutorialEdit
+
+    fun resetSetTutorialEditState() {
+        _tutorialEdit.value = State.Idle()
+    }
     fun setTutorialState(state: Boolean)  = defaultScope.launch {
-        container.setTutorialState(state).catch { _tutorialEdit.postValue(State.Failed(getHttpException(it))) }
-            .collect { _tutorialEdit.postValue(it) }
+        container.setTutorialState(state).catch { _tutorialEdit.emit(State.Failed(getHttpException(it))) }
+            .collect { _tutorialEdit.emit(it) }
     }
 }

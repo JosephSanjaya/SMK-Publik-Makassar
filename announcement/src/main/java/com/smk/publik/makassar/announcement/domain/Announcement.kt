@@ -43,6 +43,10 @@ data class Announcement (
     @SerialName("roles")
     var roles: String? = null,
 
+    @PropertyName("posted_date")
+    @SerialName("posted_date")
+    var postedDate: Long? = null,
+
     @PropertyName("kelas")
     @SerialName("kelas")
     var kelas: String? = null,

@@ -1,6 +1,5 @@
 package com.smk.publik.makassar.presentation.fragments.account
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,20 +23,19 @@ import com.google.android.material.color.MaterialColors
 import com.google.firebase.auth.FirebaseUser
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.account.domain.Password
-import com.smk.publik.makassar.databinding.FragmentRegisterBinding
-import com.smk.publik.makassar.matapelajaran.domain.MataPelajaran
 import com.smk.publik.makassar.account.domain.Users
 import com.smk.publik.makassar.account.presentation.password.PasswordObserver
 import com.smk.publik.makassar.account.presentation.password.PasswordViewModel
-import com.smk.publik.makassar.interfaces.ActivityInterfaces
-import com.smk.publik.makassar.interfaces.BaseOnClickView
-import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
-import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranObserver
 import com.smk.publik.makassar.account.presentation.register.RegisterObserver
-import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranViewModel
 import com.smk.publik.makassar.account.presentation.register.RegisterViewModel
+import com.smk.publik.makassar.databinding.FragmentRegisterBinding
 import com.smk.publik.makassar.inline.*
+import com.smk.publik.makassar.interfaces.BaseOnClickView
+import com.smk.publik.makassar.matapelajaran.domain.MataPelajaran
+import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranObserver
+import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranViewModel
 import com.smk.publik.makassar.presentation.activities.account.AccountActivity
+import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
 import com.smk.publik.makassar.presentation.adapter.PasswordRequirementAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -61,7 +59,6 @@ class RegisterFragment :
     private val mSharedViewModel by activityViewModels<AccountSharedViewModel>()
     private val mPasswordViewModel: PasswordViewModel by viewModel()
 
-    private var mActivityInterfaces: ActivityInterfaces? = null
     private val mViewModel: RegisterViewModel by viewModel()
     private val isTeacher = ObservableBoolean(false)
     private val mMateriViewModel: MataPelajaranViewModel by viewModel()
@@ -167,7 +164,7 @@ class RegisterFragment :
     }
 
     override fun onStart() {
-        mActivityInterfaces?.onToolbarChanges(
+        appCompatActivity?.toolbarChanges(
             StringUtils.getString(R.string.button_label_sign_up),
             isBack = true,
             isHide = false
@@ -382,11 +379,6 @@ class RegisterFragment :
         }
     }
 
-    override fun onRegisterIdle() {
-        loading.second.dismiss()
-        super.onRegisterIdle()
-    }
-
     override fun onRegisterLoading() {
         loading.second.show()
         super.onRegisterLoading()
@@ -394,12 +386,12 @@ class RegisterFragment :
 
     override fun onRegisterFailed(e: Throwable) {
         requireActivity().showErrorToast(e.message.toString())
-        mViewModel.resetRegisterState()
+        loading.second.dismiss()
         super.onRegisterFailed(e)
     }
 
     override fun onRegisterSuccess(user: FirebaseUser?) {
-        mViewModel.resetRegisterState()
+        loading.second.dismiss()
         mSharedViewModel.mUsers.postValue(user)
         context?.showSuccessDialog {
             requireActivity().showSuccessToast("Registrasi berhasil, selanjutnya silahkan melakukan verifikasi email!")
@@ -407,11 +399,6 @@ class RegisterFragment :
             ActivityUtils.finishAllActivities(true)
         }
         super.onRegisterSuccess(user)
-    }
-
-    override fun onFetchMataPelajaranIdle() {
-        loading.second.dismiss()
-        super.onFetchMataPelajaranIdle()
     }
 
     override fun onFetchMataPelajaranLoading() {
@@ -424,24 +411,18 @@ class RegisterFragment :
         adapter.addAll(data.map {
             it.nama
         })
-        mMateriViewModel.resetFetchMataPelajaranState()
+        loading.second.dismiss()
         super.onFetchMataPelajaranSuccess(data)
     }
 
     override fun onFetchMataPelajaranFailed(e: Throwable) {
         requireActivity().showErrorToast(e.message.toString())
-        mMateriViewModel.resetFetchMataPelajaranState()
+        loading.second.dismiss()
         super.onFetchMataPelajaranFailed(e)
-    }
-
-    override fun onAttach(context: Context) {
-        if (context is ActivityInterfaces) mActivityInterfaces = context
-        super.onAttach(context)
     }
 
     override fun onDetach() {
         if (loading.second.isShowing) loading.second.dismiss()
-        mActivityInterfaces = null
         super.onDetach()
     }
 }

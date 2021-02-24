@@ -1,6 +1,5 @@
 package com.smk.publik.makassar.presentation.fragments.forgot
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,16 +14,12 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.StringUtils
 import com.google.android.material.color.MaterialColors
 import com.smk.publik.makassar.R
+import com.smk.publik.makassar.account.domain.Password
 import com.smk.publik.makassar.account.presentation.password.PasswordObserver
 import com.smk.publik.makassar.account.presentation.password.PasswordViewModel
-import com.smk.publik.makassar.interfaces.ActivityInterfaces
-import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.databinding.FragmentChangePasswordBinding
-import com.smk.publik.makassar.account.domain.Password
-import com.smk.publik.makassar.inline.errorAnimation
-import com.smk.publik.makassar.inline.makeLoadingDialog
-import com.smk.publik.makassar.inline.showErrorToast
-import com.smk.publik.makassar.inline.showSuccessDialog
+import com.smk.publik.makassar.inline.*
+import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.presentation.activities.account.ForgotActivity
 import com.smk.publik.makassar.presentation.adapter.PasswordRequirementAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -45,7 +40,6 @@ class NewPasswordFragment: Fragment(R.layout.fragment_change_password), BaseOnCl
 
     private var mRequestCode: String = ""
     private val binding by viewBinding(FragmentChangePasswordBinding::bind)
-    private var mActivityInterfaces: ActivityInterfaces? = null
     private val mViewModel: PasswordViewModel by viewModel()
     private val loading by lazy { requireContext().makeLoadingDialog(false) }
     private var isPasswordValid = false
@@ -102,7 +96,7 @@ class NewPasswordFragment: Fragment(R.layout.fragment_change_password), BaseOnCl
     }
 
     override fun onStart() {
-        mActivityInterfaces?.onToolbarChanges(StringUtils.getString(R.string.label_change_password_toolbar), isBack = true, isHide = false)
+        appCompatActivity?.toolbarChanges(StringUtils.getString(R.string.label_change_password_toolbar), isBack = true, isHide = false)
         super.onStart()
     }
 
@@ -135,18 +129,13 @@ class NewPasswordFragment: Fragment(R.layout.fragment_change_password), BaseOnCl
         super.onPasswordValidated(result)
     }
 
-    override fun onChangePasswordIdle() {
-        loading.second.dismiss()
-        super.onChangePasswordIdle()
-    }
-
     override fun onChangePasswordLoading() {
         loading.second.show()
         super.onChangePasswordLoading()
     }
 
     override fun onChangePasswordSuccess() {
-        mViewModel.resetChangePasswordState()
+        loading.second.dismiss()
         context?.showSuccessDialog {
             ForgotActivity.launchSuccess()
             ActivityUtils.finishAllActivities(true)
@@ -156,17 +145,12 @@ class NewPasswordFragment: Fragment(R.layout.fragment_change_password), BaseOnCl
 
     override fun onChangePasswordFailed(e: Throwable) {
         activity?.showErrorToast(e.message.toString())
-        mViewModel.resetChangePasswordState()
+        loading.second.dismiss()
         super.onChangePasswordFailed(e)
     }
 
-    override fun onAttach(context: Context) {
-        if (context is ActivityInterfaces) mActivityInterfaces = context
-        super.onAttach(context)
-    }
-
     override fun onDetach() {
-        mActivityInterfaces = null
+        loading.second.dismiss()
         super.onDetach()
     }
 }

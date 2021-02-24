@@ -1,6 +1,5 @@
 package com.smk.publik.makassar.presentation.fragments.forgot
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -9,7 +8,8 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.StringUtils
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.databinding.FragmentChangePasswordSuccessBinding
-import com.smk.publik.makassar.interfaces.ActivityInterfaces
+import com.smk.publik.makassar.inline.appCompatActivity
+import com.smk.publik.makassar.inline.toolbarChanges
 import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.presentation.activities.account.AccountActivity
 
@@ -22,7 +22,6 @@ import com.smk.publik.makassar.presentation.activities.account.AccountActivity
 class ChangePasswordSuccessFragment: Fragment(R.layout.fragment_change_password_success), BaseOnClickView{
 
     private val binding by viewBinding(FragmentChangePasswordSuccessBinding::bind)
-    private var mActivityInterfaces: ActivityInterfaces? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,7 +29,7 @@ class ChangePasswordSuccessFragment: Fragment(R.layout.fragment_change_password_
     }
 
     override fun onStart() {
-        mActivityInterfaces?.onToolbarChanges(StringUtils.getString(R.string.label_change_password_toolbar), isBack = true, isHide = false)
+        appCompatActivity?.toolbarChanges(StringUtils.getString(R.string.label_change_password_toolbar), isBack = true, isHide = false)
         super.onStart()
     }
 
@@ -42,15 +41,5 @@ class ChangePasswordSuccessFragment: Fragment(R.layout.fragment_change_password_
             }
         }
         super.onClick(p0)
-    }
-
-    override fun onAttach(context: Context) {
-        if (context is ActivityInterfaces) mActivityInterfaces = context
-        super.onAttach(context)
-    }
-
-    override fun onDetach() {
-        mActivityInterfaces = null
-        super.onDetach()
     }
 }

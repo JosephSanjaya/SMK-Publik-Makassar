@@ -8,7 +8,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.blankj.utilcode.util.ActivityUtils
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.databinding.ActivityBottomNavBinding
-import com.smk.publik.makassar.interfaces.ActivityInterfaces
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -16,7 +15,7 @@ import com.smk.publik.makassar.interfaces.ActivityInterfaces
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class RolesActivity : AppCompatActivity(R.layout.activity_bottom_nav), ActivityInterfaces {
+class RolesActivity : AppCompatActivity(R.layout.activity_bottom_nav) {
 
     companion object {
         fun newInstance() = ActivityUtils.startActivity(RolesActivity::class.java)
@@ -31,16 +30,6 @@ class RolesActivity : AppCompatActivity(R.layout.activity_bottom_nav), ActivityI
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
         binding.bottomNav.setupWithNavController(navController)
-    }
-
-    override fun onToolbarChanges(title: String, isBack: Boolean, isHide: Boolean) {
-        supportActionBar?.apply {
-            elevation = 0f
-            setTitle(title)
-            setDisplayHomeAsUpEnabled(isBack)
-            if(isHide) hide() else show()
-        }
-        super.onToolbarChanges(title, isBack, isHide)
     }
 
 }

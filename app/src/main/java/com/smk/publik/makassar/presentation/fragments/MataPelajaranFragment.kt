@@ -1,10 +1,9 @@
 package com.smk.publik.makassar.presentation.fragments
 
-import android.content.Context
 import androidx.fragment.app.Fragment
 import com.smk.publik.makassar.R
-import com.smk.publik.makassar.interfaces.ActivityInterfaces
-
+import com.smk.publik.makassar.inline.appCompatActivity
+import com.smk.publik.makassar.inline.toolbarChanges
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -13,20 +12,9 @@ import com.smk.publik.makassar.interfaces.ActivityInterfaces
  */
 
 class MataPelajaranFragment: Fragment(R.layout.fragment_mata_palajaran) {
-    private var mActivityInterfaces: ActivityInterfaces? = null
 
     override fun onStart() {
-        mActivityInterfaces?.onToolbarChanges("Mata Pelajaran", false, isHide = false)
+        appCompatActivity?.toolbarChanges("Mata Pelajaran", false, isHide = false)
         super.onStart()
-    }
-
-    override fun onAttach(context: Context) {
-        if(context is ActivityInterfaces) mActivityInterfaces = context
-        super.onAttach(context)
-    }
-
-    override fun onDetach() {
-        mActivityInterfaces = null
-        super.onDetach()
     }
 }

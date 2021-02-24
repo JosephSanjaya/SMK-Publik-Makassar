@@ -1,8 +1,8 @@
 package com.smk.publik.makassar.matapelajaran.presentation
 
 import android.net.Uri
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.core.presentation.BaseViewModel
 import com.smk.publik.makassar.matapelajaran.data.MataPelajaranRepository
@@ -22,30 +22,36 @@ class MataPelajaranViewModel(
     private val repository: MataPelajaranRepository
 ) : BaseViewModel() {
 
-    private val _buatMatpel: MutableLiveData<State<String?>> = MutableLiveData()
-    val mBuatMatpel: LiveData<State<String?>> get() = _buatMatpel
+    private val _buatMatpel= MutableStateFlow<State<String?>>(State.Idle())
+    val mBuatMatpel: StateFlow<State<String?>> get() = _buatMatpel
 
-    fun resetBuatMataPelajaranState() = _buatMatpel.postValue(State.Idle())
+    fun resetBuatMataPelajaranState() {
+        _buatMatpel.value = State.Idle()
+    }
     fun buatMataPelajaran(namaPelajaran: String, deskripsi: String)  = defaultScope.launch {
-        repository.buatMataPelajaran(namaPelajaran, deskripsi).catch { _buatMatpel.postValue(State.Failed(getHttpException(it))) }
-            .collect { _buatMatpel.postValue(it) }
+        repository.buatMataPelajaran(namaPelajaran, deskripsi).catch { _buatMatpel.emit(State.Failed(getHttpException(it))) }
+            .collect { _buatMatpel.emit(it) }
     }
 
-    private val _fetchMatpel: MutableLiveData<State<List<MataPelajaran.Detail>>> = MutableLiveData()
-    val mFetchMatpel: LiveData<State<List<MataPelajaran.Detail>>> get() = _fetchMatpel
+    private val _fetchMatpel= MutableStateFlow<State<List<MataPelajaran.Detail>>>(State.Idle())
+    val mFetchMatpel: StateFlow<State<List<MataPelajaran.Detail>>> get() = _fetchMatpel
 
-    fun resetFetchMataPelajaranState() = _fetchMatpel.postValue(State.Idle())
+    fun resetFetchMataPelajaranState() {
+        _fetchMatpel.value = State.Idle()
+    }
     fun fetchMataPelajaran() = defaultScope.launch {
-        repository.getMataPelajaran().catch { _fetchMatpel.postValue(State.Failed(getHttpException(it))) }
-            .collect { _fetchMatpel.postValue(it) }
+        repository.getMataPelajaran().catch { _fetchMatpel.emit(State.Failed(getHttpException(it))) }
+            .collect { _fetchMatpel.emit(it) }
     }
 
-    private val _upload: MutableLiveData<State<Uri>> = MutableLiveData()
-    val mUpload: LiveData<State<Uri>> get() = _upload
+    private val _upload= MutableStateFlow<State<Uri>>(State.Idle())
+    val mUpload: StateFlow<State<Uri>> get() = _upload
 
-    fun resetUpload() = _buatMatpel.postValue(State.Idle())
+    fun resetUpload() {
+        _buatMatpel.value = State.Idle()
+    }
     fun uploadMateri(idMatpel: String, file: File) = defaultScope.launch {
-        repository.uploadMateri(idMatpel, file).catch { _upload.postValue(State.Failed(getHttpException(it))) }
-            .collect { _upload.postValue(it) }
+        repository.uploadMateri(idMatpel, file).catch { _upload.emit(State.Failed(getHttpException(it))) }
+            .collect { _upload.emit(it) }
     }
 }

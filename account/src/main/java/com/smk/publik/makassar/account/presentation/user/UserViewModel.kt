@@ -1,16 +1,12 @@
 package com.smk.publik.makassar.account.presentation.user
 
-import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.account.data.UserRepository
-import com.smk.publik.makassar.datastore.User
-import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.account.domain.Users
+import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.core.presentation.BaseViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -25,49 +21,59 @@ class UserViewModel(
     private val repository: UserRepository
 ) : BaseViewModel() {
 
-    private val _logout: MutableLiveData<State<Boolean>> = MutableLiveData()
-    val logout: LiveData<State<Boolean>> get() = _logout
+    private val _logout= MutableStateFlow<State<Boolean>>(State.Idle())
+    val logout: StateFlow<State<Boolean>> get() = _logout
 
-    fun resetLogout() = _logout.postValue(State.Idle())
+    fun resetLogout() {
+        _logout.value = State.Idle()
+    }
     fun doLogout() = defaultScope.launch {
-        repository.doLogout().catch { _logout.postValue(State.Failed(getHttpException(it))) }
-            .collect { _logout.postValue(it) }
+        repository.doLogout().catch { _logout.emit(State.Failed(getHttpException(it))) }
+            .collect { _logout.emit(it) }
     }
 
-    private val _login: MutableLiveData<State<FirebaseUser?>> = MutableLiveData()
-    val login: LiveData<State<FirebaseUser?>> get() = _login
+    private val _login= MutableStateFlow<State<FirebaseUser?>>(State.Idle())
+    val login: StateFlow<State<FirebaseUser?>> get() = _login
 
-    fun resetLoginState() = _login.postValue(State.Idle())
+    fun resetLoginState() {
+        _login.value = State.Idle()
+    }
     fun login(email: String, password: String) = defaultScope.launch {
-        repository.login(email, password).catch { _login.postValue(State.Failed(getHttpException(it))) }
-            .collect { _login.postValue(it) }
+        repository.login(email, password).catch { _login.emit(State.Failed(getHttpException(it))) }
+            .collect { _login.emit(it) }
     }
 
-    private val _reload: MutableLiveData<State<Boolean>> = MutableLiveData()
-    val reload: LiveData<State<Boolean>> get() = _reload
+    private val _reload= MutableStateFlow<State<Boolean>>(State.Idle())
+    val reload: StateFlow<State<Boolean>> get() = _reload
 
-    fun resetReloadState() = _login.postValue(State.Idle())
+    fun resetReloadState() {
+        _reload.value = State.Idle()
+    }
     fun reloadCurrentUser() = defaultScope.launch {
-        repository.reloadCurrentUser().catch { _reload.postValue(State.Failed(getHttpException(it))) }
-            .collect { _reload.postValue(it) }
+        repository.reloadCurrentUser().catch { _reload.emit(State.Failed(getHttpException(it))) }
+            .collect { _reload.emit(it) }
     }
 
-    private val _user: MutableLiveData<State<Users?>> = MutableLiveData()
-    val mUser: LiveData<State<Users?>> get() = _user
+    private val _user= MutableStateFlow<State<Users?>>(State.Idle())
+    val mUser: StateFlow<State<Users?>> get() = _user
 
-    fun resetGetUserData() = _user.postValue(State.Idle())
+    fun resetGetUserData() {
+        _user.value = State.Idle()
+    }
     fun getUserData(userUID: String) = defaultScope.launch {
-        repository.getUserData(userUID).catch { _user.postValue(State.Failed(getHttpException(it))) }
-            .collect { _user.postValue(it) }
+        repository.getUserData(userUID).catch { _user.emit(State.Failed(getHttpException(it))) }
+            .collect { _user.emit(it) }
     }
 
-    private val _edit: MutableLiveData<State<Users?>> = MutableLiveData()
-    val edit: LiveData<State<Users?>> get() = _edit
+    private val _edit= MutableStateFlow<State<Users?>>(State.Idle())
+    val edit: StateFlow<State<Users?>> get() = _edit
 
-    fun resetEdit() = _edit.postValue(State.Idle())
+    fun resetEdit() {
+        _edit.value = State.Idle()
+    }
     fun editUserData(newNamaValue: String, newPhoneValue: String) = defaultScope.launch {
-        repository.editUserData(newNamaValue, newPhoneValue).catch { _edit.postValue(State.Failed(getHttpException(it))) }
-            .collect { _edit.postValue(it) }
+        repository.editUserData(newNamaValue, newPhoneValue).catch { _edit.emit(State.Failed(getHttpException(it))) }
+            .collect { _edit.emit(it) }
     }
 
 }

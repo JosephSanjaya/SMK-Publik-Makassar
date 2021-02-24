@@ -1,11 +1,10 @@
 package com.smk.publik.makassar.account.presentation.register
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
 import com.google.firebase.auth.FirebaseUser
 import com.smk.publik.makassar.core.domain.State
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -19,14 +18,22 @@ class RegisterObserver(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
-        viewModel.mRegister.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onRegisterIdle()
-                is State.Loading -> view.onRegisterLoading()
-                is State.Success -> view.onRegisterSuccess(it.data)
-                is State.Failed -> view.onRegisterFailed(it.throwable)
+        owner.lifecycleScope.launch {
+            viewModel.mRegister.collect {
+                when(it) {
+                    is State.Idle -> view.onRegisterIdle()
+                    is State.Loading -> view.onRegisterLoading()
+                    is State.Success -> {
+                        view.onRegisterSuccess(it.data)
+                        viewModel.resetRegisterState()
+                    }
+                    is State.Failed -> {
+                        view.onRegisterFailed(it.throwable)
+                        viewModel.resetRegisterState()
+                    }
+                }
             }
-        })
+        }
     }
 
     interface Interfaces {

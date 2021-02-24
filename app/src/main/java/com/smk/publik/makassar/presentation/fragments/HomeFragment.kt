@@ -1,12 +1,12 @@
 package com.smk.publik.makassar.presentation.fragments
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.afollestad.vvalidator.form
 import com.blankj.utilcode.util.ActivityUtils
@@ -18,16 +18,21 @@ import com.smk.publik.makassar.account.domain.Users
 import com.smk.publik.makassar.account.domain.users
 import com.smk.publik.makassar.account.presentation.user.UserObserver
 import com.smk.publik.makassar.account.presentation.user.UserViewModel
+import com.smk.publik.makassar.announcement.domain.Announcement
+import com.smk.publik.makassar.announcement.presentation.AnnouncementObserver
+import com.smk.publik.makassar.announcement.presentation.AnnouncementViewModel
 import com.smk.publik.makassar.databinding.DialogEditProfileBinding
 import com.smk.publik.makassar.databinding.FragmentHomeBinding
 import com.smk.publik.makassar.inline.*
-import com.smk.publik.makassar.interfaces.ActivityInterfaces
 import com.smk.publik.makassar.interfaces.BaseOnClickView
+import com.smk.publik.makassar.presentation.activities.AddAnnouncementActivity
 import com.smk.publik.makassar.presentation.activities.account.AccountActivity
+import com.smk.publik.makassar.presentation.adapter.AnnouncementAdapter
 import io.noties.markwon.Markwon
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
+import kotlin.collections.ArrayList
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -35,19 +40,24 @@ import java.util.*
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, BaseOnClickView {
+class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, BaseOnClickView, AnnouncementObserver.Interfaces, SwipeRefreshLayout.OnRefreshListener {
     init {
         setHasOptionsMenu(true)
     }
 
     private val mSharedPreferences by inject<SharedPreferences>()
-    private var mActivityInterfaces: ActivityInterfaces? = null
     private val binding by viewBinding(FragmentHomeBinding::bind)
     private val mViewModel: UserViewModel by viewModel()
+    private val mAnnouncementViewModel: AnnouncementViewModel by viewModel()
     private val loading by lazy { requireContext().makeLoadingDialog(false) }
     private var mUser = MutableLiveData<Users?>()
     private val markwon by lazy {
         Markwon.create(requireContext())
+    }
+
+    private val mAnnouncementList: MutableList<Announcement> = ArrayList()
+    private val mAnnouncementAdapter by lazy {
+        AnnouncementAdapter(mAnnouncementList)
     }
 
     private val logoutDialog by lazy {
@@ -95,7 +105,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, 
 
 
     override fun onStart() {
-        mActivityInterfaces?.onToolbarChanges("", false, isHide = false)
+        appCompatActivity?.toolbarChanges("", false, isHide = false)
         super.onStart()
     }
 
@@ -118,6 +128,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, 
     ): View? {
         mUser.postValue(mSharedPreferences.users)
         lifecycle.addObserver(UserObserver(this, mViewModel, this))
+        lifecycle.addObserver(AnnouncementObserver(this, mAnnouncementViewModel, this))
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -131,7 +142,14 @@ class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, 
             setupRoles(it)
             setupChip(it)
         })
+        binding.rvAnnouncement.adapter = mAnnouncementAdapter
         binding.listener = this
+        binding.swipeRefresh.setOnRefreshListener(this)
+        onRefresh()
+    }
+
+    override fun onRefresh() {
+        mAnnouncementViewModel.fetchAnnouncement()
     }
 
     override fun onClick(p0: View?) {
@@ -146,6 +164,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, 
                 }
                 true
             })
+            binding.tvPengumuman -> AddAnnouncementActivity.newInstance()
             editProfileDialog.first.btnAction -> {
                 if(mValidator.validate().success()) {
                     editProfileDialog.second.dismiss()
@@ -191,16 +210,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, 
         }
     }
 
-    override fun onAttach(context: Context) {
-        if (context is ActivityInterfaces) mActivityInterfaces = context
-        super.onAttach(context)
-    }
-
-    override fun onEditUserDataIdle() {
-        loading.second.dismiss()
-        super.onEditUserDataIdle()
-    }
-
     override fun onEditUserDataLoading() {
         KeyboardUtils.hideSoftInput(requireActivity())
         loading.second.show()
@@ -208,7 +217,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, 
     }
 
     override fun onEditUserDataSuccess(user: Users?) {
-        mViewModel.resetEdit()
+        loading.second.dismiss()
         context?.showSuccessDialog {
             editProfileDialog.first.etName.setText("")
             editProfileDialog.first.etPhone.setText("")
@@ -219,15 +228,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, 
     }
 
     override fun onEditUserDataFailed(e: Throwable) {
-        mViewModel.resetEdit()
+        loading.second.dismiss()
         activity?.showErrorToast(e.message.toString())
         super.onEditUserDataFailed(e)
-    }
-    
-
-    override fun onLogoutIdle() {
-        loading.second.dismiss()
-        super.onLogoutIdle()
     }
 
     override fun onLogoutLoading() {
@@ -236,20 +239,31 @@ class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, 
     }
 
     override fun onLogoutSuccess() {
-        mViewModel.resetLogout()
+        loading.second.dismiss()
         ActivityUtils.startActivity(AccountActivity.createLoginIntent(requireContext()))
         ActivityUtils.finishAllActivities(true)
         super.onLogoutSuccess()
     }
 
     override fun onLogoutFailed(e: Throwable) {
-        mViewModel.resetLogout()
+        loading.second.dismiss()
         activity?.showErrorToast(e.message ?: "Logout Gagal!")
         super.onLogoutFailed(e)
     }
 
+    override fun onAnnouncementFetchSuccess(data: List<Announcement>) {
+        mAnnouncementAdapter.setNewInstance(data.toMutableList())
+        binding.swipeRefresh.isRefreshing = false
+        super.onAnnouncementFetchSuccess(data)
+    }
+
+    override fun onAnnouncementFetchFailed(e: Throwable) {
+        binding.swipeRefresh.isRefreshing = false
+        super.onAnnouncementFetchFailed(e)
+    }
+
     override fun onDetach() {
-        mActivityInterfaces = null
+        loading.second.dismiss()
         super.onDetach()
     }
 }

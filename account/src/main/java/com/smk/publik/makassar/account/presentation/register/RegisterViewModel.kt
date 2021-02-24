@@ -1,7 +1,7 @@
 package com.smk.publik.makassar.account.presentation.register
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import com.google.firebase.auth.FirebaseUser
 import com.smk.publik.makassar.account.data.RegisterRepository
 import com.smk.publik.makassar.core.domain.State
@@ -21,12 +21,14 @@ class RegisterViewModel(
     private val repository: RegisterRepository
 ) : BaseViewModel() {
 
-    private val _register: MutableLiveData<State<FirebaseUser?>> = MutableLiveData()
-    val mRegister: LiveData<State<FirebaseUser?>> get() = _register
+    private val _register= MutableStateFlow<State<FirebaseUser?>>(State.Idle())
+    val mRegister: StateFlow<State<FirebaseUser?>> get() = _register
 
-    fun resetRegisterState() = _register.postValue(State.Idle())
+    fun resetRegisterState() {
+        _register.value = State.Idle()
+    }
     fun register(email: String, password: String, data: Users) = defaultScope.launch {
-        repository.register(email, password, data).catch { _register.postValue(State.Failed(getHttpException(it))) }
-            .collect { _register.postValue(it) }
+        repository.register(email, password, data).catch { _register.emit(State.Failed(getHttpException(it))) }
+            .collect { _register.emit(it) }
     }
 }

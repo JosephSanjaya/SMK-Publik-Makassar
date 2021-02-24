@@ -29,6 +29,10 @@
         <item name="colorControlActivated">?attr/colorSecondary</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.App.CornerSize10Percent" parent="">
+        <item name="cornerSize">11%</item>
+    </style>
+
     <style name="TextInputLayoutShape" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">@dimen/defaultRadius</item>

@@ -1,11 +1,10 @@
 package com.smk.publik.makassar.account.presentation.password
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
 import com.smk.publik.makassar.account.domain.Password
 import com.smk.publik.makassar.core.domain.State
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -19,31 +18,55 @@ class PasswordObserver(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
-        viewModel.sendForgot.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onSendForgotPasswordIdle()
-                is State.Loading -> view.onSendForgotPasswordLoading()
-                is State.Success -> view.onSendForgotPasswordSuccess()
-                is State.Failed -> view.onSendForgotPasswordFailed(it.throwable)
+        owner.lifecycleScope.launch {
+            viewModel.sendForgot.collect {
+                when(it) {
+                    is State.Idle -> view.onSendForgotPasswordIdle()
+                    is State.Loading -> view.onSendForgotPasswordLoading()
+                    is State.Success -> {
+                        view.onSendForgotPasswordSuccess()
+                        viewModel.resetSendForgotState()
+                    }
+                    is State.Failed -> {
+                        view.onSendForgotPasswordFailed(it.throwable)
+                        viewModel.resetSendForgotState()
+                    }
+                }
             }
-        })
-        viewModel.verifyCodePassword.observe(owner, {
+        }
+        owner.lifecycleScope.launch {
+            viewModel.verifyCodePassword.collect {
             when(it) {
-                is State.Idle -> view.onVerifyCodePasswordIdle()
-                is State.Loading -> view.onVerifyCodePasswordLoading()
-                is State.Success -> view.onVerifyCodePasswordSuccess(it.data)
-                is State.Failed -> view.onVerifyCodePasswordFailed(it.throwable)
+                    is State.Idle -> view.onVerifyCodePasswordIdle()
+                    is State.Loading -> view.onVerifyCodePasswordLoading()
+                    is State.Success -> {
+                        view.onVerifyCodePasswordSuccess(it.data)
+                        viewModel.resetVerifyCodePasswordState()
+                    }
+                    is State.Failed -> {
+                        view.onVerifyCodePasswordFailed(it.throwable)
+                        viewModel.resetVerifyCodePasswordState()
+                    }
+                }
             }
-        })
-        viewModel.changePassword.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onChangePasswordIdle()
-                is State.Loading -> view.onChangePasswordLoading()
-                is State.Success -> view.onChangePasswordSuccess()
-                is State.Failed -> view.onChangePasswordFailed(it.throwable)
+        }
+        owner.lifecycleScope.launch {
+            viewModel.changePassword.collect {
+                when(it) {
+                    is State.Idle -> view.onChangePasswordIdle()
+                    is State.Loading -> view.onChangePasswordLoading()
+                    is State.Success -> {
+                        view.onChangePasswordSuccess()
+                        viewModel.resetChangePasswordState()
+                    }
+                    is State.Failed -> {
+                        view.onChangePasswordFailed(it.throwable)
+                        viewModel.resetChangePasswordState()
+                    }
+                }
             }
-        })
-        viewModel.mValidation.observe(owner, {
+        }
+        viewModel.mValidation.observe(owner, Observer{
             view.onPasswordValidated(it)
         })
     }

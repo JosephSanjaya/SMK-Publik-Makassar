@@ -1,6 +1,5 @@
 package com.smk.publik.makassar.presentation.fragments.forgot
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,25 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.StringUtils
 import com.google.android.material.color.MaterialColors
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.account.presentation.password.PasswordObserver
 import com.smk.publik.makassar.account.presentation.password.PasswordViewModel
-import com.smk.publik.makassar.databinding.FragmentVerifikasiBinding
-import com.smk.publik.makassar.interfaces.ActivityInterfaces
-import com.smk.publik.makassar.interfaces.BaseOnClickView
-import com.smk.publik.makassar.presentation.activities.account.AccountActivity
-import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
-import com.smk.publik.makassar.account.presentation.verify.VerifyObserver
-import com.smk.publik.makassar.account.presentation.verify.VerifyViewModel
 import com.smk.publik.makassar.databinding.FragmentForgotPasswordRequestBinding
 import com.smk.publik.makassar.inline.*
+import com.smk.publik.makassar.interfaces.BaseOnClickView
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /*
@@ -38,7 +27,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ForgotRequestFragment: Fragment(R.layout.fragment_forgot_password_request), BaseOnClickView, PasswordObserver.Interfaces {
 
     private val binding by viewBinding(FragmentForgotPasswordRequestBinding::bind)
-    private var mActivityInterfaces: ActivityInterfaces? = null
     private val mViewModel: PasswordViewModel by viewModel()
     private val loading by lazy { requireContext().makeLoadingDialog(false) }
 
@@ -70,7 +58,7 @@ class ForgotRequestFragment: Fragment(R.layout.fragment_forgot_password_request)
     }
 
     override fun onStart() {
-        mActivityInterfaces?.onToolbarChanges(StringUtils.getString(R.string.label_forgot_password_toolbar), isBack = true, isHide = false)
+        appCompatActivity?.toolbarChanges(StringUtils.getString(R.string.label_forgot_password_toolbar), isBack = true, isHide = false)
         super.onStart()
     }
 
@@ -81,23 +69,13 @@ class ForgotRequestFragment: Fragment(R.layout.fragment_forgot_password_request)
         super.onClick(p0)
     }
 
-    override fun onAttach(context: Context) {
-        if (context is ActivityInterfaces) mActivityInterfaces = context
-        super.onAttach(context)
-    }
-
-    override fun onSendForgotPasswordIdle() {
-        loading.second.dismiss()
-        super.onSendForgotPasswordIdle()
-    }
-
     override fun onSendForgotPasswordLoading() {
         loading.second.show()
         super.onSendForgotPasswordLoading()
     }
 
     override fun onSendForgotPasswordSuccess() {
-        mViewModel.resetSendForgotState()
+        loading.second.dismiss()
         context?.showSuccessDialog {
             context?.makeMessageDialog(true, StringUtils.getString(R.string.label_forgot_password_dialog_message), onDismissListener = {
                 activity?.finish()
@@ -107,13 +85,13 @@ class ForgotRequestFragment: Fragment(R.layout.fragment_forgot_password_request)
     }
 
     override fun onSendForgotPasswordFailed(e: Throwable) {
-        mViewModel.resetSendForgotState()
+        loading.second.dismiss()
         activity?.showErrorToast(e.message ?: "Terjadi kesalahan, silahkan coba lagi")
         super.onSendForgotPasswordFailed(e)
     }
 
     override fun onDetach() {
-        mActivityInterfaces = null
+        loading.second.dismiss()
         super.onDetach()
     }
 }

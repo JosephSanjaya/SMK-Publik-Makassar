@@ -1,12 +1,11 @@
 package com.smk.publik.makassar.account.presentation.user
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
 import com.google.firebase.auth.FirebaseUser
 import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.account.domain.Users
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -20,46 +19,86 @@ class UserObserver(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
-        viewModel.reload.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onReloadIdle()
-                is State.Loading -> view.onReloadLoading()
-                is State.Success -> view.onReloadSuccess()
-                is State.Failed -> view.onReloadFailed(it.throwable)
+        owner.lifecycleScope.launch {
+            viewModel.reload.collect {
+                when(it) {
+                    is State.Idle -> view.onReloadIdle()
+                    is State.Loading -> view.onReloadLoading()
+                    is State.Success -> {
+                        view.onReloadSuccess()
+                        viewModel.resetReloadState()
+                    }
+                    is State.Failed -> {
+                        view.onReloadFailed(it.throwable)
+                        viewModel.resetReloadState()
+                    }
+                }
             }
-        })
-        viewModel.login.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onLoginIdle()
-                is State.Loading -> view.onLoginLoading()
-                is State.Success -> view.onLoginSuccess(it.data)
-                is State.Failed -> view.onLoginFailed(it.throwable)
+        }
+        owner.lifecycleScope.launch {
+            viewModel.login.collect {
+                when(it) {
+                    is State.Idle -> view.onLoginIdle()
+                    is State.Loading -> view.onLoginLoading()
+                    is State.Success -> {
+                        view.onLoginSuccess(it.data)
+                        viewModel.resetLoginState()
+                    }
+                    is State.Failed -> {
+                        view.onLoginFailed(it.throwable)
+                        viewModel.resetLoginState()
+                    }
+                }
             }
-        })
-        viewModel.mUser.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onGetUserDataIdle()
-                is State.Loading -> view.onGetUserDataLoading()
-                is State.Success -> view.onGetUserDataSuccess(it.data)
-                is State.Failed -> view.onGetUserDataFailed(it.throwable)
+        }
+        owner.lifecycleScope.launch {
+            viewModel.mUser.collect {
+                when(it) {
+                    is State.Idle -> view.onGetUserDataIdle()
+                    is State.Loading -> view.onGetUserDataLoading()
+                    is State.Success -> {
+                        view.onGetUserDataSuccess(it.data)
+                        viewModel.resetGetUserData()
+                    }
+                    is State.Failed -> {
+                        view.onGetUserDataFailed(it.throwable)
+                        viewModel.resetGetUserData()
+                    }
+                }
             }
-        })
-        viewModel.logout.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onLogoutIdle()
-                is State.Loading -> view.onLogoutLoading()
-                is State.Success -> view.onLogoutSuccess()
-                is State.Failed -> view.onLogoutFailed(it.throwable)
+        }
+        owner.lifecycleScope.launch {
+            viewModel.logout.collect {
+                when(it) {
+                    is State.Idle -> view.onLogoutIdle()
+                    is State.Loading -> view.onLogoutLoading()
+                    is State.Success -> {
+                        view.onLogoutSuccess()
+                        viewModel.resetLogout()
+                    }
+                    is State.Failed -> {
+                        view.onLogoutFailed(it.throwable)
+                        viewModel.resetLogout()
+                    }
+                }
             }
-        })
-        viewModel.edit.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onEditUserDataIdle()
-                is State.Loading -> view.onEditUserDataLoading()
-                is State.Success -> view.onEditUserDataSuccess(it.data)
-                is State.Failed -> view.onEditUserDataFailed(it.throwable)
+        }
+        owner.lifecycleScope.launch {
+            viewModel.edit.collect {
+                when(it) {
+                    is State.Idle -> view.onEditUserDataIdle()
+                    is State.Loading -> view.onEditUserDataLoading()
+                    is State.Success -> {
+                        view.onEditUserDataSuccess(it.data)
+                        viewModel.resetEdit()
+                    }
+                    is State.Failed -> {
+                        view.onEditUserDataFailed(it.throwable)
+                        viewModel.resetEdit()
+                    }
+                }
             }
-        })
+        }
     }
 
     interface Interfaces {

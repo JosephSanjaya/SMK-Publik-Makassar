@@ -1,6 +1,5 @@
 package com.smk.publik.makassar.presentation.fragments.account
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,17 +12,13 @@ import com.blankj.utilcode.util.StringUtils
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.R
+import com.smk.publik.makassar.account.presentation.verify.VerifyObserver
+import com.smk.publik.makassar.account.presentation.verify.VerifyViewModel
 import com.smk.publik.makassar.databinding.FragmentVerifikasiBinding
-import com.smk.publik.makassar.interfaces.ActivityInterfaces
+import com.smk.publik.makassar.inline.*
 import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.presentation.activities.account.AccountActivity
 import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
-import com.smk.publik.makassar.account.presentation.verify.VerifyObserver
-import com.smk.publik.makassar.account.presentation.verify.VerifyViewModel
-import com.smk.publik.makassar.inline.makeLoadingDialog
-import com.smk.publik.makassar.inline.showErrorToast
-import com.smk.publik.makassar.inline.showSuccessDialog
-import com.smk.publik.makassar.inline.showSuccessToast
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /*
@@ -35,7 +30,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickView, VerifyObserver.Interfaces {
 
     private val binding by viewBinding(FragmentVerifikasiBinding::bind)
-    private var mActivityInterfaces: ActivityInterfaces? = null
     private val mViewModel: VerifyViewModel by viewModel()
     private val loading by lazy { requireContext().makeLoadingDialog(false) }
     private val mSharedViewModel by activityViewModels<AccountSharedViewModel>()
@@ -56,7 +50,7 @@ class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickVie
     }
 
     override fun onStart() {
-        mActivityInterfaces?.onToolbarChanges(StringUtils.getString(R.string.button_label_verifikasi), isBack = true, isHide = false)
+        appCompatActivity?.toolbarChanges(StringUtils.getString(R.string.button_label_verifikasi), isBack = true, isHide = false)
         super.onStart()
     }
 
@@ -72,15 +66,6 @@ class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickVie
         super.onClick(p0)
     }
 
-    override fun onAttach(context: Context) {
-        if (context is ActivityInterfaces) mActivityInterfaces = context
-        super.onAttach(context)
-    }
-
-    override fun onSendingEmailVerificationIdle() {
-        loading.second.dismiss()
-        super.onSendingEmailVerificationIdle()
-    }
     override fun onSendingEmailVerificationLoading() {
         loading.second.show()
         super.onSendingEmailVerificationLoading()
@@ -90,18 +75,18 @@ class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickVie
         context?.showSuccessDialog {
             requireActivity().showSuccessToast("Link berhasil dikirimkan, silahkan cek email anda!")
         }
-        mViewModel.resetEmailVerifyState()
+        loading.second.dismiss()
         super.onSendingEmailVerificationSuccess()
     }
 
     override fun onSendingEmailVerificationFailed(e: Throwable) {
         requireActivity().showErrorToast(e.message.toString())
-        mViewModel.resetEmailVerifyState()
+        loading.second.dismiss()
         super.onSendingEmailVerificationFailed(e)
     }
 
     override fun onDetach() {
-        mActivityInterfaces = null
+        loading.second.dismiss()
         super.onDetach()
     }
 }

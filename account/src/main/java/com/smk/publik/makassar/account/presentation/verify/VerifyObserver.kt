@@ -1,11 +1,10 @@
 package com.smk.publik.makassar.account.presentation.verify
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
 import com.google.firebase.auth.FirebaseUser
 import com.smk.publik.makassar.core.domain.State
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -19,22 +18,38 @@ class VerifyObserver(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
-        viewModel.emailVerify.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onSendingEmailVerificationIdle()
-                is State.Loading -> view.onSendingEmailVerificationLoading()
-                is State.Success -> view.onSendingEmailVerificationSuccess()
-                is State.Failed -> view.onSendingEmailVerificationFailed(it.throwable)
+        owner.lifecycleScope.launch {
+            viewModel.emailVerify.collect {
+                when(it) {
+                    is State.Idle -> view.onSendingEmailVerificationIdle()
+                    is State.Loading -> view.onSendingEmailVerificationLoading()
+                    is State.Success -> {
+                        view.onSendingEmailVerificationSuccess()
+                        viewModel.resetEmailVerifyState()
+                    }
+                    is State.Failed -> {
+                        view.onSendingEmailVerificationFailed(it.throwable)
+                        viewModel.resetEmailVerifyState()
+                    }
+                }
             }
-        })
-        viewModel.verifyEmail.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onVerifyEmailIdle()
-                is State.Loading -> view.onVerifyEmailLoading()
-                is State.Success -> view.onVerifyEmailSuccess()
-                is State.Failed -> view.onVerifyEmailFailed(it.throwable)
+        }
+        owner.lifecycleScope.launch {
+            viewModel.verifyEmail.collect {
+                when(it) {
+                    is State.Idle -> view.onVerifyEmailIdle()
+                    is State.Loading -> view.onVerifyEmailLoading()
+                    is State.Success -> {
+                        view.onVerifyEmailSuccess()
+                        viewModel.resetVerifyEmailState()
+                    }
+                    is State.Failed -> {
+                        view.onVerifyEmailFailed(it.throwable)
+                        viewModel.resetVerifyEmailState()
+                    }
+                }
             }
-        })
+        }
     }
 
     interface Interfaces {

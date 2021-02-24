@@ -1,10 +1,9 @@
 package com.smk.publik.makassar.core.presentation
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.*
 import com.smk.publik.makassar.core.domain.State
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -18,22 +17,40 @@ class DataStoreObserver(
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
-        viewModel.mTutorial.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onGetTutorialStateIdle()
-                is State.Loading -> view.onGetTutorialStateLoading()
-                is State.Success -> view.onGetTutorialStateSuccess(it.data)
-                is State.Failed -> view.onGetTutorialStateFailed(it.throwable)
+        owner.lifecycleScope.launch {
+                viewModel.mTutorial.collect {
+                when(it) {
+                    is State.Idle -> view.onGetTutorialStateIdle()
+                    is State.Loading -> view.onGetTutorialStateLoading()
+                    is State.Success -> {
+                        view.onGetTutorialStateSuccess(it.data)
+                        viewModel.resetSetTutorialState()
+                    }
+                    is State.Failed -> {
+                        view.onGetTutorialStateFailed(it.throwable)
+                        viewModel.resetSetTutorialState()
+                    }
+                }
             }
-        })
-        viewModel.mTutorialEdit.observe(owner, {
-            when(it) {
-                is State.Idle -> view.onSetTutorialStateIdle()
-                is State.Loading -> view.onSetTutorialStateLoading()
-                is State.Success -> view.onSetTutorialStateSuccess(it.data)
-                is State.Failed -> view.onSetTutorialStateFailed(it.throwable)
+        }
+        owner.lifecycleScope.launch {
+            viewModel.mTutorial.collect {
+                viewModel.mTutorialEdit.collect {
+                    when(it) {
+                        is State.Idle -> view.onSetTutorialStateIdle()
+                        is State.Loading -> view.onSetTutorialStateLoading()
+                        is State.Success -> {
+                            view.onSetTutorialStateSuccess(it.data)
+                            viewModel.resetSetTutorialEditState()
+                        }
+                        is State.Failed -> {
+                            view.onSetTutorialStateFailed(it.throwable)
+                            viewModel.resetSetTutorialEditState()
+                        }
+                    }
+                }
             }
-        })
+        }
     }
 
     interface Interfaces {

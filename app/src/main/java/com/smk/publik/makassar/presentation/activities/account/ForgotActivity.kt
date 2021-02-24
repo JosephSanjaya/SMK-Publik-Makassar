@@ -4,14 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.blankj.utilcode.util.ActivityUtils
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.databinding.ActivityFragmentsBinding
 import com.smk.publik.makassar.inline.replaceFragment
-import com.smk.publik.makassar.interfaces.ActivityInterfaces
+import com.smk.publik.makassar.inline.toolbarChanges
 import com.smk.publik.makassar.presentation.fragments.forgot.ChangePasswordSuccessFragment
 import com.smk.publik.makassar.presentation.fragments.forgot.ForgotRequestFragment
 import com.smk.publik.makassar.presentation.fragments.forgot.NewPasswordFragment
@@ -23,11 +22,10 @@ import com.smk.publik.makassar.presentation.fragments.forgot.NewPasswordFragment
  */
 
 class ForgotActivity :
-    AppCompatActivity(R.layout.activity_fragments),
-    ActivityInterfaces
+    AppCompatActivity(R.layout.activity_fragments)
 {
     private val binding by viewBinding(ActivityFragmentsBinding::bind)
-    private val mType: MutableLiveData<Type> = MutableLiveData(Type.EMAIL)
+    private val mType = MutableLiveData(Type.EMAIL)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,43 +37,12 @@ class ForgotActivity :
     private fun setupObserver() {
         mType.observe(this, {
             when(it) {
-                Type.EMAIL -> onFragmentChanges(ForgotRequestFragment(), isBackstack = false)
-                Type.PASSWORD -> onFragmentChanges(NewPasswordFragment.newInstance(intent.extras?.getString("code", "") ?: ""), isBackstack = false)
-                Type.SUCCESS -> onFragmentChanges(ChangePasswordSuccessFragment(), isBackstack = false)
-                else -> onToolbarChanges("Forgot Password", true, isHide = true)
+                Type.EMAIL -> replaceFragment(ForgotRequestFragment(), isBackstack = false)
+                Type.PASSWORD -> replaceFragment(NewPasswordFragment.newInstance(intent.extras?.getString("code", "") ?: ""), isBackstack = false)
+                Type.SUCCESS -> replaceFragment(ChangePasswordSuccessFragment(), isBackstack = false)
+                else -> toolbarChanges("Forgot Password", true, isHide = true)
             }
         })
-    }
-
-    override fun onFragmentChanges(
-        fragment: Fragment,
-        isBackstack: Boolean,
-        isAnimate: Boolean,
-        isInclusive: Boolean
-    ) {
-        supportFragmentManager.replaceFragment(
-            binding.flFragments.id,
-            fragment,
-            isBackstack,
-            isAnimate,
-            isInclusive
-        )
-        super.onFragmentChanges(fragment, isBackstack, isAnimate, isInclusive)
-    }
-
-    override fun onToolbarChanges(title: String, isBack: Boolean, isHide: Boolean) {
-        supportActionBar?.apply {
-            elevation = 0f
-            setTitle(title)
-            setDisplayHomeAsUpEnabled(isBack)
-            if(isHide) hide() else show()
-        }
-        super.onToolbarChanges(title, isBack, isHide)
-    }
-
-    override fun onPopBackStack() {
-        supportFragmentManager.popBackStack()
-        super.onPopBackStack()
     }
 
     private fun getIntentData(intent: Intent?) {

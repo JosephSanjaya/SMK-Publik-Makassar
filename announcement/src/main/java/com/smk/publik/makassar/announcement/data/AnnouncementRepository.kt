@@ -1,5 +1,6 @@
 package com.smk.publik.makassar.announcement.data
 
+import android.content.SharedPreferences
 import android.net.Uri
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -7,6 +8,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.smk.publik.makassar.account.domain.users
 import com.smk.publik.makassar.announcement.domain.Announcement
 import com.smk.publik.makassar.core.data.CommonRepository
 import com.smk.publik.makassar.core.domain.State
@@ -26,7 +28,10 @@ import java.io.File
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class AnnouncementRepository(private val commonRepository: CommonRepository) {
+class AnnouncementRepository(
+    private val commonRepository: CommonRepository,
+    private val sharedPref: SharedPreferences,
+) {
 
     @ExperimentalCoroutinesApi
     fun uploadFile(announcementId: String, file: File) = commonRepository.uploadFile(Firebase.storage.reference.child("pengumuman").child(announcementId)
@@ -86,7 +91,12 @@ class AnnouncementRepository(private val commonRepository: CommonRepository) {
 
 
     @ExperimentalCoroutinesApi
-    fun getAnnouncement(rolesOrClass: String) = callbackFlow<State<List<Announcement>>> {
+    fun getAnnouncement() = callbackFlow<State<List<Announcement>>> {
+        val user = sharedPref.users
+        val rolesOrClass = when(user?.roles) {
+            "guru" -> user.roles.toString()
+            else -> user?.kelas.toString()
+        }
         offerSafe(State.Loading())
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

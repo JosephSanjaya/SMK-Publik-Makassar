@@ -1,9 +1,9 @@
 package com.smk.publik.makassar.presentation.fragments
 
-import android.content.Context
 import androidx.fragment.app.Fragment
 import com.smk.publik.makassar.R
-import com.smk.publik.makassar.interfaces.ActivityInterfaces
+import com.smk.publik.makassar.inline.appCompatActivity
+import com.smk.publik.makassar.inline.toolbarChanges
 
 
 /*
@@ -13,20 +13,10 @@ import com.smk.publik.makassar.interfaces.ActivityInterfaces
  */
 
 class AbsensiFragment: Fragment(R.layout.fragment_under_development) {
-    private var mActivityInterfaces: ActivityInterfaces? = null
 
     override fun onStart() {
-        mActivityInterfaces?.onToolbarChanges("Absensi", false, isHide = false)
+        appCompatActivity?.toolbarChanges("Absensi", false, isHide = false)
         super.onStart()
     }
 
-    override fun onAttach(context: Context) {
-        if(context is ActivityInterfaces) mActivityInterfaces = context
-        super.onAttach(context)
-    }
-
-    override fun onDetach() {
-        mActivityInterfaces = null
-        super.onDetach()
-    }
 }

@@ -16,13 +16,11 @@ import org.koin.dsl.module
 object AnnouncementDI {
 
     val modules = module {
-        val modules = module {
-            single {
-                AnnouncementRepository(get())
-            }
-            viewModel {
-                AnnouncementViewModel(get())
-            }
+        single {
+            AnnouncementRepository(get(), get())
+        }
+        viewModel {
+            AnnouncementViewModel(get())
         }
     }
 

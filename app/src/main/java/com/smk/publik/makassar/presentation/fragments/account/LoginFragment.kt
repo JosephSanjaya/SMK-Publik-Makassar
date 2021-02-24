@@ -1,11 +1,11 @@
 package com.smk.publik.makassar.presentation.fragments.account
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -20,12 +20,8 @@ import com.smk.publik.makassar.account.presentation.user.UserObserver
 import com.smk.publik.makassar.account.presentation.user.UserViewModel
 import com.smk.publik.makassar.core.utils.isLandingPageOpened
 import com.smk.publik.makassar.databinding.FragmentLoginBinding
-import com.smk.publik.makassar.inline.errorAnimation
-import com.smk.publik.makassar.inline.makeLoadingDialog
-import com.smk.publik.makassar.inline.showErrorToast
-import com.smk.publik.makassar.interfaces.ActivityInterfaces
+import com.smk.publik.makassar.inline.*
 import com.smk.publik.makassar.interfaces.BaseOnClickView
-import com.smk.publik.makassar.matapelajaran.presentation.MataPelajaranViewModel
 import com.smk.publik.makassar.presentation.activities.RolesActivity
 import com.smk.publik.makassar.presentation.activities.TutorialActivity
 import com.smk.publik.makassar.presentation.activities.UmumActivity
@@ -48,7 +44,6 @@ class LoginFragment :
 
     private val loading by lazy { requireContext().makeLoadingDialog(false) }
     private val binding by viewBinding(FragmentLoginBinding::bind)
-    private var mActivityInterfaces: ActivityInterfaces? = null
     private val mViewModel: UserViewModel by viewModel()
     private val mSharedPreferences by inject<SharedPreferences>()
     private val mSharedViewModel by activityViewModels<AccountSharedViewModel>()
@@ -91,7 +86,7 @@ class LoginFragment :
 
 
     override fun onStart() {
-        mActivityInterfaces?.onToolbarChanges("Masuk", false, isHide = false)
+        (activity as AppCompatActivity?)?.toolbarChanges("Masuk", false, isHide = false)
         super.onStart()
     }
 
@@ -103,7 +98,7 @@ class LoginFragment :
             )
             binding.btnUmum -> UmumActivity.newInstance()
             binding.tvSignUp -> {
-                mActivityInterfaces?.onFragmentChanges(
+                activity?.replaceFragment(
                     RegisterFragment(),
                     isBackstack = true,
                     isAnimate = true
@@ -114,12 +109,6 @@ class LoginFragment :
         super.onClick(p0)
     }
 
-
-    override fun onLoginIdle() {
-        loading.second.dismiss()
-        super.onLoginIdle()
-    }
-
     override fun onLoginLoading() {
         loading.second.show()
         super.onLoginLoading()
@@ -127,7 +116,7 @@ class LoginFragment :
 
     override fun onLoginFailed(e: Throwable) {
         requireActivity().showErrorToast(e.message.toString())
-        mViewModel.resetLoginState()
+        loading.second.dismiss()
         super.onLoginFailed(e)
     }
 
@@ -138,7 +127,7 @@ class LoginFragment :
     }
 
     override fun onGetUserDataSuccess(user: Users?) {
-        mViewModel.resetLoginState()
+        loading.second.dismiss()
         when {
             mSharedViewModel.mUsers.value?.isEmailVerified == true && !mSharedPreferences.isLandingPageOpened -> {
                 requireActivity().finish()
@@ -163,14 +152,8 @@ class LoginFragment :
         super.onGetUserDataFailed(e)
     }
 
-    override fun onAttach(context: Context) {
-        if (context is ActivityInterfaces) mActivityInterfaces = context
-        super.onAttach(context)
-    }
-
     override fun onDetach() {
         if (loading.second.isShowing) loading.second.dismiss()
-        mActivityInterfaces = null
         super.onDetach()
     }
 }

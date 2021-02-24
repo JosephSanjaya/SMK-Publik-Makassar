@@ -33,6 +33,7 @@ android {
 }
 
 dependencies {
+    api project(':account')
     api project(':core')
 }
 apply from: "$rootDir/spotless.gradle"
