@@ -1,31 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    android:layout_marginTop="10dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    app:cardElevation="12dp"
-    app:cardCornerRadius="6dp"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/tvContent"
-        android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_gravity="center_vertical"
+
+    <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="44dp"
-        android:paddingEnd="44dp"
-        android:paddingTop="28dp"
-        android:paddingBottom="28dp"
-        tools:singleLine="true"
-        android:textAppearance="?attr/textAppearanceSubtitle1"
-        android:textColor="?attr/colorOnSecondary"
-        tools:maxLength="100"
-        tools:text="@tools:sample/lorem/random"/>
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardElevation="12dp"
+        app:cardCornerRadius="6dp"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="horizontal">
 
-</com.google.android.material.card.MaterialCardView>
+        <TextView
+            android:id="@+id/tvContent"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_height="wrap_content"
+            android:paddingStart="44dp"
+            android:paddingEnd="44dp"
+            android:paddingTop="28dp"
+            android:paddingBottom="28dp"
+            tools:singleLine="true"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:textColor="?attr/colorOnSecondary"
+            tools:maxLength="100"
+            tools:text="@tools:sample/lorem/random"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</layout>
