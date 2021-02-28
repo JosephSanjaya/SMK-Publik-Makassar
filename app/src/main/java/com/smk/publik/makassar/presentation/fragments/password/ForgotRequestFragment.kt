@@ -1,4 +1,4 @@
-package com.smk.publik.makassar.presentation.fragments.forgot
+package com.smk.publik.makassar.presentation.fragments.password
 
 import android.content.res.ColorStateList
 import android.os.Bundle

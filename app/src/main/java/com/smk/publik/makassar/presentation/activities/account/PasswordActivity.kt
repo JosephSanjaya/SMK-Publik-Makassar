@@ -11,9 +11,10 @@ import com.smk.publik.makassar.R
 import com.smk.publik.makassar.databinding.ActivityFragmentsBinding
 import com.smk.publik.makassar.inline.replaceFragment
 import com.smk.publik.makassar.inline.toolbarChanges
-import com.smk.publik.makassar.presentation.fragments.forgot.ChangePasswordSuccessFragment
-import com.smk.publik.makassar.presentation.fragments.forgot.ForgotRequestFragment
-import com.smk.publik.makassar.presentation.fragments.forgot.NewPasswordFragment
+import com.smk.publik.makassar.presentation.fragments.password.ChangePasswordFragment
+import com.smk.publik.makassar.presentation.fragments.password.ConfirmResetSuccessFragment
+import com.smk.publik.makassar.presentation.fragments.password.ForgotRequestFragment
+import com.smk.publik.makassar.presentation.fragments.password.ConfirmResetFragment
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -21,7 +22,7 @@ import com.smk.publik.makassar.presentation.fragments.forgot.NewPasswordFragment
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class ForgotActivity :
+class PasswordActivity :
     AppCompatActivity(R.layout.activity_fragments)
 {
     private val binding by viewBinding(ActivityFragmentsBinding::bind)
@@ -38,8 +39,9 @@ class ForgotActivity :
         mType.observe(this, {
             when(it) {
                 Type.EMAIL -> replaceFragment(ForgotRequestFragment(), isBackstack = false)
-                Type.PASSWORD -> replaceFragment(NewPasswordFragment.newInstance(intent.extras?.getString("code", "") ?: ""), isBackstack = false)
-                Type.SUCCESS -> replaceFragment(ChangePasswordSuccessFragment(), isBackstack = false)
+                Type.PASSWORD -> replaceFragment(ConfirmResetFragment.newInstance(intent.extras?.getString("code", "") ?: ""), isBackstack = false)
+                Type.SUCCESS -> replaceFragment(ConfirmResetSuccessFragment(), isBackstack = false)
+                Type.CHANGE -> replaceFragment(ChangePasswordFragment(), isBackstack = false)
                 else -> toolbarChanges("Forgot Password", true, isHide = true)
             }
         })
@@ -60,12 +62,13 @@ class ForgotActivity :
     companion object {
         const val TYPE_EXTRA = "type"
         enum class Type {
-            EMAIL, PASSWORD, SUCCESS
+            EMAIL, PASSWORD, SUCCESS, CHANGE
         }
 
-        fun launchEmailRequest() = ActivityUtils.startActivity(bundleOf("type" to Type.EMAIL), ForgotActivity::class.java)
-        fun launchPasswordChange(oobCode: String) = ActivityUtils.startActivity(bundleOf("type" to Type.PASSWORD, "code" to oobCode), ForgotActivity::class.java)
-        fun launchSuccess() = ActivityUtils.startActivity(bundleOf("type" to Type.SUCCESS), ForgotActivity::class.java)
+        fun launchEmailRequest() = ActivityUtils.startActivity(bundleOf("type" to Type.EMAIL), PasswordActivity::class.java)
+        fun launchConfirmReset(oobCode: String) = ActivityUtils.startActivity(bundleOf("type" to Type.PASSWORD, "code" to oobCode), PasswordActivity::class.java)
+        fun launchChangePassword() = ActivityUtils.startActivity(bundleOf("type" to Type.CHANGE), PasswordActivity::class.java)
+        fun launchSuccess() = ActivityUtils.startActivity(bundleOf("type" to Type.SUCCESS), PasswordActivity::class.java)
     }
 
 }

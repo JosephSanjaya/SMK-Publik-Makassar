@@ -37,6 +37,20 @@ class AnnouncementViewModel(
             .collect { _create.emit(it) }
     }
 
+    private val _delete = MutableStateFlow<State<Boolean>>(State.Idle())
+    val delete: StateFlow<State<Boolean>> get() = _delete
+
+    fun resetDelete() {
+        _delete.value = State.Idle()
+    }
+    fun deleteAnnouncement(
+        announcement: Announcement
+    ) = defaultScope.launch {
+        repository.hapusAnnouncement(announcement)
+            .catch { _delete.emit(State.Failed(getHttpException(it))) }
+            .collect { _delete.emit(it) }
+    }
+
     private val _get = MutableStateFlow<State<List<Announcement>>>(State.Idle())
     val get: StateFlow<State<List<Announcement>>> get() = _get
 

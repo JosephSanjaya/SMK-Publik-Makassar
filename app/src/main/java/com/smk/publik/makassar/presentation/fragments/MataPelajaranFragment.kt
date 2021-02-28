@@ -43,7 +43,7 @@ class MataPelajaranFragment :
     private val isLoading = ObservableBoolean()
     private val mataPelajaran: MutableList<MataPelajaran.Detail> = ArrayList()
     private val adapter by lazy {
-        MataPelajaranAdapter(mataPelajaran).apply {
+        MataPelajaranAdapter(layoutInflater, mataPelajaran).apply {
             setOnItemClickListener(this@MataPelajaranFragment)
         }
     }

@@ -37,6 +37,41 @@ class AnnouncementRepository(
     fun uploadFile(announcementId: String, file: File) = commonRepository.uploadFile(Firebase.storage.reference.child("pengumuman").child(announcementId)
         .child(Uri.fromFile(file).lastPathSegment.toString()), file)
 
+    @ExperimentalCoroutinesApi
+    fun hapusAnnouncement(
+        announcement: Announcement
+    )= callbackFlow {
+        offer(State.Loading())
+        val child = if (announcement.roles == "guru") announcement.roles else announcement.kelas
+        val bannerDeleteAction = Runnable {
+            Firebase.storage.getReferenceFromUrl(announcement.banner.toString()).delete().addOnCompleteListener { deleteFileTask ->
+                if (deleteFileTask.isSuccessful) {
+                    offerSafeClose(State.Success(true))
+                } else {
+                    closeException<Boolean>(Throwable("Gagal hapus file!"))
+                }
+            }
+        }
+        Firebase.database.reference.child("pengumuman").child(child.toString()).removeValue().addOnCompleteListener { deleteDBTask ->
+            if (deleteDBTask.isSuccessful) {
+                when {
+                    announcement.attachment.isNullOrBlank() -> bannerDeleteAction.run()
+                    else -> {
+                        Firebase.storage.getReferenceFromUrl(announcement.attachment.toString()).delete().addOnCompleteListener { deleteFileTask ->
+                            if (deleteFileTask.isSuccessful) {
+                                bannerDeleteAction.run()
+                            } else {
+                                closeException<Boolean>(Throwable("Gagal hapus file!"))
+                            }
+                        }
+                    }
+                }
+            } else {
+                closeException<Boolean>(Throwable("Gagal hapus data!"))
+            }
+        }
+        awaitClose()
+    }
 
     @ExperimentalCoroutinesApi
     fun createAnnouncement(

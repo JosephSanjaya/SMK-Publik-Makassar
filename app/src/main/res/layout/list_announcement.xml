@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
+        android:id="@+id/llRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
@@ -11,8 +12,18 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         xmlns:tools="http://schemas.android.com/tools"
+        android:background="?attr/selectableItemBackground"
         tools:background="@android:color/white"
         android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/btnDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:tint="?attr/colorError"
+            android:layout_gravity="end"
+            android:background="?attr/selectableItemBackground"/>
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivBanner"

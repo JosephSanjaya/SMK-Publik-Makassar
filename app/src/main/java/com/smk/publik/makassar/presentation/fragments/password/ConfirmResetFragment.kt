@@ -1,4 +1,4 @@
-package com.smk.publik.makassar.presentation.fragments.forgot
+package com.smk.publik.makassar.presentation.fragments.password
 
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -17,10 +17,10 @@ import com.smk.publik.makassar.R
 import com.smk.publik.makassar.account.domain.Password
 import com.smk.publik.makassar.account.presentation.password.PasswordObserver
 import com.smk.publik.makassar.account.presentation.password.PasswordViewModel
-import com.smk.publik.makassar.databinding.FragmentChangePasswordBinding
+import com.smk.publik.makassar.databinding.FragmentResetPasswordBinding
 import com.smk.publik.makassar.inline.*
 import com.smk.publik.makassar.interfaces.BaseOnClickView
-import com.smk.publik.makassar.presentation.activities.account.ForgotActivity
+import com.smk.publik.makassar.presentation.activities.account.PasswordActivity
 import com.smk.publik.makassar.presentation.adapter.PasswordRequirementAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -30,16 +30,16 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class NewPasswordFragment: Fragment(R.layout.fragment_change_password), BaseOnClickView, PasswordObserver.Interfaces {
+class ConfirmResetFragment: Fragment(R.layout.fragment_reset_password), BaseOnClickView, PasswordObserver.Interfaces {
 
     companion object {
-        fun newInstance(code: String) = NewPasswordFragment().apply {
+        fun newInstance(code: String) = ConfirmResetFragment().apply {
             arguments = bundleOf("code" to code)
         }
     }
 
     private var mRequestCode: String = ""
-    private val binding by viewBinding(FragmentChangePasswordBinding::bind)
+    private val binding by viewBinding(FragmentResetPasswordBinding::bind)
     private val mViewModel: PasswordViewModel by viewModel()
     private val loading by lazy { requireContext().makeLoadingDialog(false) }
     private var isPasswordValid = false
@@ -105,7 +105,7 @@ class NewPasswordFragment: Fragment(R.layout.fragment_change_password), BaseOnCl
             binding.btnContinue -> when {
                 !mValidator.validate().success() -> activity?.showErrorToast("Cek kembali password anda!")
                 !isPasswordValid -> activity?.showErrorToast("Password belum valid!")
-                else -> mViewModel.changePassword(mRequestCode, binding.etPassword.text.toString())
+                else -> mViewModel.confirmPasswordReset(mRequestCode, binding.etPassword.text.toString())
             }
         }
         super.onClick(p0)
@@ -129,24 +129,24 @@ class NewPasswordFragment: Fragment(R.layout.fragment_change_password), BaseOnCl
         super.onPasswordValidated(result)
     }
 
-    override fun onChangePasswordLoading() {
+    override fun onConfirmResetPasswordLoading() {
         loading.second.show()
-        super.onChangePasswordLoading()
+        super.onConfirmResetPasswordLoading()
     }
 
-    override fun onChangePasswordSuccess() {
+    override fun onConfirmResetPasswordSuccess() {
         loading.second.dismiss()
         context?.showSuccessDialog {
-            ForgotActivity.launchSuccess()
+            PasswordActivity.launchSuccess()
             ActivityUtils.finishAllActivities(true)
         }
-        super.onChangePasswordSuccess()
+        super.onConfirmResetPasswordSuccess()
     }
 
-    override fun onChangePasswordFailed(e: Throwable) {
+    override fun onConfirmResetPasswordFailed(e: Throwable) {
         activity?.showErrorToast(e.message.toString())
         loading.second.dismiss()
-        super.onChangePasswordFailed(e)
+        super.onConfirmResetPasswordFailed(e)
     }
 
     override fun onDetach() {

@@ -1,5 +1,6 @@
 package com.smk.publik.makassar.presentation.adapter
 
+import android.view.LayoutInflater
 import coil.load
 import com.blankj.utilcode.util.TimeUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -7,6 +8,7 @@ import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.announcement.domain.Announcement
 import com.smk.publik.makassar.databinding.ListAnnouncementBinding
+import com.smk.publik.makassar.databinding.ViewEmptyViewBinding
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -14,12 +16,13 @@ import com.smk.publik.makassar.databinding.ListAnnouncementBinding
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class AnnouncementAdapter(data: MutableList<Announcement>?) :
+class AnnouncementAdapter(layoutInflater: LayoutInflater, data: MutableList<Announcement>?) :
     BaseQuickAdapter<Announcement, BaseDataBindingHolder<ListAnnouncementBinding>>(R.layout.list_announcement, data) {
 
     init {
         animationEnable = false
-        setEmptyView(R.layout.view_empty_view)
+        setEmptyView(ViewEmptyViewBinding.inflate(layoutInflater).root)
+        addChildClickViewIds(R.id.btnDelete, R.id.llRoot)
     }
 
     override fun convert(

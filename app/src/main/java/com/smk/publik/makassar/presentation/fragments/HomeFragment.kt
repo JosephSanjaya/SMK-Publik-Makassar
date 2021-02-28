@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.PopupMenu
+import androidx.databinding.ObservableBoolean
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -12,6 +13,7 @@ import com.afollestad.vvalidator.form
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.StringUtils
+import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.android.material.chip.Chip
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.account.domain.Users
@@ -24,9 +26,11 @@ import com.smk.publik.makassar.announcement.presentation.AnnouncementViewModel
 import com.smk.publik.makassar.databinding.DialogEditProfileBinding
 import com.smk.publik.makassar.databinding.FragmentHomeBinding
 import com.smk.publik.makassar.inline.*
+import com.smk.publik.makassar.interfaces.BaseOnAdapterClick
 import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.presentation.activities.AddAnnouncementActivity
 import com.smk.publik.makassar.presentation.activities.account.AccountActivity
+import com.smk.publik.makassar.presentation.activities.account.PasswordActivity
 import com.smk.publik.makassar.presentation.adapter.AnnouncementAdapter
 import io.noties.markwon.Markwon
 import org.koin.android.ext.android.inject
@@ -40,7 +44,14 @@ import kotlin.collections.ArrayList
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, BaseOnClickView, AnnouncementObserver.Interfaces, SwipeRefreshLayout.OnRefreshListener {
+class HomeFragment :
+    Fragment(R.layout.fragment_home),
+    UserObserver.Interfaces,
+    BaseOnAdapterClick,
+    BaseOnClickView,
+    AnnouncementObserver.Interfaces,
+    SwipeRefreshLayout.OnRefreshListener {
+
     init {
         setHasOptionsMenu(true)
     }
@@ -55,9 +66,12 @@ class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, 
         Markwon.create(requireContext())
     }
 
+    private val isAnnouncementLoading = ObservableBoolean()
     private val mAnnouncementList: MutableList<Announcement> = ArrayList()
     private val mAnnouncementAdapter by lazy {
-        AnnouncementAdapter(mAnnouncementList)
+        AnnouncementAdapter(layoutInflater, mAnnouncementList).apply {
+            setOnItemChildClickListener(this@HomeFragment)
+        }
     }
 
     private val logoutDialog by lazy {
@@ -142,6 +156,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, 
             setupRoles(it)
             setupChip(it)
         })
+        binding.isAnnouncementLoading = isAnnouncementLoading
         binding.rvAnnouncement.adapter = mAnnouncementAdapter
         binding.listener = this
         binding.swipeRefresh.setOnRefreshListener(this)
@@ -160,6 +175,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, 
                         editProfileDialog.first.etName.setText(mUser.value?.nama)
                         editProfileDialog.first.etPhone.setText(mUser.value?.telepon)
                         editProfileDialog.second.show()
+                    }
+                    R.id.changePassword ->  {
+                        PasswordActivity.launchChangePassword()
                     }
                 }
                 true
@@ -251,15 +269,55 @@ class HomeFragment : Fragment(R.layout.fragment_home), UserObserver.Interfaces, 
         super.onLogoutFailed(e)
     }
 
+    override fun onAnnouncementFetching() {
+        isAnnouncementLoading.set(true)
+        super.onAnnouncementFetching()
+    }
+
     override fun onAnnouncementFetchSuccess(data: List<Announcement>) {
         mAnnouncementAdapter.setNewInstance(data.toMutableList())
         binding.swipeRefresh.isRefreshing = false
+        isAnnouncementLoading.set(false)
         super.onAnnouncementFetchSuccess(data)
     }
 
     override fun onAnnouncementFetchFailed(e: Throwable) {
         binding.swipeRefresh.isRefreshing = false
+        isAnnouncementLoading.set(false)
         super.onAnnouncementFetchFailed(e)
+    }
+
+    override fun onAnnouncementDeleting() {
+        loading.second.show()
+        super.onAnnouncementDeleting()
+    }
+
+    override fun onAnnouncementDeleteSuccess() {
+        loading.second.dismiss()
+        onRefresh()
+        context?.showSuccessDialog {
+            activity?.showDeleteToast("Berhasil menghapus announcement!")
+        }
+        super.onAnnouncementDeleteSuccess()
+    }
+
+    override fun onAnnouncementDeleteFailed(e: Throwable) {
+        loading.second.dismiss()
+        activity?.showErrorToast(e.message.toString())
+        super.onAnnouncementDeleteFailed(e)
+    }
+
+    override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
+        when(adapter) {
+            is AnnouncementAdapter -> {
+                val announcement = adapter.getItem(position)
+                when(view.id) {
+                    R.id.llRoot -> activity?.showInfoToast(announcement.id.toString())
+                    R.id.btnDelete -> mAnnouncementViewModel.deleteAnnouncement(announcement)
+                }
+            }
+        }
+        super.onItemChildClick(adapter, view, position)
     }
 
     override fun onDetach() {

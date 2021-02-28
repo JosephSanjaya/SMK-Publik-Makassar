@@ -54,7 +54,7 @@
             android:name=".presentation.activities.RolesActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".presentation.activities.account.ForgotActivity"
+            android:name=".presentation.activities.account.PasswordActivity"
             android:screenOrientation="portrait"/>
 
         <meta-data

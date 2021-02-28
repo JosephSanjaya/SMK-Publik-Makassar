@@ -46,9 +46,11 @@
     <string name="label_change_password_toolbar">Password Baru</string>
     <string name="label_change_password_message_1">Buat password baru yang kuat untuk akunmu.</string>
     <string name="label_change_password_message_2">Setelah password diubah, silahkan masuk kembali dengan password barumu.</string>
+    <string name="label_change_password_message_3">Buat password baru untuk akun anda.</string>
     <string name="label_change_password_requirement_1">Minimal 8 Karakter</string>
     <string name="label_change_password_hint_1">Password Baru</string>
     <string name="label_change_password_hint_2">Ketik Ulang Password Baru</string>
+    <string name="label_change_password_hint_3">Password Lama</string>
     <string name="label_change_password_success_message">Password kamu berhasil diubah. Silahkan masuk kembali.</string>
     <string name="label_change_password_balloon_message">Password harus memenuhi beberapa ketentuan:</string>
     <string name="button_label_send">Kirim</string>
@@ -65,4 +67,5 @@
     <string name="label_chip_edit">Edit</string>
     <string name="label_menu_change_password">Ganti Password</string>
     <string name="label_menu_change_profile">Ganti Profil Pengguna</string>
+    <string name="label_no_data_search">Kata yang kamu cari tidak ditemukan.</string>
 </resources>

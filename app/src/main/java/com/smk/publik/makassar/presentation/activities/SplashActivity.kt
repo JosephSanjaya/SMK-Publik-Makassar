@@ -21,7 +21,7 @@ import com.smk.publik.makassar.account.presentation.verify.VerifyViewModel
 import com.smk.publik.makassar.core.utils.isLandingPageOpened
 import com.smk.publik.makassar.inline.*
 import com.smk.publik.makassar.presentation.activities.account.AccountActivity
-import com.smk.publik.makassar.presentation.activities.account.ForgotActivity
+import com.smk.publik.makassar.presentation.activities.account.PasswordActivity
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -115,7 +115,7 @@ class SplashActivity :
 
     override fun onVerifyCodePasswordSuccess(code: String) {
         showSuccessToast("Kode verifikasi diterima!")
-        ForgotActivity.launchPasswordChange(code)
+        PasswordActivity.launchConfirmReset(code)
         ActivityUtils.finishAllActivities(true)
         super.onVerifyCodePasswordSuccess(code)
     }

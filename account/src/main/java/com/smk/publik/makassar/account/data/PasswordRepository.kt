@@ -3,6 +3,7 @@ package com.smk.publik.makassar.account.data
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.StringUtils
 import com.google.firebase.auth.ActionCodeSettings
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.core.R
@@ -39,10 +40,22 @@ class PasswordRepository {
         emit(State.Success(code))
     }.flowOn(Dispatchers.IO)
 
-    suspend fun changePassword(code: String, password: String) = flow {
+    suspend fun confirmPasswordReset(code: String, password: String) = flow {
         emit(State.Loading())
         Firebase.auth.confirmPasswordReset(code, password).await()
         emit(State.Success(true))
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun changePassword(oldPassword: String, newPassword: String) = flow {
+        emit(State.Loading())
+        val currentUser = Firebase.auth.currentUser
+        if(currentUser == null) throw Throwable("Silahkan login terlebih dahulu")
+        else {
+            val credential = EmailAuthProvider.getCredential(currentUser.email.toString(), oldPassword)
+            currentUser.reauthenticate(credential).await()
+            currentUser.updatePassword(newPassword).await()
+            emit(State.Success(true))
+        }
     }.flowOn(Dispatchers.IO)
 
     suspend fun validatePassword(password: String) = flow {

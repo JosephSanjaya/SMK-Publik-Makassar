@@ -51,6 +51,22 @@ class PasswordObserver(
             }
         }
         owner.lifecycleScope.launch {
+            viewModel.confirmReset.collect {
+                when(it) {
+                    is State.Idle -> view.onConfirmResetPasswordIdle()
+                    is State.Loading -> view.onConfirmResetPasswordLoading()
+                    is State.Success -> {
+                        view.onConfirmResetPasswordSuccess()
+                        viewModel.resetConfirmResetState()
+                    }
+                    is State.Failed -> {
+                        view.onConfirmResetPasswordFailed(it.throwable)
+                        viewModel.resetConfirmResetState()
+                    }
+                }
+            }
+        }
+        owner.lifecycleScope.launch {
             viewModel.changePassword.collect {
                 when(it) {
                     is State.Idle -> view.onChangePasswordIdle()
@@ -81,6 +97,11 @@ class PasswordObserver(
         fun onVerifyCodePasswordLoading() {}
         fun onVerifyCodePasswordFailed(e: Throwable) {}
         fun onVerifyCodePasswordSuccess(code: String) {}
+
+        fun onConfirmResetPasswordIdle() {}
+        fun onConfirmResetPasswordLoading() {}
+        fun onConfirmResetPasswordFailed(e: Throwable) {}
+        fun onConfirmResetPasswordSuccess() {}
 
         fun onChangePasswordIdle() {}
         fun onChangePasswordLoading() {}

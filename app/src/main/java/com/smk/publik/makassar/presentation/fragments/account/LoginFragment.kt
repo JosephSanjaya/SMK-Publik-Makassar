@@ -27,7 +27,7 @@ import com.smk.publik.makassar.presentation.activities.TutorialActivity
 import com.smk.publik.makassar.presentation.activities.UmumActivity
 import com.smk.publik.makassar.presentation.activities.account.AccountActivity
 import com.smk.publik.makassar.presentation.activities.account.AccountSharedViewModel
-import com.smk.publik.makassar.presentation.activities.account.ForgotActivity
+import com.smk.publik.makassar.presentation.activities.account.PasswordActivity
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -104,7 +104,7 @@ class LoginFragment :
                     isAnimate = true
                 )
             }
-            binding.tvForgot -> ForgotActivity.launchEmailRequest()
+            binding.tvForgot -> PasswordActivity.launchEmailRequest()
         }
         super.onClick(p0)
     }

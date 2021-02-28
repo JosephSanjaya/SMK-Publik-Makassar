@@ -1,4 +1,4 @@
-package com.smk.publik.makassar.presentation.fragments.forgot
+package com.smk.publik.makassar.presentation.fragments.password
 
 import android.os.Bundle
 import android.view.View
@@ -7,7 +7,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.StringUtils
 import com.smk.publik.makassar.R
-import com.smk.publik.makassar.databinding.FragmentChangePasswordSuccessBinding
+import com.smk.publik.makassar.databinding.FragmentResetPasswordSuccessBinding
 import com.smk.publik.makassar.inline.appCompatActivity
 import com.smk.publik.makassar.inline.toolbarChanges
 import com.smk.publik.makassar.interfaces.BaseOnClickView
@@ -19,9 +19,9 @@ import com.smk.publik.makassar.presentation.activities.account.AccountActivity
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class ChangePasswordSuccessFragment: Fragment(R.layout.fragment_change_password_success), BaseOnClickView{
+class ConfirmResetSuccessFragment: Fragment(R.layout.fragment_reset_password_success), BaseOnClickView{
 
-    private val binding by viewBinding(FragmentChangePasswordSuccessBinding::bind)
+    private val binding by viewBinding(FragmentResetPasswordSuccessBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

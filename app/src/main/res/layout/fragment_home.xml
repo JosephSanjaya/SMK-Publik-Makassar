@@ -5,9 +5,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
         <variable
             name="listener"
             type="android.view.View.OnClickListener"/>
+
+        <variable
+            name="isAnnouncementLoading"
+            type="androidx.databinding.ObservableBoolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -226,9 +231,24 @@
             app:layout_constraintTop_toBottomOf="@+id/cvJadwal" />
 
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieAnimationView"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:visibility="@{isAnnouncementLoading ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvPengumuman"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading_anim" />
+
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -236,12 +256,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvPengumuman">
 
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvAnnouncement"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
+                android:visibility="@{isAnnouncementLoading ? View.GONE : View.VISIBLE}"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/list_announcement" />
 

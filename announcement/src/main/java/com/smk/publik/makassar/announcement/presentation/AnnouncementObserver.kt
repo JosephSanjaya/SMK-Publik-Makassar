@@ -50,6 +50,22 @@ class AnnouncementObserver(
                 }
             }
         }
+        owner.lifecycleScope.launch {
+            viewModel.delete.collect {
+                when(it) {
+                    is State.Idle -> view.onAnnouncementDeleteIdle()
+                    is State.Loading -> view.onAnnouncementDeleting()
+                    is State.Success -> {
+                        view.onAnnouncementDeleteSuccess()
+                        viewModel.resetDelete()
+                    }
+                    is State.Failed -> {
+                        view.onAnnouncementDeleteFailed(it.throwable)
+                        viewModel.resetDelete()
+                    }
+                }
+            }
+        }
     }
 
     interface Interfaces {
@@ -62,5 +78,10 @@ class AnnouncementObserver(
         fun onAnnouncementFetching() {}
         fun onAnnouncementFetchFailed(e: Throwable) {}
         fun onAnnouncementFetchSuccess(data: List<Announcement>) {}
+
+        fun onAnnouncementDeleteIdle() {}
+        fun onAnnouncementDeleting() {}
+        fun onAnnouncementDeleteFailed(e: Throwable) {}
+        fun onAnnouncementDeleteSuccess() {}
     }
 }

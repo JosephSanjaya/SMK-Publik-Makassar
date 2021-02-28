@@ -43,4 +43,17 @@ class CommonRepository {
         awaitClose()
     }
 
+    @ExperimentalCoroutinesApi
+    fun deleteFile(ref: StorageReference) = callbackFlow<State<Boolean>> {
+        offerSafe(State.Loading())
+        ref.delete().addOnCompleteListener {
+            if (it.isSuccessful) {
+                offerSafeClose(State.Success(true))
+            } else {
+                closeException(Throwable("Gagal hapus file!"))
+            }
+        }
+        awaitClose()
+    }
+
 }
