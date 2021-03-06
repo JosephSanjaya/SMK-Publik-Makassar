@@ -22,9 +22,9 @@ import com.smk.publik.makassar.announcement.presentation.AnnouncementViewModel
 import com.smk.publik.makassar.databinding.ActivityAddAnnouncementBinding
 import com.smk.publik.makassar.inline.*
 import com.smk.publik.makassar.interfaces.BaseOnClickView
+import java.io.File
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -32,20 +32,21 @@ import java.io.File
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class AddAnnouncementActivity : AppCompatActivity(R.layout.activity_add_announcement), BaseOnClickView, FileSelectCallBack, AnnouncementObserver.Interfaces {
-
-    companion object {
-        fun newInstance() = ActivityUtils.startActivity(AddAnnouncementActivity::class.java)
-        private const val REQUEST_CHOOSE_IMAGE = 424
-    }
+class AddAnnouncementActivity :
+    AppCompatActivity(R.layout.activity_add_announcement),
+    BaseOnClickView,
+    FileSelectCallBack,
+    AnnouncementObserver.Interfaces {
 
     private val mSharedPreferences by inject<SharedPreferences>()
     private var mFileSelector: FileSelector? = null
     private val mViewModel: AnnouncementViewModel by viewModel()
     private var mSelectedPath: String? = null
-    private var mAnnouncement = Announcement(roles = mSharedPreferences.users?.roles, postedDate = TimeUtils.getNowMills())
+    private var mAnnouncement = Announcement(
+        roles = mSharedPreferences.users?.roles,
+        postedDate = TimeUtils.getNowMills()
+    )
     private val loading by lazy { makeLoadingDialog(false) }
-
     private val binding by viewBinding(ActivityAddAnnouncementBinding::bind)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,25 +54,35 @@ class AddAnnouncementActivity : AppCompatActivity(R.layout.activity_add_announce
         setSupportActionBar(binding.toolbar)
         binding.listener = this
         binding.etDescription.addTextChangedListener {
-           if(!it.isNullOrBlank()) mAnnouncement.description = it.toString()
+            if (!it.isNullOrBlank()) mAnnouncement.description = it.toString()
         }
         binding.etTitle.addTextChangedListener {
-           if(!it.isNullOrBlank()) mAnnouncement.title = it.toString()
+            if (!it.isNullOrBlank()) mAnnouncement.title = it.toString()
         }
     }
 
     override fun onClick(p0: View?) {
-        when(p0) {
+        when (p0) {
             binding.tvAddImage -> {
-                PermissionUtils.permission(PermissionConstants.STORAGE).callback(object : PermissionUtils.SimpleCallback {
-                    override fun onGranted() {
-                        mFileSelector = chooseImage(REQUEST_CHOOSE_IMAGE, this@AddAnnouncementActivity)                    }
-                    override fun onDenied() {
-                        showErrorToast("Mohon memberikan izin untuk mengakses penyimpanan anda, untuk dapat menyimpan data!")
-                    }
-                }).request()
+                PermissionUtils.permission(PermissionConstants.STORAGE)
+                    .callback(object : PermissionUtils.SimpleCallback {
+                        override fun onGranted() {
+                            mFileSelector =
+                                chooseImage(REQUEST_CHOOSE_IMAGE, this@AddAnnouncementActivity)
+                        }
+
+                        override fun onDenied() {
+                            showErrorToast(
+                                "Mohon memberikan izin untuk mengakses " +
+                                    "penyimpanan anda, untuk dapat menyimpan data!"
+                            )
+                        }
+                    }).request()
             }
-            binding.btnBuat -> mViewModel.createAnnouncement(File(mSelectedPath.toString()), mAnnouncement)
+            binding.btnBuat -> mViewModel.createAnnouncement(
+                File(mSelectedPath.toString()),
+                mAnnouncement
+            )
         }
         super.onClick(p0)
     }
@@ -115,4 +126,8 @@ class AddAnnouncementActivity : AppCompatActivity(R.layout.activity_add_announce
         showErrorToast(e?.message ?: "File tidak terpilih!")
     }
 
+    companion object {
+        private const val REQUEST_CHOOSE_IMAGE = 424
+        fun newInstance() = ActivityUtils.startActivity(AddAnnouncementActivity::class.java)
+    }
 }

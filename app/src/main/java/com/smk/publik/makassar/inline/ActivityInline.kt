@@ -7,14 +7,11 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import com.blankj.utilcode.util.ToastUtils
-import com.google.android.material.color.MaterialColors
 import com.orhanobut.logger.Logger
 import com.smk.publik.makassar.R
 import www.sanju.motiontoast.MotionToast
@@ -32,7 +29,13 @@ fun FragmentActivity.replaceFragment(
     isInclusive: Boolean = false
 ) {
     try {
-        supportFragmentManager.replaceFragment(R.id.flFragments, fragment, isBackstack, isAnimate, isInclusive)
+        supportFragmentManager.replaceFragment(
+            R.id.flFragments,
+            fragment,
+            isBackstack,
+            isAnimate,
+            isInclusive
+        )
     } catch (e: Throwable) {
         showErrorToast("Gagal navigasi.")
         Logger.e(e, e.message.toString())
@@ -48,7 +51,7 @@ fun AppCompatActivity.toolbarChanges(title: String, isBack: Boolean, isHide: Boo
         elevation = 0f
         setTitle(title)
         setDisplayHomeAsUpEnabled(isBack)
-        if(isHide) hide() else show()
+        if (isHide) hide() else show()
     }
 }
 
@@ -60,26 +63,28 @@ fun FragmentManager.replaceFragment(
     isInclusive: Boolean = false
 ) {
     beginTransaction().apply {
-        if(isBackstack) addToBackStack(null)
-        if(isAnimate) setCustomAnimations(
-                android.R.anim.slide_in_left,
-                android.R.anim.slide_out_right,
-                android.R.anim.slide_in_left,
-                android.R.anim.slide_out_right
+        if (isBackstack) addToBackStack(null)
+        if (isAnimate) setCustomAnimations(
+            android.R.anim.slide_in_left,
+            android.R.anim.slide_out_right,
+            android.R.anim.slide_in_left,
+            android.R.anim.slide_out_right
         )
-        if(isInclusive) popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        if (isInclusive) popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         replace(placeholder, fragment)
     }.commit()
 }
 
 fun Activity.showToast(type: String, title: String, message: String) {
-    MotionToast.darkToast(this,
+    MotionToast.darkToast(
+        this,
         title,
         message,
         type,
         MotionToast.GRAVITY_BOTTOM,
         MotionToast.LONG_DURATION,
-        ResourcesCompat.getFont(this, R.font.poppins_regular))
+        ResourcesCompat.getFont(this, R.font.poppins_regular)
+    )
 }
 
 fun Activity.clearIntentData() {
@@ -106,8 +111,7 @@ fun Activity.showDeleteToast(message: String, title: String = "Deleted") {
     showToast(MotionToast.TOAST_DELETE, title, message)
 }
 
-
-fun Context.chooseImage(requestCode: Int, callback: FileSelectCallBack) : FileSelector {
+fun Context.chooseImage(requestCode: Int, callback: FileSelectCallBack): FileSelector {
     val optionsImage = FileSelectOptions().apply {
         fileType = FileType.IMAGE
         fileTypeMismatchTip = "Tipe file tidak didukung"

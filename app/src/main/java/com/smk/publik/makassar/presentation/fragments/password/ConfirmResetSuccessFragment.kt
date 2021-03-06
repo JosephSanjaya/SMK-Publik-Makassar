@@ -19,7 +19,9 @@ import com.smk.publik.makassar.presentation.activities.account.AccountActivity
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class ConfirmResetSuccessFragment: Fragment(R.layout.fragment_reset_password_success), BaseOnClickView{
+class ConfirmResetSuccessFragment :
+    Fragment(R.layout.fragment_reset_password_success),
+    BaseOnClickView {
 
     private val binding by viewBinding(FragmentResetPasswordSuccessBinding::bind)
 
@@ -29,12 +31,16 @@ class ConfirmResetSuccessFragment: Fragment(R.layout.fragment_reset_password_suc
     }
 
     override fun onStart() {
-        appCompatActivity?.toolbarChanges(StringUtils.getString(R.string.label_change_password_toolbar), isBack = true, isHide = false)
+        appCompatActivity?.toolbarChanges(
+            StringUtils.getString(R.string.label_change_password_toolbar),
+            isBack = true,
+            isHide = false
+        )
         super.onStart()
     }
 
     override fun onClick(p0: View?) {
-        when(p0) {
+        when (p0) {
             binding.btnMasuk -> {
                 ActivityUtils.startActivity(AccountActivity.createLoginIntent(requireContext()))
                 activity?.finish()

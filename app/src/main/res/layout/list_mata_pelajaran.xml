@@ -4,7 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cvRoot"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:layout_marginTop="10dp"
@@ -30,6 +32,19 @@
             android:textColor="?attr/colorOnSecondary"
             tools:maxLength="100"
             tools:text="@tools:sample/lorem/random"/>
+
+        <ImageButton
+            android:id="@+id/btnDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_bin_with_lid"
+            android:padding="8dp"
+            app:tint="?attr/colorPrimary"
+            android:background="@android:color/white"
+            android:layout_marginEnd="20dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_gravity="end|center_vertical"/>
 
     </com.google.android.material.card.MaterialCardView>
 

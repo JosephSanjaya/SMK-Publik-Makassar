@@ -4,7 +4,6 @@ import com.blankj.utilcode.util.AppUtils
 import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.core.utils.closeException
@@ -54,5 +53,4 @@ class VerifyRepository {
         }
         awaitClose()
     }
-
 }

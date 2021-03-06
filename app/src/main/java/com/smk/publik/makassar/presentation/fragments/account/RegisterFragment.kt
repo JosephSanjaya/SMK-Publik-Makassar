@@ -39,7 +39,6 @@ import com.smk.publik.makassar.presentation.activities.account.AccountSharedView
 import com.smk.publik.makassar.presentation.adapter.PasswordRequirementAdapter
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
  * @Github (https://github.com/JosephSanjaya),
@@ -51,14 +50,12 @@ class RegisterFragment :
     BaseOnClickView,
     RegisterObserver.Interfaces,
     MataPelajaranObserver.Interfaces,
-    PasswordObserver.Interfaces
-{
+    PasswordObserver.Interfaces {
 
     private val loading by lazy { requireContext().makeLoadingDialog(false) }
     private val binding by viewBinding(FragmentRegisterBinding::bind)
     private val mSharedViewModel by activityViewModels<AccountSharedViewModel>()
     private val mPasswordViewModel: PasswordViewModel by viewModel()
-
     private val mViewModel: RegisterViewModel by viewModel()
     private val isTeacher = ObservableBoolean(false)
     private val mMateriViewModel: MataPelajaranViewModel by viewModel()
@@ -71,7 +68,6 @@ class RegisterFragment :
     private val mPasswordAdapter by lazy { PasswordRequirementAdapter(mPasswordReqList) }
     private val mPasswordReqList: ArrayList<Password> = ArrayList()
     private val mUsers = MutableLiveData(Users())
-
     private val mValidator by lazy {
         form {
             input(binding.etNama) {
@@ -103,7 +99,7 @@ class RegisterFragment :
                     error = errors.firstOrNull()?.description
                 }
             }
-            if(isTeacher.get()) {
+            if (isTeacher.get()) {
                 input(binding.etNUPTK) {
                     isNotEmpty().description("NUPTK tidak boleh kosong!")
                 }.onErrors { _, errors ->
@@ -157,10 +153,21 @@ class RegisterFragment :
             }
         }
     }
-
-
     private val mButtonRolesList by lazy {
         listOf(binding.btnGuru, binding.btnSiswa)
+    }
+    private val mFormList by lazy {
+        listOf(
+            binding.etMatpel,
+            binding.rgKelas,
+            binding.etNama,
+            binding.etTelepon,
+            binding.etEmail,
+            binding.etNIS,
+            binding.etNUPTK,
+            binding.etPassword,
+            binding.etPasswordRepeat
+        )
     }
 
     override fun onStart() {
@@ -177,8 +184,20 @@ class RegisterFragment :
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewLifecycleOwner.lifecycle.addObserver(RegisterObserver(this, mViewModel, viewLifecycleOwner))
-        viewLifecycleOwner.lifecycle.addObserver(PasswordObserver(this, mPasswordViewModel, viewLifecycleOwner))
+        viewLifecycleOwner.lifecycle.addObserver(
+            RegisterObserver(
+                this,
+                mViewModel,
+                viewLifecycleOwner
+            )
+        )
+        viewLifecycleOwner.lifecycle.addObserver(
+            PasswordObserver(
+                this,
+                mPasswordViewModel,
+                viewLifecycleOwner
+            )
+        )
         viewLifecycleOwner.lifecycle.addObserver(
             MataPelajaranObserver(
                 this,
@@ -195,9 +214,11 @@ class RegisterFragment :
         binding.etMatpel.setAdapter(adapter)
         binding.rvPasswordRequirement.adapter = mPasswordAdapter
         setupEditTextListener()
-        mUsers.postValue(mUsers.value?.apply {
-            roles = "siswa"
-        })
+        mUsers.postValue(
+            mUsers.value?.apply {
+                roles = "siswa"
+            }
+        )
         mPasswordViewModel.passwordValidation("")
         mMateriViewModel.fetchMataPelajaran()
         super.onViewCreated(view, savedInstanceState)
@@ -236,76 +257,114 @@ class RegisterFragment :
     }
 
     private fun setupObserver() {
-        mUsers.observe(viewLifecycleOwner, {
-            if (isTeacher.get()) {
-                val validation = listOf(it.nama, it.telepon, it.email, it.nuptk, it.mataPelajaran.toString(), binding.etPassword.text.toString(), binding.etPasswordRepeat.text.toString())
-                formValidation(!validation.any { valid -> valid.isNullOrBlank() || valid == "null" })
-            } else {
-                val validation = listOf(it.nama, it.telepon, it.kelas, it.email, it.nis, binding.etPassword.text.toString(), binding.etPasswordRepeat.text.toString())
-                formValidation(!validation.any { valid -> valid.isNullOrBlank() || valid == "null" })
+        mUsers.observe(
+            viewLifecycleOwner,
+            {
+                if (isTeacher.get()) {
+                    val validation = listOf(
+                        it.nama,
+                        it.telepon,
+                        it.email,
+                        it.nuptk,
+                        it.mataPelajaran.toString(),
+                        binding.etPassword.text.toString(),
+                        binding.etPasswordRepeat.text.toString()
+                    )
+                    formValidation(
+                        !validation.any { valid ->
+                            valid.isNullOrBlank() || valid == "null"
+                        }
+                    )
+                } else {
+                    val validation = listOf(
+                        it.nama,
+                        it.telepon,
+                        it.kelas,
+                        it.email,
+                        it.nis,
+                        binding.etPassword.text.toString(),
+                        binding.etPasswordRepeat.text.toString()
+                    )
+                    formValidation(
+                        !validation.any { valid ->
+                            valid.isNullOrBlank() || valid == "null"
+                        }
+                    )
+                }
             }
-        })
+        )
         binding.isTeacher = isTeacher
     }
 
-    private val mFormList by lazy {
-        listOf(
-            binding.etMatpel,
-            binding.rgKelas,
-            binding.etNama,
-            binding.etTelepon,
-            binding.etEmail,
-            binding.etNIS,
-            binding.etNUPTK,
-            binding.etPassword,
-            binding.etPasswordRepeat
-        )
-    }
-
     private fun setupEditTextListener() {
-        binding.etMatpel.setOnItemClickListener { parent, view, position, id ->
+        binding.etMatpel.setOnItemClickListener { _, _, position, _ ->
             val matpel = mMateri[position]
-            mUsers.postValue(mUsers.value?.apply {
-                mataPelajaran = HashMap(mapOf(Pair(matpel.id.toString(), MataPelajaran.Detail(id = matpel.id, nama = matpel.nama))))
-            })
+            mUsers.postValue(
+                mUsers.value?.apply {
+                    mataPelajaran = HashMap(
+                        mapOf(
+                            Pair(
+                                matpel.id.toString(),
+                                MataPelajaran.Detail(id = matpel.id, nama = matpel.nama)
+                            )
+                        )
+                    )
+                }
+            )
         }
-        binding.rgKelas.setOnCheckedChangeListener { group, checkedId ->
+        binding.rgKelas.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
-                binding.rbKelasX.id -> mUsers.postValue(mUsers.value?.apply {
-                    kelas = "10"
-                })
-                binding.rbKelasXI.id -> mUsers.postValue(mUsers.value?.apply {
-                    kelas = "11"
-                })
-                binding.rbKelasXII.id -> mUsers.postValue(mUsers.value?.apply {
-                    kelas = "12"
-                })
+                binding.rbKelasX.id -> mUsers.postValue(
+                    mUsers.value?.apply {
+                        kelas = "10"
+                    }
+                )
+                binding.rbKelasXI.id -> mUsers.postValue(
+                    mUsers.value?.apply {
+                        kelas = "11"
+                    }
+                )
+                binding.rbKelasXII.id -> mUsers.postValue(
+                    mUsers.value?.apply {
+                        kelas = "12"
+                    }
+                )
             }
         }
         binding.etNama.onTextChanged {
-            mUsers.postValue(mUsers.value?.apply {
-                nama = if(it.isBlank()) null else it
-            })
+            mUsers.postValue(
+                mUsers.value?.apply {
+                    nama = if (it.isBlank()) null else it
+                }
+            )
         }
         binding.etTelepon.onTextChanged {
-            mUsers.postValue(mUsers.value?.apply {
-                telepon = if(it.isBlank()) null else it
-            })
+            mUsers.postValue(
+                mUsers.value?.apply {
+                    telepon = if (it.isBlank()) null else it
+                }
+            )
         }
         binding.etEmail.onTextChanged {
-            mUsers.postValue(mUsers.value?.apply {
-                email = if(it.isBlank()) null else it
-            })
+            mUsers.postValue(
+                mUsers.value?.apply {
+                    email = if (it.isBlank()) null else it
+                }
+            )
         }
         binding.etNIS.onTextChanged {
-            mUsers.postValue(mUsers.value?.apply {
-                nis = if(it.isBlank()) null else it
-            })
+            mUsers.postValue(
+                mUsers.value?.apply {
+                    nis = if (it.isBlank()) null else it
+                }
+            )
         }
         binding.etNUPTK.onTextChanged {
-            mUsers.postValue(mUsers.value?.apply {
-                nuptk = if(it.isBlank()) null else it
-            })
+            mUsers.postValue(
+                mUsers.value?.apply {
+                    nuptk = if (it.isBlank()) null else it
+                }
+            )
         }
         binding.etPassword.onTextChanged {
             mPasswordViewModel.passwordValidation(it)
@@ -320,17 +379,21 @@ class RegisterFragment :
         when (p0) {
             binding.btnGuru -> changeSelectedRoles(binding.btnGuru)
             binding.btnSiswa -> changeSelectedRoles(binding.btnSiswa)
-            binding.btnRegister -> if (mValidator.validate().success()) context?.makeMessageDialog(true, "Silahkan cek kembali email anda, akun akan didaftarkan menggunakan email: " +
+            binding.btnRegister -> if (mValidator.validate().success()) context?.makeMessageDialog(
+                true,
+                "Silahkan cek kembali email anda, akun akan didaftarkan menggunakan email: " +
                     "" +
                     "***${binding.etEmail.text}***" +
                     "" +
-                    "", buttonAction = {
-                mViewModel.register(
-                    binding.etEmail.text.toString(),
-                    binding.etPassword.text.toString(),
-                    mUsers.value ?: Users()
-                )
-            })?.second?.show()
+                    "",
+                buttonAction = {
+                    mViewModel.register(
+                        binding.etEmail.text.toString(),
+                        binding.etPassword.text.toString(),
+                        mUsers.value ?: Users()
+                    )
+                }
+            )?.second?.show()
         }
         super.onClick(p0)
     }
@@ -346,15 +409,19 @@ class RegisterFragment :
             when (it) {
                 is EditText -> it.setText("")
                 is RadioGroup -> {
-                    mUsers.postValue(mUsers.value?.apply {
-                        kelas = null
-                    })
+                    mUsers.postValue(
+                        mUsers.value?.apply {
+                            kelas = null
+                        }
+                    )
                     it.clearCheck()
                 }
                 is AutoCompleteTextView -> {
-                    mUsers.postValue(mUsers.value?.apply {
-                        mataPelajaran = null
-                    })
+                    mUsers.postValue(
+                        mUsers.value?.apply {
+                            mataPelajaran = null
+                        }
+                    )
                     it.clearListSelection()
                 }
             }
@@ -363,9 +430,11 @@ class RegisterFragment :
 
     private fun changeSelectedRoles(view: MaterialButton) {
         clearForm()
-        mUsers.postValue(mUsers.value?.apply {
-            roles = view.tag.toString()
-        })
+        mUsers.postValue(
+            mUsers.value?.apply {
+                roles = view.tag.toString()
+            }
+        )
         isTeacher.set(view == binding.btnGuru)
         mButtonRolesList.forEach {
             it.backgroundTintList =
@@ -394,7 +463,10 @@ class RegisterFragment :
         loading.second.dismiss()
         mSharedViewModel.mUsers.postValue(user)
         context?.showSuccessDialog {
-            requireActivity().showSuccessToast("Registrasi berhasil, selanjutnya silahkan melakukan verifikasi email!")
+            requireActivity().showSuccessToast(
+                "Registrasi berhasil, " +
+                    "selanjutnya silahkan melakukan verifikasi email!"
+            )
             ActivityUtils.startActivity(AccountActivity.createVerifyIntent(requireContext()))
             ActivityUtils.finishAllActivities(true)
         }
@@ -408,9 +480,11 @@ class RegisterFragment :
 
     override fun onFetchMataPelajaranSuccess(data: List<MataPelajaran.Detail>) {
         mMateri.addAll(data)
-        adapter.addAll(data.map {
-            it.nama
-        })
+        adapter.addAll(
+            data.map {
+                it.nama
+            }
+        )
         loading.second.dismiss()
         super.onFetchMataPelajaranSuccess(data)
     }

@@ -30,13 +30,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class ConfirmResetFragment: Fragment(R.layout.fragment_reset_password), BaseOnClickView, PasswordObserver.Interfaces {
-
-    companion object {
-        fun newInstance(code: String) = ConfirmResetFragment().apply {
-            arguments = bundleOf("code" to code)
-        }
-    }
+class ConfirmResetFragment :
+    Fragment(R.layout.fragment_reset_password),
+    BaseOnClickView,
+    PasswordObserver.Interfaces {
 
     private var mRequestCode: String = ""
     private val binding by viewBinding(FragmentResetPasswordBinding::bind)
@@ -45,7 +42,6 @@ class ConfirmResetFragment: Fragment(R.layout.fragment_reset_password), BaseOnCl
     private var isPasswordValid = false
     private val mPasswordAdapter by lazy { PasswordRequirementAdapter(mPasswordReqList) }
     private val mPasswordReqList: ArrayList<Password> = ArrayList()
-
     private val mValidator by lazy {
         form {
             input(binding.etPassword) {
@@ -73,14 +69,19 @@ class ConfirmResetFragment: Fragment(R.layout.fragment_reset_password), BaseOnCl
         }
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         mRequestCode = arguments?.getString("code", "") ?: ""
-        viewLifecycleOwner.lifecycle.addObserver(PasswordObserver(this, mViewModel, viewLifecycleOwner))
+        viewLifecycleOwner.lifecycle.addObserver(
+            PasswordObserver(
+                this,
+                mViewModel,
+                viewLifecycleOwner
+            )
+        )
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -96,16 +97,24 @@ class ConfirmResetFragment: Fragment(R.layout.fragment_reset_password), BaseOnCl
     }
 
     override fun onStart() {
-        appCompatActivity?.toolbarChanges(StringUtils.getString(R.string.label_change_password_toolbar), isBack = true, isHide = false)
+        appCompatActivity?.toolbarChanges(
+            StringUtils.getString(R.string.label_change_password_toolbar),
+            isBack = true,
+            isHide = false
+        )
         super.onStart()
     }
 
     override fun onClick(p0: View?) {
-        when(p0) {
+        when (p0) {
             binding.btnContinue -> when {
-                !mValidator.validate().success() -> activity?.showErrorToast("Cek kembali password anda!")
+                !mValidator.validate()
+                    .success() -> activity?.showErrorToast("Cek kembali password anda!")
                 !isPasswordValid -> activity?.showErrorToast("Password belum valid!")
-                else -> mViewModel.confirmPasswordReset(mRequestCode, binding.etPassword.text.toString())
+                else -> mViewModel.confirmPasswordReset(
+                    mRequestCode,
+                    binding.etPassword.text.toString()
+                )
             }
         }
         super.onClick(p0)
@@ -115,11 +124,17 @@ class ConfirmResetFragment: Fragment(R.layout.fragment_reset_password), BaseOnCl
         binding.btnContinue.apply {
             isEnabled = state
             backgroundTintList = ColorStateList.valueOf(
-                MaterialColors.getColor(this,
-                if(state) R.attr.colorSecondary else R.attr.colorDisabled))
+                MaterialColors.getColor(
+                    this,
+                    if (state) R.attr.colorSecondary else R.attr.colorDisabled
+                )
+            )
             setTextColor(
-                MaterialColors.getColor(this,
-                if(state) R.attr.colorOnSecondary else R.attr.colorOnDisabled))
+                MaterialColors.getColor(
+                    this,
+                    if (state) R.attr.colorOnSecondary else R.attr.colorOnDisabled
+                )
+            )
         }
     }
 
@@ -152,5 +167,11 @@ class ConfirmResetFragment: Fragment(R.layout.fragment_reset_password), BaseOnCl
     override fun onDetach() {
         loading.second.dismiss()
         super.onDetach()
+    }
+
+    companion object {
+        fun newInstance(code: String) = ConfirmResetFragment().apply {
+            arguments = bundleOf("code" to code)
+        }
     }
 }

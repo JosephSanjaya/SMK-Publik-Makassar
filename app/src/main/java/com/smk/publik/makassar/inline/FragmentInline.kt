@@ -7,16 +7,18 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 
-
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
  * @Github (https://github.com/JosephSanjaya),
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-inline val Fragment.appCompatActivity get() = if(activity is AppCompatActivity) activity as AppCompatActivity else null
+inline val Fragment.appCompatActivity get() = if (activity is AppCompatActivity)
+    activity as AppCompatActivity
+else
+    null
 
-fun Fragment.chooseImage(requestCode: Int, callback: FileSelectCallBack) : FileSelector {
+fun Fragment.chooseImage(requestCode: Int, callback: FileSelectCallBack): FileSelector {
     val optionsImage = FileSelectOptions().apply {
         fileType = FileType.IMAGE
         fileTypeMismatchTip = "Tipe file tidak didukung"

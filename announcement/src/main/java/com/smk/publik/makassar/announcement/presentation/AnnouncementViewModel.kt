@@ -4,12 +4,12 @@ import com.smk.publik.makassar.announcement.data.AnnouncementRepository
 import com.smk.publik.makassar.announcement.domain.Announcement
 import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.core.presentation.BaseViewModel
+import java.io.File
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.io.File
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -27,6 +27,7 @@ class AnnouncementViewModel(
     fun resetCreate() {
         _create.value = State.Idle()
     }
+
     fun createAnnouncement(
         bannerImage: File,
         announcement: Announcement,
@@ -43,6 +44,7 @@ class AnnouncementViewModel(
     fun resetDelete() {
         _delete.value = State.Idle()
     }
+
     fun deleteAnnouncement(
         announcement: Announcement
     ) = defaultScope.launch {
@@ -57,10 +59,10 @@ class AnnouncementViewModel(
     fun resetGet() {
         _get.value = State.Idle()
     }
+
     fun fetchAnnouncement() = defaultScope.launch {
         repository.getAnnouncement()
             .catch { _get.emit(State.Failed(getHttpException(it))) }
             .collect { _get.emit(it) }
     }
-
 }

@@ -27,7 +27,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickView, VerifyObserver.Interfaces {
+class VerifikasiFragment :
+    Fragment(R.layout.fragment_verifikasi),
+    BaseOnClickView,
+    VerifyObserver.Interfaces {
 
     private val binding by viewBinding(FragmentVerifikasiBinding::bind)
     private val mViewModel: VerifyViewModel by viewModel()
@@ -39,7 +42,13 @@ class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickVie
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewLifecycleOwner.lifecycle.addObserver(VerifyObserver(this, mViewModel, viewLifecycleOwner))
+        viewLifecycleOwner.lifecycle.addObserver(
+            VerifyObserver(
+                this,
+                mViewModel,
+                viewLifecycleOwner
+            )
+        )
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -50,12 +59,16 @@ class VerifikasiFragment: Fragment(R.layout.fragment_verifikasi), BaseOnClickVie
     }
 
     override fun onStart() {
-        appCompatActivity?.toolbarChanges(StringUtils.getString(R.string.button_label_verifikasi), isBack = true, isHide = false)
+        appCompatActivity?.toolbarChanges(
+            StringUtils.getString(R.string.button_label_verifikasi),
+            isBack = true,
+            isHide = false
+        )
         super.onStart()
     }
 
     override fun onClick(p0: View?) {
-        when(p0) {
+        when (p0) {
             binding.btnVerifikasi -> mViewModel.sendEmailVerification(mSharedViewModel.mUsers.value)
             binding.tvLogout -> {
                 Firebase.auth.signOut()

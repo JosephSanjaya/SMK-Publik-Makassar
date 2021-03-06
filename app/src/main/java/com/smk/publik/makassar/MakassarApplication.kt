@@ -1,8 +1,6 @@
 package com.smk.publik.makassar
 
 import ando.file.core.FileOperator
-import android.content.Context
-import android.widget.ImageView
 import androidx.multidex.MultiDexApplication
 import coil.load
 import com.orhanobut.logger.AndroidLogAdapter
@@ -13,14 +11,11 @@ import com.smk.publik.makassar.account.di.UserDI
 import com.smk.publik.makassar.account.di.VerifyDI
 import com.smk.publik.makassar.announcement.di.AnnouncementDI
 import com.smk.publik.makassar.core.di.CoreDI
-import com.smk.publik.makassar.core.di.DataStoreDI
 import com.smk.publik.makassar.matapelajaran.di.MataPelajaranDI
 import com.yuyh.library.imgsel.ISNav
-import com.yuyh.library.imgsel.common.ImageLoader
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
-
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -32,11 +27,10 @@ class MakassarApplication : MultiDexApplication() {
 
     override fun onCreate() {
         Logger.addLogAdapter(AndroidLogAdapter())
-        startKoin{
+        startKoin {
             androidLogger()
             androidContext(this@MakassarApplication)
             modules(
-                DataStoreDI.modules,
                 CoreDI.modules,
                 UserDI.modules,
                 AnnouncementDI.modules,
@@ -50,5 +44,4 @@ class MakassarApplication : MultiDexApplication() {
         ISNav.getInstance().init { context, path, imageView -> imageView?.load(path) }
         super.onCreate()
     }
-
 }

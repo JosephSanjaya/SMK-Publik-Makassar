@@ -48,14 +48,18 @@ class SplashActivity :
         lifecycle.addObserver(UserObserver(this, mViewModel, this))
         lifecycle.addObserver(VerifyObserver(this, mVerifyViewModel, this))
         lifecycle.addObserver(PasswordObserver(this, mPasswordViewModel, this))
-        if(intent.data != null) {
+        if (intent.data != null) {
             Firebase.dynamicLinks.getDynamicLink(intent).addOnSuccessListener {
                 if (it != null) {
                     val deepLink = it.link
                     val oobCode = deepLink?.getQueryParameter("oobCode")
                     when {
-                        deepLink.toString().contains("verify") -> mVerifyViewModel.verifyEmail(mCurrentUser, oobCode?.trim() ?: "")
-                        deepLink.toString().contains("forgotPassword") -> mPasswordViewModel.verifyCodePassword(oobCode?.trim() ?: "")
+                        deepLink.toString().contains("verify") -> {
+                            mVerifyViewModel.verifyEmail(mCurrentUser, oobCode?.trim() ?: "")
+                        }
+                        deepLink.toString().contains("forgotPassword") -> {
+                            mPasswordViewModel.verifyCodePassword(oobCode?.trim() ?: "")
+                        }
                         else -> mViewModel.reloadCurrentUser()
                     }
                 } else mViewModel.reloadCurrentUser()
@@ -84,7 +88,7 @@ class SplashActivity :
 
     override fun onGetUserDataSuccess(user: Users?) {
         if (mCurrentUser != null) {
-            next()
+            next(StringUtils.equals(user?.roles, "admin"))
         } else {
             ActivityUtils.startActivity(AccountActivity.createLoginIntent(this))
             ActivityUtils.finishAllActivities(true)
@@ -106,9 +110,12 @@ class SplashActivity :
 
     override fun onVerifyEmailSuccess() {
         showSuccessDialog {
-            makeMessageDialog(true, StringUtils.getString(R.string.label_verifikasi_dialog_message), onDismissListener = {
-                mViewModel.reloadCurrentUser()
-            }).second.show()
+            makeMessageDialog(
+                true, StringUtils.getString(R.string.label_verifikasi_dialog_message),
+                onDismissListener = {
+                    mViewModel.reloadCurrentUser()
+                }
+            ).second.show()
         }
         super.onVerifyEmailSuccess()
     }
@@ -126,14 +133,17 @@ class SplashActivity :
         super.onVerifyCodePasswordFailed(e)
     }
 
-
-    private fun next() {
-        when (mCurrentUser?.isEmailVerified) {
-            true -> when (mSharedPreferences.isLandingPageOpened) {
-                true -> RolesActivity.newInstance()
-                false -> TutorialActivity.newInstance()
+    private fun next(isAdmin: Boolean = false) {
+        if (isAdmin) {
+            AdminActivity.launchHome()
+        } else {
+            when (mCurrentUser?.isEmailVerified) {
+                true -> when (mSharedPreferences.isLandingPageOpened) {
+                    true -> RolesActivity.newInstance()
+                    false -> TutorialActivity.newInstance()
+                }
+                false -> ActivityUtils.startActivity(AccountActivity.createVerifyIntent(this))
             }
-            false -> ActivityUtils.startActivity(AccountActivity.createVerifyIntent(this))
         }
         ActivityUtils.finishAllActivities(true)
     }

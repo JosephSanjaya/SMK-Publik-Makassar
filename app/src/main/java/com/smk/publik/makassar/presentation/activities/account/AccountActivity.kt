@@ -24,11 +24,10 @@ import com.smk.publik.makassar.presentation.fragments.account.VerifikasiFragment
  */
 
 class AccountActivity :
-    AppCompatActivity(R.layout.activity_fragments)
-{
+    AppCompatActivity(R.layout.activity_fragments) {
     private val binding by viewBinding(ActivityFragmentsBinding::bind)
     private val mSharedViewModel by viewModels<AccountSharedViewModel>()
-    private val mType = MutableLiveData(Type.LOGIN)
+    private val mType: MutableLiveData<Type> = MutableLiveData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,17 +42,20 @@ class AccountActivity :
     }
 
     private fun setupObserver() {
-        mType.observe(this, {
-            when(it) {
-                Type.LOGIN -> replaceFragment(LoginFragment(), isBackstack = false)
-                Type.REGISTER -> replaceFragment(RegisterFragment(), isBackstack = false)
-                Type.VERIFY -> {
-                    mSharedViewModel.mUsers.postValue(Firebase.auth.currentUser)
-                    replaceFragment(VerifikasiFragment(), isBackstack = false)
+        mType.observe(
+            this,
+            {
+                when (it) {
+                    Type.LOGIN -> replaceFragment(LoginFragment(), isBackstack = false)
+                    Type.REGISTER -> replaceFragment(RegisterFragment(), isBackstack = false)
+                    Type.VERIFY -> {
+                        mSharedViewModel.mUsers.postValue(Firebase.auth.currentUser)
+                        replaceFragment(VerifikasiFragment(), isBackstack = false)
+                    }
+                    else -> toolbarChanges("Forgot Password", true, isHide = true)
                 }
-                else -> toolbarChanges("Forgot Password", true, isHide = true)
             }
-        })
+        )
     }
 
     private fun getIntentData(intent: Intent?) {
@@ -69,25 +71,31 @@ class AccountActivity :
     }
 
     companion object {
+
         const val TYPE_EXTRA = "type"
+        fun createLoginIntent(context: Context): Intent =
+            Intent(context, AccountActivity::class.java)
+                .apply {
+                    putExtra(TYPE_EXTRA, Type.LOGIN)
+                }
+
+        fun createRegisterIntent(context: Context): Intent =
+            Intent(context, AccountActivity::class.java).apply {
+                putExtra(TYPE_EXTRA, Type.REGISTER)
+            }
+
+        fun createForgotIntent(context: Context): Intent =
+            Intent(context, AccountActivity::class.java).apply {
+                putExtra(TYPE_EXTRA, Type.FORGOT)
+            }
+
+        fun createVerifyIntent(context: Context): Intent =
+            Intent(context, AccountActivity::class.java).apply {
+                putExtra(TYPE_EXTRA, Type.VERIFY)
+            }
+
         enum class Type {
             LOGIN, REGISTER, FORGOT, VERIFY
         }
-
-        fun createLoginIntent(context: Context) : Intent = Intent(context, AccountActivity::class.java).apply {
-            putExtra(TYPE_EXTRA, Type.LOGIN)
-        }
-
-        fun createRegisterIntent(context: Context) : Intent = Intent(context, AccountActivity::class.java).apply {
-            putExtra(TYPE_EXTRA, Type.REGISTER)
-        }
-
-        fun createForgotIntent(context: Context) : Intent = Intent(context, AccountActivity::class.java).apply {
-            putExtra(TYPE_EXTRA, Type.FORGOT)
-        }
-        fun createVerifyIntent(context: Context) : Intent = Intent(context, AccountActivity::class.java).apply {
-            putExtra(TYPE_EXTRA, Type.VERIFY)
-        }
     }
-
 }

@@ -2,7 +2,6 @@ package com.smk.publik.makassar.core.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthActionCodeException
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.orhanobut.logger.Logger
@@ -33,12 +32,14 @@ abstract class BaseViewModel : ViewModel() {
     protected val defaultScope = CoroutineScope(viewModelScope.coroutineContext + exceptionHandler)
 
     fun getHttpException(e: Throwable): Throwable {
-        val exception = when(e) {
+        val exception = when (e) {
             is FirebaseAuthActionCodeException -> {
                 Throwable(cause = e, message = e.localizedMessage)
             }
             is HttpException -> {
-                val errorResponse: ErrorBody? = Json.decodeFromString(e.response()?.errorBody()?.charStream().toString())
+                val errorResponse: ErrorBody? = Json.decodeFromString(
+                    e.response()?.errorBody()?.charStream().toString()
+                )
                 Throwable(cause = e, message = errorResponse?.message.toString())
             }
             else -> e

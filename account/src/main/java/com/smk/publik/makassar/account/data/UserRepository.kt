@@ -1,4 +1,3 @@
-
 package com.smk.publik.makassar.account.data
 
 import android.content.SharedPreferences
@@ -39,11 +38,13 @@ class UserRepository(
                 mSharedPreferences.users = result
                 offerSafeClose(State.Success(result))
             }
+
             override fun onCancelled(error: DatabaseError) {
                 closeException(error.toException())
             }
         }
-        Firebase.database.reference.child("users").child(userUID).addListenerForSingleValueEvent(listener)
+        Firebase.database.reference.child("users").child(userUID)
+            .addListenerForSingleValueEvent(listener)
         awaitClose { Firebase.database.reference.removeEventListener(listener) }
     }
 
@@ -84,6 +85,25 @@ class UserRepository(
             }
         }
         awaitClose()
+    }
+
+    @ExperimentalCoroutinesApi
+    fun fetchUser() = callbackFlow<State<List<Users>>> {
+        offerSafe(State.Loading())
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val result = snapshot.children.mapNotNull {
+                    it.getValue(Users::class.java)
+                }
+                offerSafeClose(State.Success(result))
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                closeException(error.toException())
+            }
+        }
+        Firebase.database.reference.child("users").addListenerForSingleValueEvent(listener)
+        awaitClose { Firebase.database.reference.removeEventListener(listener) }
     }
 
     suspend fun doLogout() = flow {

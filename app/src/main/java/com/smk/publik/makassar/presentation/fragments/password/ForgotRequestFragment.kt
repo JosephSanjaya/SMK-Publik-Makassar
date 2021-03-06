@@ -24,7 +24,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class ForgotRequestFragment: Fragment(R.layout.fragment_forgot_password_request), BaseOnClickView, PasswordObserver.Interfaces {
+class ForgotRequestFragment :
+    Fragment(R.layout.fragment_forgot_password_request),
+    BaseOnClickView,
+    PasswordObserver.Interfaces {
 
     private val binding by viewBinding(FragmentForgotPasswordRequestBinding::bind)
     private val mViewModel: PasswordViewModel by viewModel()
@@ -35,7 +38,13 @@ class ForgotRequestFragment: Fragment(R.layout.fragment_forgot_password_request)
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        viewLifecycleOwner.lifecycle.addObserver(PasswordObserver(this, mViewModel, viewLifecycleOwner))
+        viewLifecycleOwner.lifecycle.addObserver(
+            PasswordObserver(
+                this,
+                mViewModel,
+                viewLifecycleOwner
+            )
+        )
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -50,20 +59,32 @@ class ForgotRequestFragment: Fragment(R.layout.fragment_forgot_password_request)
     private fun changeButtonState(state: Boolean) {
         binding.btnSend.apply {
             isEnabled = state
-            backgroundTintList = ColorStateList.valueOf(MaterialColors.getColor(this,
-                if(state) R.attr.colorSecondary else R.attr.colorDisabled))
-            setTextColor(MaterialColors.getColor(this,
-                if(state) R.attr.colorOnSecondary else R.attr.colorOnDisabled))
+            backgroundTintList = ColorStateList.valueOf(
+                MaterialColors.getColor(
+                    this,
+                    if (state) R.attr.colorSecondary else R.attr.colorDisabled
+                )
+            )
+            setTextColor(
+                MaterialColors.getColor(
+                    this,
+                    if (state) R.attr.colorOnSecondary else R.attr.colorOnDisabled
+                )
+            )
         }
     }
 
     override fun onStart() {
-        appCompatActivity?.toolbarChanges(StringUtils.getString(R.string.label_forgot_password_toolbar), isBack = true, isHide = false)
+        appCompatActivity?.toolbarChanges(
+            StringUtils.getString(R.string.label_forgot_password_toolbar),
+            isBack = true,
+            isHide = false
+        )
         super.onStart()
     }
 
     override fun onClick(p0: View?) {
-        when(p0) {
+        when (p0) {
             binding.btnSend -> mViewModel.sendForgotPassword(binding.etEmail.text.toString())
         }
         super.onClick(p0)
@@ -77,9 +98,13 @@ class ForgotRequestFragment: Fragment(R.layout.fragment_forgot_password_request)
     override fun onSendForgotPasswordSuccess() {
         loading.second.dismiss()
         context?.showSuccessDialog {
-            context?.makeMessageDialog(true, StringUtils.getString(R.string.label_forgot_password_dialog_message), onDismissListener = {
-                activity?.finish()
-            })?.second?.show()
+            context?.makeMessageDialog(
+                true,
+                StringUtils.getString(R.string.label_forgot_password_dialog_message),
+                onDismissListener = {
+                    activity?.finish()
+                }
+            )?.second?.show()
         }
         super.onSendForgotPasswordSuccess()
     }

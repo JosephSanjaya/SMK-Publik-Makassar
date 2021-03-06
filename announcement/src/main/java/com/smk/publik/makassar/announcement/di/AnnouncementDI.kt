@@ -1,9 +1,7 @@
 package com.smk.publik.makassar.announcement.di
 
-import android.content.Context
 import com.smk.publik.makassar.announcement.data.AnnouncementRepository
 import com.smk.publik.makassar.announcement.presentation.AnnouncementViewModel
-import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -23,5 +21,4 @@ object AnnouncementDI {
             AnnouncementViewModel(get())
         }
     }
-
 }

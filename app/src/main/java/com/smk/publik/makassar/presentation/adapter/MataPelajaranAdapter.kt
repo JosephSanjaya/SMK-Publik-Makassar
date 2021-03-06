@@ -1,6 +1,7 @@
 package com.smk.publik.makassar.presentation.adapter
 
 import android.view.LayoutInflater
+import androidx.core.view.isGone
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.smk.publik.makassar.R
@@ -14,8 +15,15 @@ import com.smk.publik.makassar.matapelajaran.domain.MataPelajaran
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class MataPelajaranAdapter(layoutInflater: LayoutInflater, data: MutableList<MataPelajaran.Detail>) :
-    BaseQuickAdapter<MataPelajaran.Detail, BaseDataBindingHolder<ListMataPelajaranBinding>>(R.layout.list_mata_pelajaran, data) {
+class MataPelajaranAdapter(
+    layoutInflater: LayoutInflater,
+    data: MutableList<MataPelajaran.Detail>,
+    private val isAdmin: Boolean = false
+) :
+    BaseQuickAdapter<MataPelajaran.Detail, BaseDataBindingHolder<ListMataPelajaranBinding>>(
+        R.layout.list_mata_pelajaran,
+        data
+    ) {
 
     var fullData: MutableList<MataPelajaran.Detail> = ArrayList()
 
@@ -23,6 +31,7 @@ class MataPelajaranAdapter(layoutInflater: LayoutInflater, data: MutableList<Mat
         setEmptyView(ViewEmptyViewBinding.inflate(layoutInflater).root)
         fullData = data
         animationEnable = true
+        addChildClickViewIds(R.id.cvRoot, R.id.btnDelete)
     }
 
     fun updateData(data: List<MataPelajaran.Detail>) {
@@ -31,9 +40,11 @@ class MataPelajaranAdapter(layoutInflater: LayoutInflater, data: MutableList<Mat
     }
 
     fun reset() = setNewInstance(fullData)
-    fun filter(search: String) = setNewInstance(fullData.filter {
-        it.nama?.contains(search, ignoreCase = true) == true
-    }.toMutableList())
+    fun filter(search: String) = setNewInstance(
+        fullData.filter {
+            it.nama?.contains(search, ignoreCase = true) == true
+        }.toMutableList()
+    )
 
     override fun convert(
         holder: BaseDataBindingHolder<ListMataPelajaranBinding>,
@@ -41,6 +52,7 @@ class MataPelajaranAdapter(layoutInflater: LayoutInflater, data: MutableList<Mat
     ) {
         holder.dataBinding?.apply {
             tvContent.text = item.nama
+            btnDelete.isGone = !isAdmin
         }
     }
 }

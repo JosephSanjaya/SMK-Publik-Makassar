@@ -16,12 +16,7 @@ import com.smk.publik.makassar.inline.toolbarChanges
 
 class UmumActivity : AppCompatActivity(R.layout.activity_under_development) {
 
-    companion object {
-        fun newInstance() = ActivityUtils.startActivity(UmumActivity::class.java)
-    }
-
     private val binding by viewBinding(ActivityUnderDevelopmentBinding::bind)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
@@ -31,5 +26,9 @@ class UmumActivity : AppCompatActivity(R.layout.activity_under_development) {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return super.onSupportNavigateUp()
+    }
+
+    companion object {
+        fun newInstance() = ActivityUtils.startActivity(UmumActivity::class.java)
     }
 }

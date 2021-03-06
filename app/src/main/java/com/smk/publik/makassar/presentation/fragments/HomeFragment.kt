@@ -33,10 +33,10 @@ import com.smk.publik.makassar.presentation.activities.account.AccountActivity
 import com.smk.publik.makassar.presentation.activities.account.PasswordActivity
 import com.smk.publik.makassar.presentation.adapter.AnnouncementAdapter
 import io.noties.markwon.Markwon
-import org.koin.android.ext.android.inject
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 import kotlin.collections.ArrayList
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -52,10 +52,6 @@ class HomeFragment :
     AnnouncementObserver.Interfaces,
     SwipeRefreshLayout.OnRefreshListener {
 
-    init {
-        setHasOptionsMenu(true)
-    }
-
     private val mSharedPreferences by inject<SharedPreferences>()
     private val binding by viewBinding(FragmentHomeBinding::bind)
     private val mViewModel: UserViewModel by viewModel()
@@ -65,7 +61,6 @@ class HomeFragment :
     private val markwon by lazy {
         Markwon.create(requireContext())
     }
-
     private val isAnnouncementLoading = ObservableBoolean()
     private val mAnnouncementList: MutableList<Announcement> = ArrayList()
     private val mAnnouncementAdapter by lazy {
@@ -73,7 +68,6 @@ class HomeFragment :
             setOnItemChildClickListener(this@HomeFragment)
         }
     }
-
     private val logoutDialog by lazy {
         requireContext().makeOptionDialog(
             true,
@@ -84,14 +78,16 @@ class HomeFragment :
             }
         )
     }
-
     private val editProfileDialog by lazy {
-        requireContext().makeCustomViewDialog(DialogEditProfileBinding::inflate, true, isTransparent = false).apply { 
+        requireContext().makeCustomViewDialog(
+            DialogEditProfileBinding::inflate,
+            true,
+            isTransparent = false
+        ).apply {
             first.btnCancel.setOnClickListener(this@HomeFragment)
             first.btnAction.setOnClickListener(this@HomeFragment)
         }
     }
-
     private val mValidator by lazy {
         form {
             input(editProfileDialog.first.etName) {
@@ -117,6 +113,9 @@ class HomeFragment :
         }
     }
 
+    init {
+        setHasOptionsMenu(true)
+    }
 
     override fun onStart() {
         appCompatActivity?.toolbarChanges("", false, isHide = false)
@@ -148,14 +147,17 @@ class HomeFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mUser.observe(viewLifecycleOwner, {
-            binding.tvName.apply {
-                text = it?.nama
-                requestFocus()
+        mUser.observe(
+            viewLifecycleOwner,
+            {
+                binding.tvName.apply {
+                    text = it?.nama
+                    requestFocus()
+                }
+                setupRoles(it)
+                setupChip(it)
             }
-            setupRoles(it)
-            setupChip(it)
-        })
+        )
         binding.isAnnouncementLoading = isAnnouncementLoading
         binding.rvAnnouncement.adapter = mAnnouncementAdapter
         binding.listener = this
@@ -168,29 +170,35 @@ class HomeFragment :
     }
 
     override fun onClick(p0: View?) {
-        when(p0) {
-            binding.btnEdit -> p0.showMenu(R.menu.edit_profile_menu, onMenuItemClickListener = PopupMenu.OnMenuItemClickListener {
-                when(it.itemId) {
-                    R.id.changeProfile -> {
-                        editProfileDialog.first.etName.setText(mUser.value?.nama)
-                        editProfileDialog.first.etPhone.setText(mUser.value?.telepon)
-                        editProfileDialog.second.show()
+        when (p0) {
+            binding.btnEdit -> p0.showMenu(
+                R.menu.edit_profile_menu,
+                onMenuItemClickListener = PopupMenu.OnMenuItemClickListener {
+                    when (it.itemId) {
+                        R.id.changeProfile -> {
+                            editProfileDialog.first.etName.setText(mUser.value?.nama)
+                            editProfileDialog.first.etPhone.setText(mUser.value?.telepon)
+                            editProfileDialog.second.show()
+                        }
+                        R.id.changePassword -> {
+                            PasswordActivity.launchChangePassword()
+                        }
                     }
-                    R.id.changePassword ->  {
-                        PasswordActivity.launchChangePassword()
-                    }
+                    true
                 }
-                true
-            })
+            )
             binding.tvPengumuman -> AddAnnouncementActivity.newInstance()
             editProfileDialog.first.btnAction -> {
-                if(mValidator.validate().success()) {
+                if (mValidator.validate().success()) {
                     editProfileDialog.second.dismiss()
-                    mViewModel.editUserData(editProfileDialog.first.etName.text.toString(), editProfileDialog.first.etPhone.text.toString())
+                    mViewModel.editUserData(
+                        editProfileDialog.first.etName.text.toString(),
+                        editProfileDialog.first.etPhone.text.toString()
+                    )
                 }
             }
             editProfileDialog.first.btnCancel -> editProfileDialog.second.dismiss()
-            else -> when(p0) {
+            else -> when (p0) {
                 is Chip -> activity?.showInfoToast(p0.tag.toString())
             }
         }
@@ -198,7 +206,7 @@ class HomeFragment :
     }
 
     private fun setupRoles(user: Users?) {
-        when(user?.roles) {
+        when (user?.roles) {
             "guru" -> {
                 val tempRoles = "${StringUtils.upperFirstLetter(user.roles)} (***${user.nuptk}***)"
                 markwon.setMarkdown(binding.tvRoles, tempRoles)
@@ -212,18 +220,25 @@ class HomeFragment :
 
     private fun setupChip(user: Users?) {
         binding.cgMateri.removeAllViews()
-        when(user?.roles) {
+        when (user?.roles) {
             "guru" -> {
                 user.mataPelajaran?.let {
                     for ((key, value) in it) {
                         binding.cgMateri.addChip(value.nama, key, onClickListener = this)
                     }
                 }
-                binding.cgMateri.addChip("Tambah", "tambah", R.drawable.ic_baseline_add_24, onClickListener = this)
+                binding.cgMateri.addChip(
+                    "Tambah",
+                    "tambah",
+                    R.drawable.ic_baseline_add_24,
+                    onClickListener = this
+                )
             }
             "siswa" -> {
-                binding.cgMateri.addChip("Kelas ${user.kelas?.toUpperCase(Locale.getDefault())}",
-                    user.kelas, onClickListener = this)
+                binding.cgMateri.addChip(
+                    "Kelas ${user.kelas?.toUpperCase(Locale.getDefault())}",
+                    user.kelas, onClickListener = this
+                )
             }
         }
     }
@@ -308,11 +323,11 @@ class HomeFragment :
     }
 
     override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
-        when(adapter) {
+        when (adapter) {
             is AnnouncementAdapter -> {
                 val announcement = adapter.getItem(position)
-                when(view.id) {
-                    R.id.llRoot -> activity?.showInfoToast(announcement.id.toString())
+                when (view.id) {
+                    R.id.cvRoot -> activity?.showInfoToast(announcement.id.toString())
                     R.id.btnDelete -> mAnnouncementViewModel.deleteAnnouncement(announcement)
                 }
             }

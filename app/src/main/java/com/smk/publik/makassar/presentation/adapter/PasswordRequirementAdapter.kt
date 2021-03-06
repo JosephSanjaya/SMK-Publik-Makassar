@@ -25,9 +25,20 @@ class PasswordRequirementAdapter(data: MutableList<Password>?) :
     override fun convert(holder: BaseViewHolder, item: Password) {
         holder.getView<ImageView>(R.id.ivLogo).let {
             it.load(item.drawable)
-            it.imageTintList = ColorStateList.valueOf(MaterialColors.getColor(it, if (item.status) R.attr.colorApproved else R.attr.colorError))
+            it.imageTintList = ColorStateList.valueOf(
+                MaterialColors.getColor(
+                    it,
+                    if (item.status) R.attr.colorApproved else R.attr.colorError
+                )
+            )
         }
         holder.setText(R.id.tvContent, item.label)
-            .setTextColor(R.id.tvContent, MaterialColors.getColor(holder.getView(R.id.tvContent), if (item.status) R.attr.colorApproved else R.attr.colorError))
+            .setTextColor(
+                R.id.tvContent,
+                MaterialColors.getColor(
+                    holder.getView(R.id.tvContent),
+                    if (item.status) R.attr.colorApproved else R.attr.colorError
+                )
+            )
     }
 }

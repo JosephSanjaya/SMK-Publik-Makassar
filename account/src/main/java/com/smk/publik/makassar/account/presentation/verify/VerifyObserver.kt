@@ -1,7 +1,6 @@
 package com.smk.publik.makassar.account.presentation.verify
 
 import androidx.lifecycle.*
-import com.google.firebase.auth.FirebaseUser
 import com.smk.publik.makassar.core.domain.State
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -13,14 +12,16 @@ import kotlinx.coroutines.launch
  */
 
 class VerifyObserver(
-    private val view: Interfaces, private val viewModel: VerifyViewModel, private val owner: LifecycleOwner
+    private val view: Interfaces,
+    private val viewModel: VerifyViewModel,
+    private val owner: LifecycleOwner
 ) : LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
         owner.lifecycleScope.launch {
             viewModel.emailVerify.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onSendingEmailVerificationIdle()
                     is State.Loading -> view.onSendingEmailVerificationLoading()
                     is State.Success -> {
@@ -36,7 +37,7 @@ class VerifyObserver(
         }
         owner.lifecycleScope.launch {
             viewModel.verifyEmail.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onVerifyEmailIdle()
                     is State.Loading -> view.onVerifyEmailLoading()
                     is State.Success -> {

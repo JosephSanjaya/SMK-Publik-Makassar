@@ -13,14 +13,16 @@ import kotlinx.coroutines.launch
  */
 
 class AnnouncementObserver(
-    private val view: Interfaces, private val viewModel: AnnouncementViewModel, private val owner: LifecycleOwner
+    private val view: Interfaces,
+    private val viewModel: AnnouncementViewModel,
+    private val owner: LifecycleOwner
 ) : LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
         owner.lifecycleScope.launch {
             viewModel.create.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onCreateAnnouncementIdle()
                     is State.Loading -> view.onCreateAnnouncementLoading()
                     is State.Success -> {
@@ -36,7 +38,7 @@ class AnnouncementObserver(
         }
         owner.lifecycleScope.launch {
             viewModel.get.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onAnnouncementFetchIdle()
                     is State.Loading -> view.onAnnouncementFetching()
                     is State.Success -> {
@@ -52,7 +54,7 @@ class AnnouncementObserver(
         }
         owner.lifecycleScope.launch {
             viewModel.delete.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onAnnouncementDeleteIdle()
                     is State.Loading -> view.onAnnouncementDeleting()
                     is State.Success -> {

@@ -5,12 +5,12 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
 import androidx.viewbinding.ViewBinding
 import com.blankj.utilcode.util.KeyboardUtils
-import com.blankj.utilcode.util.ResourceUtils
 import com.blankj.utilcode.util.StringUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.smk.publik.makassar.R
@@ -40,7 +40,8 @@ inline fun <T : ViewBinding> Context.makeCustomViewDialog(
     isCancelable: Boolean = true,
     isTransparent: Boolean = false,
     onDismissListener: DialogInterface.OnDismissListener? = null,
-) : Pair<T, AlertDialog> {
+    isBottomDialog: Boolean = false,
+): Pair<T, AlertDialog> {
     val layout = bindingInflater.invoke(LayoutInflater.from(this@makeCustomViewDialog))
     val dialog = MaterialAlertDialogBuilder(this, R.style.MaterialAlertDialog_Rounded).apply {
         setView(layout.root)
@@ -53,15 +54,31 @@ inline fun <T : ViewBinding> Context.makeCustomViewDialog(
         lp?.dimAmount = 0.7f
         window?.attributes = lp
         window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+        if (isBottomDialog) {
+            show()
+            val windows = window
+            windows?.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
+            if (isTransparent) windows?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            val attribute = windows?.attributes?.apply {
+                windowAnimations = R.style.SlidingDialogAnimation
+                gravity = Gravity.BOTTOM
+                horizontalMargin = 0f
+                verticalMargin = 0f
+            }
+            window?.attributes = attribute
+            dismiss()
+        }
     }
-
     return Pair(layout, dialog)
 }
 
 fun Context.makeLoadingDialog(
     isCancelable: Boolean = true,
     onDismissListener: DialogInterface.OnDismissListener? = null
-) : Pair<DialogLoadingBinding, AlertDialog> {
+): Pair<DialogLoadingBinding, AlertDialog> {
     return makeCustomViewDialog(
         DialogLoadingBinding::inflate,
         isCancelable,
@@ -86,13 +103,16 @@ fun Context.showSuccessDialog(dismissListener: DialogInterface.OnDismissListener
         window?.setWindowAnimations(R.style.DialogAnimationFade)
     }.show()
     val t = Timer()
-    t.schedule(object : TimerTask() {
-        override fun run() {
-            if (dialog.isShowing)
-                dialog.dismiss() // when the task active then close the dialog
-            t.cancel() // also just top the timer thread, otherwise, you may receive a crash report
-        }
-    }, 1200)
+    t.schedule(
+        object : TimerTask() {
+            override fun run() {
+                if (dialog.isShowing)
+                    dialog.dismiss()
+                t.cancel()
+            }
+        },
+        1200
+    )
 }
 
 fun Context.makeMessageDialog(
@@ -101,7 +121,7 @@ fun Context.makeMessageDialog(
     buttonText: String? = null,
     buttonAction: (() -> Unit)? = null,
     onDismissListener: DialogInterface.OnDismissListener? = null,
-) : Pair<DialogMessageBinding, AlertDialog> {
+): Pair<DialogMessageBinding, AlertDialog> {
     return makeCustomViewDialog(
         DialogMessageBinding::inflate,
         isCancelable,
@@ -127,7 +147,7 @@ fun Context.makeOptionDialog(
     negativeButtonAction: (() -> Unit)? = null,
     positiveButtonAction: (() -> Unit)? = null,
     onDismissListener: DialogInterface.OnDismissListener? = null,
-) : Pair<DialogOptionBinding, AlertDialog> {
+): Pair<DialogOptionBinding, AlertDialog> {
     return makeCustomViewDialog(
         DialogOptionBinding::inflate,
         isCancelable,

@@ -19,14 +19,13 @@ import com.smk.publik.makassar.interfaces.BaseOnClickView
 import com.smk.publik.makassar.presentation.fragments.TutorialFragments
 import org.koin.android.ext.android.inject
 
-
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
  * @Github (https://github.com/JosephSanjaya),
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class TutorialActivity: AppCompatActivity(R.layout.activity_tutorial), BaseOnClickView {
+class TutorialActivity : AppCompatActivity(R.layout.activity_tutorial), BaseOnClickView {
 
     private val binding by viewBinding(ActivityTutorialBinding::bind)
     private val mSharedPreferences by inject<SharedPreferences>()
@@ -48,7 +47,7 @@ class TutorialActivity: AppCompatActivity(R.layout.activity_tutorial), BaseOnCli
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.menuLewati -> next()
         }
         return super.onOptionsItemSelected(item)
@@ -87,8 +86,8 @@ class TutorialActivity: AppCompatActivity(R.layout.activity_tutorial), BaseOnCli
     }
 
     override fun onClick(p0: View?) {
-        when(p0) {
-            binding.btnContinue -> if(binding.vpTutorial.currentItem < 2) {
+        when (p0) {
+            binding.btnContinue -> if (binding.vpTutorial.currentItem < 2) {
                 binding.vpTutorial.currentItem += 1
             } else next()
         }

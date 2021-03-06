@@ -20,26 +20,29 @@ class VerifyViewModel(
     private val repository: VerifyRepository
 ) : BaseViewModel() {
 
-    private val _emailVerify= MutableStateFlow<State<Boolean>>(State.Idle())
+    private val _emailVerify = MutableStateFlow<State<Boolean>>(State.Idle())
     val emailVerify: StateFlow<State<Boolean>> get() = _emailVerify
 
     fun resetEmailVerifyState() {
         _emailVerify.value = State.Idle()
     }
-    fun sendEmailVerification(user: FirebaseUser?)  = defaultScope.launch {
-        repository.sendEmailVerification(user).catch { _emailVerify.emit(State.Failed(getHttpException(it))) }
+
+    fun sendEmailVerification(user: FirebaseUser?) = defaultScope.launch {
+        repository.sendEmailVerification(user)
+            .catch { _emailVerify.emit(State.Failed(getHttpException(it))) }
             .collect { _emailVerify.emit(it) }
     }
 
-    private val _verifyEmail= MutableStateFlow<State<Boolean>>(State.Idle())
+    private val _verifyEmail = MutableStateFlow<State<Boolean>>(State.Idle())
     val verifyEmail: StateFlow<State<Boolean>> get() = _verifyEmail
 
     fun resetVerifyEmailState() {
         _emailVerify.value = State.Idle()
     }
+
     fun verifyEmail(user: FirebaseUser?, oobCode: String) = defaultScope.launch {
-        repository.verifyEmail(user, oobCode).catch { _verifyEmail.emit(State.Failed(getHttpException(it))) }
+        repository.verifyEmail(user, oobCode)
+            .catch { _verifyEmail.emit(State.Failed(getHttpException(it))) }
             .collect { _verifyEmail.emit(it) }
     }
-
 }

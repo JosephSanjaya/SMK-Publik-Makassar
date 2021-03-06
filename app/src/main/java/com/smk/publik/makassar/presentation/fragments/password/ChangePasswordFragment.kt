@@ -27,7 +27,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class ChangePasswordFragment: Fragment(R.layout.fragment_change_password), BaseOnClickView, PasswordObserver.Interfaces {
+class ChangePasswordFragment :
+    Fragment(R.layout.fragment_change_password),
+    BaseOnClickView,
+    PasswordObserver.Interfaces {
 
     private var mRequestCode: String = ""
     private val binding by viewBinding(FragmentChangePasswordBinding::bind)
@@ -72,14 +75,19 @@ class ChangePasswordFragment: Fragment(R.layout.fragment_change_password), BaseO
         }
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         mRequestCode = arguments?.getString("code", "") ?: ""
-        viewLifecycleOwner.lifecycle.addObserver(PasswordObserver(this, mViewModel, viewLifecycleOwner))
+        viewLifecycleOwner.lifecycle.addObserver(
+            PasswordObserver(
+                this,
+                mViewModel,
+                viewLifecycleOwner
+            )
+        )
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -95,16 +103,24 @@ class ChangePasswordFragment: Fragment(R.layout.fragment_change_password), BaseO
     }
 
     override fun onStart() {
-        appCompatActivity?.toolbarChanges(StringUtils.getString(R.string.label_change_password_toolbar), isBack = true, isHide = false)
+        appCompatActivity?.toolbarChanges(
+            StringUtils.getString(R.string.label_change_password_toolbar),
+            isBack = true,
+            isHide = false
+        )
         super.onStart()
     }
 
     override fun onClick(p0: View?) {
-        when(p0) {
+        when (p0) {
             binding.btnContinue -> when {
-                !mValidator.validate().success() -> activity?.showErrorToast("Cek kembali password anda!")
+                !mValidator.validate()
+                    .success() -> activity?.showErrorToast("Cek kembali password anda!")
                 !isPasswordValid -> activity?.showErrorToast("Password belum valid!")
-                else -> mViewModel.changePassword(binding.etPasswordOld.text.toString(), binding.etPasswordNew.text.toString())
+                else -> mViewModel.changePassword(
+                    binding.etPasswordOld.text.toString(),
+                    binding.etPasswordNew.text.toString()
+                )
             }
         }
         super.onClick(p0)
@@ -114,11 +130,17 @@ class ChangePasswordFragment: Fragment(R.layout.fragment_change_password), BaseO
         binding.btnContinue.apply {
             isEnabled = state
             backgroundTintList = ColorStateList.valueOf(
-                MaterialColors.getColor(this,
-                if(state) R.attr.colorSecondary else R.attr.colorDisabled))
+                MaterialColors.getColor(
+                    this,
+                    if (state) R.attr.colorSecondary else R.attr.colorDisabled
+                )
+            )
             setTextColor(
-                MaterialColors.getColor(this,
-                if(state) R.attr.colorOnSecondary else R.attr.colorOnDisabled))
+                MaterialColors.getColor(
+                    this,
+                    if (state) R.attr.colorOnSecondary else R.attr.colorOnDisabled
+                )
+            )
         }
     }
 

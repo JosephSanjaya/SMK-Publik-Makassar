@@ -14,14 +14,16 @@ import kotlinx.coroutines.launch
  */
 
 class MataPelajaranObserver(
-    private val view: Interfaces, private val viewModel: MataPelajaranViewModel, private val owner: LifecycleOwner
+    private val view: Interfaces,
+    private val viewModel: MataPelajaranViewModel,
+    private val owner: LifecycleOwner
 ) : LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
         owner.lifecycleScope.launch {
             viewModel.mBuatMatpel.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onBuatMataPelajaranIdle()
                     is State.Loading -> view.onBuatMataPelajaranLoading()
                     is State.Success -> {
@@ -37,7 +39,7 @@ class MataPelajaranObserver(
         }
         owner.lifecycleScope.launch {
             viewModel.mFetchMatpel.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onFetchMataPelajaranIdle()
                     is State.Loading -> view.onFetchMataPelajaranLoading()
                     is State.Success -> {
@@ -53,7 +55,7 @@ class MataPelajaranObserver(
         }
         owner.lifecycleScope.launch {
             viewModel.mUpload.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onUploadMateriIdle()
                     is State.Loading -> view.onUploadMateriLoading()
                     is State.Success -> {

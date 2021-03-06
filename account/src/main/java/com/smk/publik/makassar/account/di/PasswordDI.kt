@@ -5,7 +5,6 @@ import com.smk.publik.makassar.account.presentation.password.PasswordViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
-
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
  * @Github (https://github.com/JosephSanjaya),

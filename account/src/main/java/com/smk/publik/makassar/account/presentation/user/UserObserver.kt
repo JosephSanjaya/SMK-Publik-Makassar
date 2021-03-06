@@ -2,8 +2,8 @@ package com.smk.publik.makassar.account.presentation.user
 
 import androidx.lifecycle.*
 import com.google.firebase.auth.FirebaseUser
-import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.account.domain.Users
+import com.smk.publik.makassar.core.domain.State
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -14,14 +14,16 @@ import kotlinx.coroutines.launch
  */
 
 class UserObserver(
-    private val view: Interfaces, private val viewModel: UserViewModel, private val owner: LifecycleOwner
+    private val view: Interfaces,
+    private val viewModel: UserViewModel,
+    private val owner: LifecycleOwner
 ) : LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
         owner.lifecycleScope.launch {
             viewModel.reload.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onReloadIdle()
                     is State.Loading -> view.onReloadLoading()
                     is State.Success -> {
@@ -37,7 +39,7 @@ class UserObserver(
         }
         owner.lifecycleScope.launch {
             viewModel.login.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onLoginIdle()
                     is State.Loading -> view.onLoginLoading()
                     is State.Success -> {
@@ -53,7 +55,7 @@ class UserObserver(
         }
         owner.lifecycleScope.launch {
             viewModel.mUser.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onGetUserDataIdle()
                     is State.Loading -> view.onGetUserDataLoading()
                     is State.Success -> {
@@ -69,7 +71,7 @@ class UserObserver(
         }
         owner.lifecycleScope.launch {
             viewModel.logout.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onLogoutIdle()
                     is State.Loading -> view.onLogoutLoading()
                     is State.Success -> {
@@ -85,7 +87,7 @@ class UserObserver(
         }
         owner.lifecycleScope.launch {
             viewModel.edit.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onEditUserDataIdle()
                     is State.Loading -> view.onEditUserDataLoading()
                     is State.Success -> {
@@ -95,6 +97,22 @@ class UserObserver(
                     is State.Failed -> {
                         view.onEditUserDataFailed(it.throwable)
                         viewModel.resetEdit()
+                    }
+                }
+            }
+        }
+        owner.lifecycleScope.launch {
+            viewModel.mFetchUsers.collect {
+                when (it) {
+                    is State.Idle -> view.onFetchUsersIdle()
+                    is State.Loading -> view.onFetchUsersLoading()
+                    is State.Success -> {
+                        view.onFetchUsersSuccess(it.data)
+                        viewModel.resetFetchUsersState()
+                    }
+                    is State.Failed -> {
+                        view.onFetchUsersFailed(it.throwable)
+                        viewModel.resetFetchUsersState()
                     }
                 }
             }
@@ -126,5 +144,10 @@ class UserObserver(
         fun onLogoutLoading() {}
         fun onLogoutFailed(e: Throwable) {}
         fun onLogoutSuccess() {}
+
+        fun onFetchUsersIdle() {}
+        fun onFetchUsersLoading() {}
+        fun onFetchUsersFailed(e: Throwable) {}
+        fun onFetchUsersSuccess(data: List<Users>) {}
     }
 }

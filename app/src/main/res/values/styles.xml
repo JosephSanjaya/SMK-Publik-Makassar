@@ -50,7 +50,10 @@
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>
-
+    <style name="SlidingDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_bottom</item>
+    </style>
 
     <style name="RolesSelectorStyleLeft" parent="RolesSelectorStyleBase">
         <item name="shapeAppearanceOverlay">@style/RolesSelectorShapeLeft</item>

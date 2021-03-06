@@ -2,8 +2,6 @@ package com.smk.publik.makassar.account.presentation.password
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.orhanobut.logger.Logger
@@ -11,6 +9,8 @@ import com.smk.publik.makassar.account.data.PasswordRepository
 import com.smk.publik.makassar.account.domain.Password
 import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.core.presentation.BaseViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -25,52 +25,59 @@ class PasswordViewModel(
     private val repository: PasswordRepository
 ) : BaseViewModel() {
 
-    private val _sendForgot= MutableStateFlow<State<Boolean>>(State.Idle())
+    private val _sendForgot = MutableStateFlow<State<Boolean>>(State.Idle())
     val sendForgot: StateFlow<State<Boolean>> get() = _sendForgot
 
-    fun resetSendForgotState(){
+    fun resetSendForgotState() {
         _sendForgot.value = State.Idle()
     }
+
     fun sendForgotPassword(email: String) = defaultScope.launch {
-        repository.sendPasswordResetEmail(email).catch { _sendForgot.emit(State.Failed(getHttpException(it))) }
+        repository.sendPasswordResetEmail(email)
+            .catch { _sendForgot.emit(State.Failed(getHttpException(it))) }
             .collect { _sendForgot.emit(it) }
     }
 
-    private val _verifyCodePassword= MutableStateFlow<State<String>>(State.Idle())
+    private val _verifyCodePassword = MutableStateFlow<State<String>>(State.Idle())
     val verifyCodePassword: StateFlow<State<String>> get() = _verifyCodePassword
 
     fun resetVerifyCodePasswordState() {
         _verifyCodePassword.value = State.Idle()
     }
+
     fun verifyCodePassword(code: String) = defaultScope.launch {
-        repository.verifyPasswordResetCode(code).catch { _verifyCodePassword.emit(State.Failed(getHttpException(it))) }
+        repository.verifyPasswordResetCode(code)
+            .catch { _verifyCodePassword.emit(State.Failed(getHttpException(it))) }
             .collect { _verifyCodePassword.emit(it) }
     }
 
-    private val _confirmReset= MutableStateFlow<State<Boolean>>(State.Idle())
+    private val _confirmReset = MutableStateFlow<State<Boolean>>(State.Idle())
     val confirmReset: StateFlow<State<Boolean>> get() = _confirmReset
 
     fun resetConfirmResetState() {
         _confirmReset.value = State.Idle()
     }
+
     fun confirmPasswordReset(code: String, email: String) = defaultScope.launch {
-        repository.confirmPasswordReset(code, email).catch { _confirmReset.emit(State.Failed(getHttpException(it))) }
+        repository.confirmPasswordReset(code, email)
+            .catch { _confirmReset.emit(State.Failed(getHttpException(it))) }
             .collect { _confirmReset.emit(it) }
     }
 
-    private val _changePassword= MutableStateFlow<State<Boolean>>(State.Idle())
+    private val _changePassword = MutableStateFlow<State<Boolean>>(State.Idle())
     val changePassword: StateFlow<State<Boolean>> get() = _changePassword
 
     fun resetChangePasswordState() {
         _changePassword.value = State.Idle()
     }
+
     fun changePassword(oldPassword: String, newPassword: String) = defaultScope.launch {
-        repository.changePassword(oldPassword, newPassword).catch { _changePassword.emit(State.Failed(getHttpException(it))) }
+        repository.changePassword(oldPassword, newPassword)
+            .catch { _changePassword.emit(State.Failed(getHttpException(it))) }
             .collect { _changePassword.emit(it) }
     }
 
-
-    private val _validation= MutableLiveData<Pair<List<Password?>, Boolean>>()
+    private val _validation = MutableLiveData<Pair<List<Password?>, Boolean>>()
     val mValidation: LiveData<Pair<List<Password?>, Boolean>> get() = _validation
 
     fun passwordValidation(password: String) = defaultScope.launch {
@@ -80,5 +87,4 @@ class PasswordViewModel(
         }
             .collect { _validation.postValue(it) }
     }
-
 }

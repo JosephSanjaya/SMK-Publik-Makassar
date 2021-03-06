@@ -10,8 +10,7 @@ import com.google.firebase.auth.FirebaseUser
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-class AccountSharedViewModel: ViewModel() {
+class AccountSharedViewModel : ViewModel() {
 
     val mUsers = MutableLiveData<FirebaseUser>()
-
 }

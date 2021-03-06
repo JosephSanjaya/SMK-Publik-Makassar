@@ -5,6 +5,7 @@
     <string name="label_connecting">Connecting..</string>
     <string name="label_email">Email</string>
     <string name="label_password">Kata Sandi</string>
+    <string name="label_admin_password">Kata Sandi Admin Saat Ini</string>
     <string name="label_password_repeat">Ulangi Kata Sandi</string>
     <string name="label_nuptk">NUPTK</string>
     <string name="label_class_selection">Kamu Kelas Berapa?</string>
@@ -16,6 +17,7 @@
     <string name="button_label_forgot_password">Lupa Password?</string>
     <string name="button_label_logout">Keluar</string>
     <string name="button_label_sign_up">Daftar</string>
+    <string name="button_label_sign_up_admin">Simpan Admin</string>
     <string name="button_label_sign_in">Masuk</string>
     <string name="button_label_sign_in_underline"><u>Sign in</u></string>
     <string name="label_siswa_baru">Pengguna baru?</string>
@@ -67,5 +69,6 @@
     <string name="label_chip_edit">Edit</string>
     <string name="label_menu_change_password">Ganti Password</string>
     <string name="label_menu_change_profile">Ganti Profil Pengguna</string>
-    <string name="label_no_data_search">Kata yang kamu cari tidak ditemukan.</string>
+    <string name="label_add_mata_pelajaran">Tambah Mata Pelajaran</string>
+    <string name="label_add_admin">Tambah Admin</string>
 </resources>

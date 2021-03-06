@@ -22,6 +22,7 @@ import com.smk.publik.makassar.core.utils.isLandingPageOpened
 import com.smk.publik.makassar.databinding.FragmentLoginBinding
 import com.smk.publik.makassar.inline.*
 import com.smk.publik.makassar.interfaces.BaseOnClickView
+import com.smk.publik.makassar.presentation.activities.AdminActivity
 import com.smk.publik.makassar.presentation.activities.RolesActivity
 import com.smk.publik.makassar.presentation.activities.TutorialActivity
 import com.smk.publik.makassar.presentation.activities.UmumActivity
@@ -84,7 +85,6 @@ class LoginFragment :
         binding.listener = this
     }
 
-
     override fun onStart() {
         (activity as AppCompatActivity?)?.toolbarChanges("Masuk", false, isHide = false)
         super.onStart()
@@ -129,13 +129,21 @@ class LoginFragment :
     override fun onGetUserDataSuccess(user: Users?) {
         loading.second.dismiss()
         when {
-            mSharedViewModel.mUsers.value?.isEmailVerified == true && !mSharedPreferences.isLandingPageOpened -> {
+            mSharedViewModel.mUsers.value?.isEmailVerified == true &&
+                !mSharedPreferences.isLandingPageOpened -> {
                 requireActivity().finish()
-                TutorialActivity.newInstance()
+                when (user?.roles) {
+                    "admin" -> AdminActivity.launchHome()
+                    else -> TutorialActivity.newInstance()
+                }
             }
-            mSharedViewModel.mUsers.value?.isEmailVerified == true && mSharedPreferences.isLandingPageOpened -> {
+            mSharedViewModel.mUsers.value?.isEmailVerified == true &&
+                mSharedPreferences.isLandingPageOpened -> {
                 requireActivity().finish()
-                RolesActivity.newInstance()
+                when (user?.roles) {
+                    "admin" -> AdminActivity.launchHome()
+                    else -> RolesActivity.newInstance()
+                }
             }
             else -> {
                 requireActivity().finish()

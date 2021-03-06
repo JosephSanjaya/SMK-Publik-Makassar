@@ -6,8 +6,8 @@ import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.smk.publik.makassar.core.R
 import com.smk.publik.makassar.account.domain.Password
+import com.smk.publik.makassar.core.R
 import com.smk.publik.makassar.core.domain.State
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
@@ -24,13 +24,14 @@ class PasswordRepository {
 
     suspend fun sendPasswordResetEmail(email: String) = flow {
         emit(State.Loading())
-        Firebase.auth.sendPasswordResetEmail(email,
+        Firebase.auth.sendPasswordResetEmail(
+            email,
             ActionCodeSettings.newBuilder()
                 .setHandleCodeInApp(true)
                 .setAndroidPackageName(AppUtils.getAppPackageName(), true, "1.0")
-                .setUrl("https://smkpublikmakassar.page.link/forgotPassword?email=${email}")
+                .setUrl("https://smkpublikmakassar.page.link/forgotPassword?email=$email")
                 .build()
-            ).await()
+        ).await()
         emit(State.Success(true))
     }.flowOn(Dispatchers.IO)
 
@@ -49,9 +50,10 @@ class PasswordRepository {
     suspend fun changePassword(oldPassword: String, newPassword: String) = flow {
         emit(State.Loading())
         val currentUser = Firebase.auth.currentUser
-        if(currentUser == null) throw Throwable("Silahkan login terlebih dahulu")
+        if (currentUser == null) throw Throwable("Silahkan login terlebih dahulu")
         else {
-            val credential = EmailAuthProvider.getCredential(currentUser.email.toString(), oldPassword)
+            val credential =
+                EmailAuthProvider.getCredential(currentUser.email.toString(), oldPassword)
             currentUser.reauthenticate(credential).await()
             currentUser.updatePassword(newPassword).await()
             emit(State.Success(true))
@@ -69,19 +71,55 @@ class PasswordRepository {
         mList.apply {
             password.let { s ->
                 if (s.any { t -> t.isLetter().and(t.isLowerCase()) }) {
-                    add(Password(R.drawable.ic_baseline_check_24, StringUtils.getString(R.string.label_tv_baloon_password_req_1), true))
+                    add(
+                        Password(
+                            R.drawable.ic_baseline_check_24,
+                            StringUtils.getString(R.string.label_tv_baloon_password_req_1),
+                            true
+                        )
+                    )
                 } else {
-                    add(Password(R.drawable.ic_baseline_close_24, StringUtils.getString(R.string.label_tv_baloon_password_req_1), false))
+                    add(
+                        Password(
+                            R.drawable.ic_baseline_close_24,
+                            StringUtils.getString(R.string.label_tv_baloon_password_req_1),
+                            false
+                        )
+                    )
                 }
                 if (s.any { t -> t.isUpperCase() }) {
-                    add(Password(R.drawable.ic_baseline_check_24, StringUtils.getString(R.string.label_tv_baloon_password_req_2), true))
+                    add(
+                        Password(
+                            R.drawable.ic_baseline_check_24,
+                            StringUtils.getString(R.string.label_tv_baloon_password_req_2),
+                            true
+                        )
+                    )
                 } else {
-                    add(Password(R.drawable.ic_baseline_close_24, StringUtils.getString(R.string.label_tv_baloon_password_req_2), false))
+                    add(
+                        Password(
+                            R.drawable.ic_baseline_close_24,
+                            StringUtils.getString(R.string.label_tv_baloon_password_req_2),
+                            false
+                        )
+                    )
                 }
                 if (s.length >= 8) {
-                    add(Password(R.drawable.ic_baseline_check_24, StringUtils.getString(R.string.label_tv_baloon_password_req_3), true))
+                    add(
+                        Password(
+                            R.drawable.ic_baseline_check_24,
+                            StringUtils.getString(R.string.label_tv_baloon_password_req_3),
+                            true
+                        )
+                    )
                 } else {
-                    add(Password(R.drawable.ic_baseline_close_24, StringUtils.getString(R.string.label_tv_baloon_password_req_3), false))
+                    add(
+                        Password(
+                            R.drawable.ic_baseline_close_24,
+                            StringUtils.getString(R.string.label_tv_baloon_password_req_3),
+                            false
+                        )
+                    )
                 }
             }
             mList.any { valid -> !valid.status }.let {
@@ -91,5 +129,4 @@ class PasswordRepository {
             return Pair(mList, isValid)
         }
     }
-
 }

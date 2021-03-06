@@ -1,12 +1,12 @@
 package com.smk.publik.makassar.account.presentation.register
 
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import com.google.firebase.auth.FirebaseUser
 import com.smk.publik.makassar.account.data.RegisterRepository
-import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.account.domain.Users
+import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.core.presentation.BaseViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -21,14 +21,23 @@ class RegisterViewModel(
     private val repository: RegisterRepository
 ) : BaseViewModel() {
 
-    private val _register= MutableStateFlow<State<FirebaseUser?>>(State.Idle())
+    private val _register = MutableStateFlow<State<FirebaseUser?>>(State.Idle())
     val mRegister: StateFlow<State<FirebaseUser?>> get() = _register
 
     fun resetRegisterState() {
         _register.value = State.Idle()
     }
+
     fun register(email: String, password: String, data: Users) = defaultScope.launch {
-        repository.register(email, password, data).catch { _register.emit(State.Failed(getHttpException(it))) }
+        repository.register(email, password, data)
+            .catch { _register.emit(State.Failed(getHttpException(it))) }
             .collect { _register.emit(it) }
     }
+
+    fun registerAdmin(creatorPassword: String, email: String, password: String, data: Users) =
+        defaultScope.launch {
+            repository.registerAdmin(creatorPassword, email, password, data)
+                .catch { _register.emit(State.Failed(getHttpException(it))) }
+                .collect { _register.emit(it) }
+        }
 }

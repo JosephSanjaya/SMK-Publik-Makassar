@@ -1,59 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
-        android:id="@+id/llRoot"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cvRoot"
+        app:cardBackgroundColor="?attr/colorOnApproved"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="15dp"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:background="?attr/selectableItemBackground"
-        tools:background="@android:color/white"
-        android:orientation="vertical">
+        android:layout_marginBottom="12dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginEnd="22dp"
+        android:layout_height="wrap_content">
 
-        <ImageButton
-            android:id="@+id/btnDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            android:tint="?attr/colorError"
-            android:layout_gravity="end"
-            android:background="?attr/selectableItemBackground"/>
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/ivBanner"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:scaleType="centerCrop"
-            app:shapeAppearance="@style/ShapeAppearanceOverlay.App.CornerSize10Percent"
-            android:layout_marginBottom="10dp"
-            tools:src="@tools:sample/backgrounds/scenic"/>
-        <TextView
-            android:id="@+id/tvContent"
-            android:layout_width="match_parent"
-            android:layout_gravity="center_vertical"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBody1"
-            android:textColor="?attr/colorOnSecondary"
-            tools:maxLength="100"
-            tools:text="@tools:sample/lorem/random"/>
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tvDate"
-            android:layout_width="match_parent"
-            android:layout_gravity="center_vertical"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceCaption"
-            android:gravity="end"
-            android:textColor="?attr/colorOnSecondary"
-            tools:maxLength="100"
-            tools:text="@tools:sample/date/ddmmyy"/>
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipRoles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-24dp"
+                android:layout_marginStart="16dp"
+                tools:text="Umum"
+                android:textAppearance="?attr/textAppearanceCaption"
+                android:textColor="?attr/colorPrimary"
+                android:elevation="8dp"
+                app:chipBackgroundColor="?attr/colorOnApproved"
+                app:chipEndPadding="16dp"
+                app:chipStartPadding="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivBanner" />
 
-    </LinearLayout>
+            <ImageButton
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:translationZ="2dp"
+                android:layout_margin="8dp"
+                android:src="@drawable/ic_bin_with_lid"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="?attr/colorOnApproved"
+                tools:visibility="visible" />
+
+
+            <ImageView
+                android:id="@+id/ivBanner"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@tools:sample/backgrounds/scenic" />
+
+            <LinearLayout
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivBanner">
+
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?attr/textAppearanceSubtitle2"
+                    android:layout_marginBottom="4dp"
+                    android:maxLines="2"
+                    tools:text="Big, stormy pins loudly love a misty, warm plank. "/>
+
+                <TextView
+                    android:id="@+id/tvPosted"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textAppearance="?attr/textAppearanceCaption"
+                    tools:text="By Joseph Sanjaya - 2 Hari yang lalu"/>
+
+            </LinearLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    </com.google.android.material.card.MaterialCardView>
 
 </layout>

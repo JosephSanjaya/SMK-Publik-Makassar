@@ -17,7 +17,7 @@ import kotlinx.serialization.json.Json
  */
 
 @Serializable
-data class Announcement (
+data class Announcement(
 
     @PropertyName("id")
     @SerialName("id")
@@ -54,7 +54,6 @@ data class Announcement (
     @PropertyName("attachment")
     @SerialName("attachment")
     var attachment: String? = null
-
 ) {
     fun sendNotification() {
         Firebase.messaging.send(

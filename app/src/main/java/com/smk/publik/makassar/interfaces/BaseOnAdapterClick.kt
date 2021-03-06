@@ -13,7 +13,10 @@ import com.github.florent37.viewanimator.ViewAnimator
  * @LinkedIn (https://www.linkedin.com/in/josephsanjaya/))
  */
 
-interface BaseOnAdapterClick : OnItemChildClickListener, OnItemClickListener, OnItemLongClickListener {
+interface BaseOnAdapterClick :
+    OnItemChildClickListener,
+    OnItemClickListener,
+    OnItemLongClickListener {
 
     override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
         ViewAnimator.animate(view).scale(1f, 0.95f, 1f).duration(500).start()

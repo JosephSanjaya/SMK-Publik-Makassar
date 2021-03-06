@@ -1,4 +1,4 @@
-package com.smk.publik.makassar.utils
+package com.smk.publik.makassar.inline
 
 import ando.file.compressor.ImageCompressPredicate
 import ando.file.compressor.ImageCompressor
@@ -8,7 +8,6 @@ import ando.file.core.*
 import ando.file.core.FileDirectory.getCacheDir
 import android.content.Context
 import android.net.Uri
-import androidx.appcompat.app.AlertDialog
 import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -30,13 +29,13 @@ fun <T> compressImage(context: Context, photos: List<T>, success: (index: Int, u
     ImageCompressor
         .with(context)
         .load(photos)
-        .ignoreBy(100)//单位 Byte
+        .ignoreBy(100) // 单位 Byte
         .setTargetDir(getCompressedImageCacheDir())
         .setFocusAlpha(false)
         .enableCache(true)
         .filter(object : ImageCompressPredicate {
             override fun apply(uri: Uri?): Boolean {
-                //FileLogger.i("compressImage predicate $uri  ${FileUri.getFilePathByUri(uri)}")
+                // FileLogger.i("compressImage predicate $uri  ${FileUri.getFilePathByUri(uri)}")
                 return if (uri != null) !FileUtils.getExtension(uri).endsWith("gif") else false
             }
         })

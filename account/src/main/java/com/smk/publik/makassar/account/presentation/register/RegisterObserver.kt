@@ -13,14 +13,16 @@ import kotlinx.coroutines.launch
  */
 
 class RegisterObserver(
-    private val view: Interfaces, private val viewModel: RegisterViewModel, private val owner: LifecycleOwner
+    private val view: Interfaces,
+    private val viewModel: RegisterViewModel,
+    private val owner: LifecycleOwner
 ) : LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
         owner.lifecycleScope.launch {
             viewModel.mRegister.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onRegisterIdle()
                     is State.Loading -> view.onRegisterLoading()
                     is State.Success -> {

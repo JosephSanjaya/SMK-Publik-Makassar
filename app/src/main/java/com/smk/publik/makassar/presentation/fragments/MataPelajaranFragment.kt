@@ -35,8 +35,7 @@ class MataPelajaranFragment :
     Fragment(R.layout.fragment_mata_palajaran),
     MataPelajaranObserver.Interfaces,
     SwipeRefreshLayout.OnRefreshListener,
-    BaseOnAdapterClick
-{
+    BaseOnAdapterClick {
 
     private val mViewModel: MataPelajaranViewModel by viewModel()
     private val binding by viewBinding(FragmentMataPalajaranBinding::bind)
@@ -70,21 +69,27 @@ class MataPelajaranFragment :
         onRefresh()
         binding.etSearch.addTextChangedListener {
             mHandler.removeCallbacksAndMessages(null)
-            mHandler.postDelayed({
-                mQuery.postValue(it.toString())
-            }, 700)
+            mHandler.postDelayed(
+                {
+                    mQuery.postValue(it.toString())
+                },
+                700
+            )
         }
-        mQuery.observe(viewLifecycleOwner, {
-            when {
-                it.isNullOrBlank() || it == "null" -> adapter.reset()
-                else -> adapter.filter(it)
+        mQuery.observe(
+            viewLifecycleOwner,
+            {
+                when {
+                    it.isNullOrBlank() || it == "null" -> adapter.reset()
+                    else -> adapter.filter(it)
+                }
             }
-        })
+        )
         super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onItemClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
-        if(adapter is MataPelajaranAdapter) {
+        if (adapter is MataPelajaranAdapter) {
             activity?.showInfoToast(adapter.getItem(position).nama.toString())
         }
         super.onItemClick(adapter, view, position)

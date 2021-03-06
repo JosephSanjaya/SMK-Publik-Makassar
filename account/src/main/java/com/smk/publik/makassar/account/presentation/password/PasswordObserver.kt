@@ -13,14 +13,16 @@ import kotlinx.coroutines.launch
  */
 
 class PasswordObserver(
-    private val view: Interfaces, private val viewModel: PasswordViewModel, private val owner: LifecycleOwner
+    private val view: Interfaces,
+    private val viewModel: PasswordViewModel,
+    private val owner: LifecycleOwner
 ) : LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun onCreate() {
         owner.lifecycleScope.launch {
             viewModel.sendForgot.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onSendForgotPasswordIdle()
                     is State.Loading -> view.onSendForgotPasswordLoading()
                     is State.Success -> {
@@ -36,7 +38,7 @@ class PasswordObserver(
         }
         owner.lifecycleScope.launch {
             viewModel.verifyCodePassword.collect {
-            when(it) {
+                when (it) {
                     is State.Idle -> view.onVerifyCodePasswordIdle()
                     is State.Loading -> view.onVerifyCodePasswordLoading()
                     is State.Success -> {
@@ -52,7 +54,7 @@ class PasswordObserver(
         }
         owner.lifecycleScope.launch {
             viewModel.confirmReset.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onConfirmResetPasswordIdle()
                     is State.Loading -> view.onConfirmResetPasswordLoading()
                     is State.Success -> {
@@ -68,7 +70,7 @@ class PasswordObserver(
         }
         owner.lifecycleScope.launch {
             viewModel.changePassword.collect {
-                when(it) {
+                when (it) {
                     is State.Idle -> view.onChangePasswordIdle()
                     is State.Loading -> view.onChangePasswordLoading()
                     is State.Success -> {
@@ -82,9 +84,12 @@ class PasswordObserver(
                 }
             }
         }
-        viewModel.mValidation.observe(owner, Observer{
-            view.onPasswordValidated(it)
-        })
+        viewModel.mValidation.observe(
+            owner,
+            Observer {
+                view.onPasswordValidated(it)
+            }
+        )
     }
 
     interface Interfaces {

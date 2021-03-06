@@ -45,6 +45,9 @@
             android:name=".presentation.activities.AddAnnouncementActivity"
             android:screenOrientation="portrait"/>
         <activity
+            android:name=".presentation.activities.AdminActivity"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".presentation.activities.TutorialActivity"
             android:screenOrientation="portrait"/>
         <activity

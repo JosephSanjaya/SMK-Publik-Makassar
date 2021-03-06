@@ -17,10 +17,6 @@ import com.smk.publik.makassar.databinding.ActivityBottomNavBinding
 
 class RolesActivity : AppCompatActivity(R.layout.activity_bottom_nav) {
 
-    companion object {
-        fun newInstance() = ActivityUtils.startActivity(RolesActivity::class.java)
-    }
-
     private val binding by viewBinding(ActivityBottomNavBinding::bind)
     private val navController by lazy {
         findNavController(R.id.nav_host_fragment)
@@ -32,4 +28,7 @@ class RolesActivity : AppCompatActivity(R.layout.activity_bottom_nav) {
         binding.bottomNav.setupWithNavController(navController)
     }
 
+    companion object {
+        fun newInstance() = ActivityUtils.startActivity(RolesActivity::class.java)
+    }
 }

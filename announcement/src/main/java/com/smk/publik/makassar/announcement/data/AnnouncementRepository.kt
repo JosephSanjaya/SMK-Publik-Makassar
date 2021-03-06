@@ -15,12 +15,12 @@ import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.core.utils.closeException
 import com.smk.publik.makassar.core.utils.offerSafe
 import com.smk.publik.makassar.core.utils.offerSafeClose
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
-import java.io.File
 
 /*
  * Copyright (c) 2021 Designed and developed by Joseph Sanjaya, S.T., M.Kom., All Rights Reserved.
@@ -34,42 +34,48 @@ class AnnouncementRepository(
 ) {
 
     @ExperimentalCoroutinesApi
-    fun uploadFile(announcementId: String, file: File) = commonRepository.uploadFile(Firebase.storage.reference.child("pengumuman").child(announcementId)
-        .child(Uri.fromFile(file).lastPathSegment.toString()), file)
+    fun uploadFile(announcementId: String, file: File) = commonRepository.uploadFile(
+        Firebase.storage.reference.child("pengumuman").child(announcementId)
+            .child(Uri.fromFile(file).lastPathSegment.toString()),
+        file
+    )
 
     @ExperimentalCoroutinesApi
     fun hapusAnnouncement(
         announcement: Announcement
-    )= callbackFlow {
+    ) = callbackFlow {
         offer(State.Loading())
         val child = if (announcement.roles == "guru") announcement.roles else announcement.kelas
         val bannerDeleteAction = Runnable {
-            Firebase.storage.getReferenceFromUrl(announcement.banner.toString()).delete().addOnCompleteListener { deleteFileTask ->
-                if (deleteFileTask.isSuccessful) {
-                    offerSafeClose(State.Success(true))
-                } else {
-                    closeException<Boolean>(Throwable("Gagal hapus file!"))
-                }
-            }
-        }
-        Firebase.database.reference.child("pengumuman").child(child.toString()).removeValue().addOnCompleteListener { deleteDBTask ->
-            if (deleteDBTask.isSuccessful) {
-                when {
-                    announcement.attachment.isNullOrBlank() -> bannerDeleteAction.run()
-                    else -> {
-                        Firebase.storage.getReferenceFromUrl(announcement.attachment.toString()).delete().addOnCompleteListener { deleteFileTask ->
-                            if (deleteFileTask.isSuccessful) {
-                                bannerDeleteAction.run()
-                            } else {
-                                closeException<Boolean>(Throwable("Gagal hapus file!"))
-                            }
-                        }
+            Firebase.storage.getReferenceFromUrl(announcement.banner.toString()).delete()
+                .addOnCompleteListener { deleteFileTask ->
+                    if (deleteFileTask.isSuccessful) {
+                        offerSafeClose(State.Success(true))
+                    } else {
+                        closeException<Boolean>(Throwable("Gagal hapus file!"))
                     }
                 }
-            } else {
-                closeException<Boolean>(Throwable("Gagal hapus data!"))
-            }
         }
+        Firebase.database.reference.child("pengumuman").child(child.toString()).removeValue()
+            .addOnCompleteListener { deleteDBTask ->
+                if (deleteDBTask.isSuccessful) {
+                    when {
+                        announcement.attachment.isNullOrBlank() -> bannerDeleteAction.run()
+                        else -> {
+                            Firebase.storage.getReferenceFromUrl(announcement.attachment.toString())
+                                .delete().addOnCompleteListener { deleteFileTask ->
+                                    if (deleteFileTask.isSuccessful) {
+                                        bannerDeleteAction.run()
+                                    } else {
+                                        closeException<Boolean>(Throwable("Gagal hapus file!"))
+                                    }
+                                }
+                        }
+                    }
+                } else {
+                    closeException<Boolean>(Throwable("Gagal hapus data!"))
+                }
+            }
         awaitClose()
     }
 
@@ -87,12 +93,12 @@ class AnnouncementRepository(
         }
         uploadFile(announcement.id.toString(), bannerImage).collect {
             when (it) {
-                is State.Failed -> throw  it.throwable
+                is State.Failed -> throw it.throwable
                 is State.Success -> {
                     announcement.apply {
                         banner = it.data.toString()
                     }
-                    when(attachmentFile) {
+                    when (attachmentFile) {
                         null -> {
                             push.setValue(announcement).await()
                             emit(State.Success(announcement))
@@ -103,7 +109,7 @@ class AnnouncementRepository(
                                 attachmentFile
                             ).collect { attachmentUri ->
                                 when (attachmentUri) {
-                                    is State.Failed -> throw  attachmentUri.throwable
+                                    is State.Failed -> throw attachmentUri.throwable
                                     is State.Success -> {
                                         announcement.apply {
                                             attachment = it.data.toString()
@@ -111,24 +117,25 @@ class AnnouncementRepository(
                                         push.setValue(announcement).await()
                                         emit(State.Success(announcement))
                                     }
-                                    else -> {}
+                                    else -> {
+                                    }
                                 }
                             }
                         }
                     }
                 }
-                else -> {}
+                else -> {
+                }
             }
         }
     }.catch {
         throw it
     }.flowOn(Dispatchers.IO)
 
-
     @ExperimentalCoroutinesApi
     fun getAnnouncement() = callbackFlow<State<List<Announcement>>> {
         val user = sharedPref.users
-        val rolesOrClass = when(user?.roles) {
+        val rolesOrClass = when (user?.roles) {
             "guru" -> user.roles.toString()
             else -> user?.kelas.toString()
         }
@@ -145,7 +152,8 @@ class AnnouncementRepository(
                 closeException(error.toException())
             }
         }
-        Firebase.database.reference.child("pengumuman").child(rolesOrClass).addListenerForSingleValueEvent(listener)
+        Firebase.database.reference.child("pengumuman").child(rolesOrClass)
+            .addListenerForSingleValueEvent(listener)
         awaitClose { Firebase.database.reference.removeEventListener(listener) }
     }
 }

@@ -17,7 +17,7 @@ import kotlinx.serialization.json.Json
  */
 
 @Serializable
-data class Users (
+data class Users(
     @PropertyName("id")
     @SerialName("id")
     var id: String? = null,
@@ -53,6 +53,10 @@ data class Users (
     @PropertyName("roles")
     @SerialName("roles")
     var roles: String? = null,
+
+    @PropertyName("registered_by")
+    @SerialName("registered_by")
+    var registeredBy: String? = null,
 )
 
 inline var SharedPreferences.users: Users?
