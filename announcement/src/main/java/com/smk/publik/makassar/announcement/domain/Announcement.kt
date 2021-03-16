@@ -53,8 +53,15 @@ data class Announcement(
 
     @PropertyName("attachment")
     @SerialName("attachment")
-    var attachment: String? = null
+    var attachment: String? = null,
+
+    @PropertyName("link")
+    @SerialName("link")
+    var link: String? = null
 ) {
+    companion object {
+        const val REF = "pengumuman"
+    }
     fun sendNotification() {
         Firebase.messaging.send(
             RemoteMessage.Builder(Firebase.auth.uid.toString())

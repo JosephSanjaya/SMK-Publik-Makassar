@@ -11,6 +11,7 @@ import kotlinx.serialization.Serializable
  */
 
 object MataPelajaran {
+    const val REF = "mata_pelajaran"
 
     @Serializable
     data class Detail(
@@ -33,6 +34,7 @@ object MataPelajaran {
 
     )
 
+    const val MATERI_REF = "materi"
     @Serializable
     data class Materi(
 

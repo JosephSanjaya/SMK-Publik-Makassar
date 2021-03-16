@@ -23,7 +23,7 @@ class RegisterRepository {
     suspend fun register(email: String, password: String, data: Users) = flow {
         emit(State.Loading())
         val result = Firebase.auth.createUserWithEmailAndPassword(email, password).await()
-        Firebase.database.reference.child("users").child(result.user?.uid.toString()).setValue(
+        Firebase.database.reference.child(Users.REF).child(result.user?.uid.toString()).setValue(
             data.apply {
                 id = result.user?.uid
             }
@@ -44,7 +44,7 @@ class RegisterRepository {
         val credential = EmailAuthProvider.getCredential(creator?.email.toString(), creatorPassword)
         creator?.reauthenticate(credential)?.await()
         val result = Firebase.auth.createUserWithEmailAndPassword(email, password).await()
-        Firebase.database.reference.child("users").child(result.user?.uid.toString()).setValue(
+        Firebase.database.reference.child(Users.REF).child(result.user?.uid.toString()).setValue(
             data.apply {
                 registeredBy = "${creator?.uid}|${creator?.email}"
                 id = result.user?.uid

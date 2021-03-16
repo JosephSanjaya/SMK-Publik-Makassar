@@ -8,7 +8,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.account.domain.Users
-import com.smk.publik.makassar.account.domain.users
+import com.smk.publik.makassar.account.domain.Users.Companion.users
 import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.core.utils.closeException
 import com.smk.publik.makassar.core.utils.offerSafe
@@ -43,7 +43,7 @@ class UserRepository(
                 closeException(error.toException())
             }
         }
-        Firebase.database.reference.child("users").child(userUID)
+        Firebase.database.reference.child(Users.REF).child(userUID)
             .addListenerForSingleValueEvent(listener)
         awaitClose { Firebase.database.reference.removeEventListener(listener) }
     }
@@ -55,7 +55,8 @@ class UserRepository(
             nama = newNamaValue
             telepon = newPhoneValue
         }
-        Firebase.database.reference.child("users").child(user?.id.toString()).setValue(user).await()
+        Firebase.database.reference.child(Users.REF).child(user?.id.toString()).setValue(user)
+            .await()
         mSharedPreferences.users = user
         emit(State.Success(user))
     }.catch {
@@ -80,9 +81,7 @@ class UserRepository(
                 closeException(Throwable(it.exception))
             }
         } ?: run {
-            Throwable("User tidak ditemukan, silahkan login terlebih dahulu!").let {
-                closeException(Throwable(it))
-            }
+            closeException(Throwable(Throwable(Users.MSG_USER_NOT_FOUND)))
         }
         awaitClose()
     }
@@ -102,7 +101,7 @@ class UserRepository(
                 closeException(error.toException())
             }
         }
-        Firebase.database.reference.child("users").addListenerForSingleValueEvent(listener)
+        Firebase.database.reference.child(Users.REF).addListenerForSingleValueEvent(listener)
         awaitClose { Firebase.database.reference.removeEventListener(listener) }
     }
 

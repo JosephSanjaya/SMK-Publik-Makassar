@@ -134,7 +134,7 @@ class AdminUsersFragment :
 
     override fun onFetchUsersSuccess(data: List<Users>) {
         adapter.updateData(data.filter {
-            it.roles == "admin" && it.id != Firebase.auth.currentUser?.uid
+            it.roles == Users.ROLES_ADMIN && it.id != Firebase.auth.currentUser?.uid
         })
         isLoading.set(false)
         binding.swipeRefresh.isRefreshing = false

@@ -57,10 +57,23 @@ data class Users(
     @PropertyName("registered_by")
     @SerialName("registered_by")
     var registeredBy: String? = null,
-)
-
-inline var SharedPreferences.users: Users?
-    get() = getString("user_data", null)?.let {
-        Json.decodeFromString(it)
+) {
+    companion object {
+        const val REF = "users"
+        const val ROLES_GURU = "guru"
+        const val ROLES_SISWA = "siswa"
+        const val SISWA_X = "10"
+        const val SISWA_XI = "11"
+        const val SISWA_XII = "12"
+        const val ROLES_ADMIN = "admin"
+        const val ROLES_UMUM = "umum"
+        const val FORGOT_URL = "https://smkpublikmakassar.page.link/forgotPassword?email="
+        const val VERIFY_URL = "https://smkpublikmakassar.page.link/verify?uid="
+        const val MSG_USER_NOT_FOUND = "User tidak ditemukan, silahkan login terlebih dahulu!"
+        inline var SharedPreferences.users: Users?
+            get() = getString("user_data", null)?.let {
+                Json.decodeFromString(it)
+            }
+            set(value) = set("user_data", Json.encodeToString(value))
     }
-    set(value) = set("user_data", Json.encodeToString(value))
+}

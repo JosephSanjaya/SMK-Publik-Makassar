@@ -7,6 +7,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.smk.publik.makassar.account.domain.Password
+import com.smk.publik.makassar.account.domain.Users
 import com.smk.publik.makassar.core.R
 import com.smk.publik.makassar.core.domain.State
 import kotlinx.coroutines.Dispatchers
@@ -28,8 +29,12 @@ class PasswordRepository {
             email,
             ActionCodeSettings.newBuilder()
                 .setHandleCodeInApp(true)
-                .setAndroidPackageName(AppUtils.getAppPackageName(), true, "1.0")
-                .setUrl("https://smkpublikmakassar.page.link/forgotPassword?email=$email")
+                .setAndroidPackageName(
+                    AppUtils.getAppPackageName(),
+                    true,
+                    AppUtils.getAppVersionName()
+                )
+                .setUrl("${Users.FORGOT_URL}$email")
                 .build()
         ).await()
         emit(State.Success(true))
@@ -50,7 +55,7 @@ class PasswordRepository {
     suspend fun changePassword(oldPassword: String, newPassword: String) = flow {
         emit(State.Loading())
         val currentUser = Firebase.auth.currentUser
-        if (currentUser == null) throw Throwable("Silahkan login terlebih dahulu")
+        if (currentUser == null) throw Throwable(Password.MSG_LOGIN_FIRST)
         else {
             val credential =
                 EmailAuthProvider.getCredential(currentUser.email.toString(), oldPassword)
@@ -73,51 +78,51 @@ class PasswordRepository {
                 if (s.any { t -> t.isLetter().and(t.isLowerCase()) }) {
                     add(
                         Password(
-                            R.drawable.ic_baseline_check_24,
-                            StringUtils.getString(R.string.label_tv_baloon_password_req_1),
-                            true
+                            drawable = R.drawable.ic_baseline_check_24,
+                            label = StringUtils.getString(R.string.label_tv_baloon_password_req_1),
+                            status = true
                         )
                     )
                 } else {
                     add(
                         Password(
-                            R.drawable.ic_baseline_close_24,
-                            StringUtils.getString(R.string.label_tv_baloon_password_req_1),
-                            false
+                            drawable = R.drawable.ic_baseline_close_24,
+                            label = StringUtils.getString(R.string.label_tv_baloon_password_req_1),
+                            status = false
                         )
                     )
                 }
                 if (s.any { t -> t.isUpperCase() }) {
                     add(
                         Password(
-                            R.drawable.ic_baseline_check_24,
-                            StringUtils.getString(R.string.label_tv_baloon_password_req_2),
-                            true
+                            drawable = R.drawable.ic_baseline_check_24,
+                            label = StringUtils.getString(R.string.label_tv_baloon_password_req_2),
+                            status = true
                         )
                     )
                 } else {
                     add(
                         Password(
-                            R.drawable.ic_baseline_close_24,
-                            StringUtils.getString(R.string.label_tv_baloon_password_req_2),
-                            false
+                            drawable = R.drawable.ic_baseline_close_24,
+                            label = StringUtils.getString(R.string.label_tv_baloon_password_req_2),
+                            status = false
                         )
                     )
                 }
                 if (s.length >= 8) {
                     add(
                         Password(
-                            R.drawable.ic_baseline_check_24,
-                            StringUtils.getString(R.string.label_tv_baloon_password_req_3),
-                            true
+                            drawable = R.drawable.ic_baseline_check_24,
+                            label = StringUtils.getString(R.string.label_tv_baloon_password_req_3),
+                            status = true
                         )
                     )
                 } else {
                     add(
                         Password(
-                            R.drawable.ic_baseline_close_24,
-                            StringUtils.getString(R.string.label_tv_baloon_password_req_3),
-                            false
+                            drawable = R.drawable.ic_baseline_close_24,
+                            label = StringUtils.getString(R.string.label_tv_baloon_password_req_3),
+                            status = false
                         )
                     )
                 }

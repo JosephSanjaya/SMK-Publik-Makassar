@@ -216,7 +216,7 @@ class RegisterFragment :
         setupEditTextListener()
         mUsers.postValue(
             mUsers.value?.apply {
-                roles = "siswa"
+                roles = Users.ROLES_SISWA
             }
         )
         mPasswordViewModel.passwordValidation("")
@@ -316,17 +316,17 @@ class RegisterFragment :
             when (checkedId) {
                 binding.rbKelasX.id -> mUsers.postValue(
                     mUsers.value?.apply {
-                        kelas = "10"
+                        kelas = Users.SISWA_X
                     }
                 )
                 binding.rbKelasXI.id -> mUsers.postValue(
                     mUsers.value?.apply {
-                        kelas = "11"
+                        kelas = Users.SISWA_XI
                     }
                 )
                 binding.rbKelasXII.id -> mUsers.postValue(
                     mUsers.value?.apply {
-                        kelas = "12"
+                        kelas = Users.SISWA_XII
                     }
                 )
             }

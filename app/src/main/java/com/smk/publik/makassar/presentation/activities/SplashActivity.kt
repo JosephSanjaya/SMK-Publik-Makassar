@@ -88,7 +88,7 @@ class SplashActivity :
 
     override fun onGetUserDataSuccess(user: Users?) {
         if (mCurrentUser != null) {
-            next(StringUtils.equals(user?.roles, "admin"))
+            next(StringUtils.equals(user?.roles, Users.ROLES_ADMIN))
         } else {
             ActivityUtils.startActivity(AccountActivity.createLoginIntent(this))
             ActivityUtils.finishAllActivities(true)

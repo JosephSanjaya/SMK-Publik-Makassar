@@ -17,7 +17,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.google.android.material.chip.Chip
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.account.domain.Users
-import com.smk.publik.makassar.account.domain.users
+import com.smk.publik.makassar.account.domain.Users.Companion.users
 import com.smk.publik.makassar.account.presentation.user.UserObserver
 import com.smk.publik.makassar.account.presentation.user.UserViewModel
 import com.smk.publik.makassar.announcement.domain.Announcement
@@ -207,11 +207,11 @@ class HomeFragment :
 
     private fun setupRoles(user: Users?) {
         when (user?.roles) {
-            "guru" -> {
+            Users.ROLES_GURU -> {
                 val tempRoles = "${StringUtils.upperFirstLetter(user.roles)} (***${user.nuptk}***)"
                 markwon.setMarkdown(binding.tvRoles, tempRoles)
             }
-            "siswa" -> {
+            Users.ROLES_SISWA -> {
                 val tempRoles = "${StringUtils.upperFirstLetter(user.roles)} (***${user.nis}***)"
                 markwon.setMarkdown(binding.tvRoles, tempRoles)
             }
@@ -221,7 +221,7 @@ class HomeFragment :
     private fun setupChip(user: Users?) {
         binding.cgMateri.removeAllViews()
         when (user?.roles) {
-            "guru" -> {
+            Users.ROLES_GURU -> {
                 user.mataPelajaran?.let {
                     for ((key, value) in it) {
                         binding.cgMateri.addChip(value.nama, key, onClickListener = this)
@@ -234,7 +234,7 @@ class HomeFragment :
                     onClickListener = this
                 )
             }
-            "siswa" -> {
+            Users.ROLES_SISWA -> {
                 binding.cgMateri.addChip(
                     "Kelas ${user.kelas?.toUpperCase(Locale.getDefault())}",
                     user.kelas, onClickListener = this

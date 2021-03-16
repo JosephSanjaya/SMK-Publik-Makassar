@@ -10,4 +10,8 @@ data class Password(
     var drawable: Int,
     var label: String,
     var status: Boolean
-)
+) {
+    companion object {
+        const val MSG_LOGIN_FIRST = "Silahkan login terlebih dahulu"
+    }
+}

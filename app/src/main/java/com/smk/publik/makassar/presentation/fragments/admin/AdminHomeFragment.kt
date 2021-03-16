@@ -14,7 +14,7 @@ import com.blankj.utilcode.util.StringUtils
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.smk.publik.makassar.R
 import com.smk.publik.makassar.account.domain.Users
-import com.smk.publik.makassar.account.domain.users
+import com.smk.publik.makassar.account.domain.Users.Companion.users
 import com.smk.publik.makassar.account.presentation.user.UserObserver
 import com.smk.publik.makassar.account.presentation.user.UserViewModel
 import com.smk.publik.makassar.databinding.DialogEditProfileBinding

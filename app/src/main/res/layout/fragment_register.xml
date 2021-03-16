@@ -6,6 +6,7 @@
 
     <data>
         <import type="android.view.View"/>
+        <import type="com.smk.publik.makassar.account.domain.Users"/>
         <variable
             name="listener"
             type="android.view.View.OnClickListener"/>
@@ -41,7 +42,7 @@
                 app:backgroundTint="?attr/colorSecondary"
                 android:textColor="?attr/colorOnSecondary"
                 android:singleLine="true"
-                android:tag="siswa"
+                android:tag="@{Users.ROLES_SISWA}"
                 android:paddingStart="58dp"
                 android:onClick="@{listener}"
                 android:paddingTop="14dp"
@@ -56,7 +57,7 @@
                 android:singleLine="true"
                 android:layout_height="wrap_content"
                 android:onClick="@{listener}"
-                android:tag="guru"
+                android:tag="@{Users.ROLES_GURU}"
                 style="@style/RolesSelectorStyleRight"
                 android:paddingStart="58dp"
                 android:paddingTop="14dp"

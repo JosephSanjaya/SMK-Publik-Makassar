@@ -8,7 +8,8 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.smk.publik.makassar.account.domain.users
+import com.smk.publik.makassar.account.domain.Users
+import com.smk.publik.makassar.account.domain.Users.Companion.users
 import com.smk.publik.makassar.announcement.domain.Announcement
 import com.smk.publik.makassar.core.data.CommonRepository
 import com.smk.publik.makassar.core.domain.State
@@ -35,7 +36,7 @@ class AnnouncementRepository(
 
     @ExperimentalCoroutinesApi
     fun uploadFile(announcementId: String, file: File) = commonRepository.uploadFile(
-        Firebase.storage.reference.child("pengumuman").child(announcementId)
+        Firebase.storage.reference.child(Announcement.REF).child(announcementId)
             .child(Uri.fromFile(file).lastPathSegment.toString()),
         file
     )
@@ -45,7 +46,8 @@ class AnnouncementRepository(
         announcement: Announcement
     ) = callbackFlow {
         offer(State.Loading())
-        val child = if (announcement.roles == "guru") announcement.roles else announcement.kelas
+        val child =
+            if (announcement.roles == Users.ROLES_GURU) announcement.roles else announcement.kelas
         val bannerDeleteAction = Runnable {
             Firebase.storage.getReferenceFromUrl(announcement.banner.toString()).delete()
                 .addOnCompleteListener { deleteFileTask ->
@@ -56,7 +58,7 @@ class AnnouncementRepository(
                     }
                 }
         }
-        Firebase.database.reference.child("pengumuman").child(child.toString()).removeValue()
+        Firebase.database.reference.child(Announcement.REF).child(child.toString()).removeValue()
             .addOnCompleteListener { deleteDBTask ->
                 if (deleteDBTask.isSuccessful) {
                     when {
@@ -86,8 +88,10 @@ class AnnouncementRepository(
         attachmentFile: File? = null
     ) = flow {
         emit(State.Loading())
-        val child = if (announcement.roles == "guru") announcement.roles else announcement.kelas
-        val push = Firebase.database.reference.child("pengumuman").child(child.toString()).push()
+        val child =
+            if (announcement.roles == Users.ROLES_GURU) announcement.roles else announcement.kelas
+        val push =
+            Firebase.database.reference.child(Announcement.REF).child(child.toString()).push()
         announcement.apply {
             id = push.key.toString()
         }
@@ -136,7 +140,7 @@ class AnnouncementRepository(
     fun getAnnouncement() = callbackFlow<State<List<Announcement>>> {
         val user = sharedPref.users
         val rolesOrClass = when (user?.roles) {
-            "guru" -> user.roles.toString()
+            Users.ROLES_GURU -> user.roles.toString()
             else -> user?.kelas.toString()
         }
         offerSafe(State.Loading())
@@ -152,7 +156,7 @@ class AnnouncementRepository(
                 closeException(error.toException())
             }
         }
-        Firebase.database.reference.child("pengumuman").child(rolesOrClass)
+        Firebase.database.reference.child(Announcement.REF).child(rolesOrClass)
             .addListenerForSingleValueEvent(listener)
         awaitClose { Firebase.database.reference.removeEventListener(listener) }
     }

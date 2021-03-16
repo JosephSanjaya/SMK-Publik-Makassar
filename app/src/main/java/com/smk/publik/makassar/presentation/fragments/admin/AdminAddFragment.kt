@@ -55,7 +55,7 @@ class AdminAddFragment :
             positiveButtonAction = {
                 val user = Users(
                     nama = binding.etNama.text.toString(),
-                    roles = "admin",
+                    roles = Users.ROLES_ADMIN,
                     email = binding.etEmail.text.toString(),
                     telepon = binding.etPhone.text.toString(),
                     nuptk = binding.etNUPTK.text.toString()

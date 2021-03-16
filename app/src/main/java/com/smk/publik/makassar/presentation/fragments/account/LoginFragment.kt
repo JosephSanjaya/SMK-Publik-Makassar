@@ -133,7 +133,7 @@ class LoginFragment :
                 !mSharedPreferences.isLandingPageOpened -> {
                 requireActivity().finish()
                 when (user?.roles) {
-                    "admin" -> AdminActivity.launchHome()
+                    Users.ROLES_ADMIN -> AdminActivity.launchHome()
                     else -> TutorialActivity.newInstance()
                 }
             }
@@ -141,7 +141,7 @@ class LoginFragment :
                 mSharedPreferences.isLandingPageOpened -> {
                 requireActivity().finish()
                 when (user?.roles) {
-                    "admin" -> AdminActivity.launchHome()
+                    Users.ROLES_ADMIN -> AdminActivity.launchHome()
                     else -> RolesActivity.newInstance()
                 }
             }

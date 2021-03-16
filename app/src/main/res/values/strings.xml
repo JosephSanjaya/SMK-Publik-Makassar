@@ -9,6 +9,7 @@
     <string name="label_password_repeat">Ulangi Kata Sandi</string>
     <string name="label_nuptk">NUPTK</string>
     <string name="label_class_selection">Kamu Kelas Berapa?</string>
+    <string name="label_all">Semua</string>
     <string name="label_class_x">Kelas X</string>
     <string name="label_class_xi">Kelas XI</string>
     <string name="label_class_xii">Kelas XII</string>
@@ -70,5 +71,7 @@
     <string name="label_menu_change_password">Ganti Password</string>
     <string name="label_menu_change_profile">Ganti Profil Pengguna</string>
     <string name="label_add_mata_pelajaran">Tambah Mata Pelajaran</string>
+    <string name="label_add_announcement">Tambah Pengumuman</string>
+    <string name="label_add_announcement_target">Penerima Pengumuman *</string>
     <string name="label_add_admin">Tambah Admin</string>
 </resources>

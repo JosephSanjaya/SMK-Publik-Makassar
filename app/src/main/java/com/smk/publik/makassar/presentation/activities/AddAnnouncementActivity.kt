@@ -15,7 +15,7 @@ import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.PermissionUtils
 import com.blankj.utilcode.util.TimeUtils
 import com.smk.publik.makassar.R
-import com.smk.publik.makassar.account.domain.users
+import com.smk.publik.makassar.account.domain.Users.Companion.users
 import com.smk.publik.makassar.announcement.domain.Announcement
 import com.smk.publik.makassar.announcement.presentation.AnnouncementObserver
 import com.smk.publik.makassar.announcement.presentation.AnnouncementViewModel

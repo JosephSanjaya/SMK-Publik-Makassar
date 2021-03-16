@@ -25,11 +25,26 @@ class AnnouncementAdapter(
 ) : BaseQuickAdapter<Announcement, BaseDataBindingHolder<ListAnnouncementBinding>>
 (R.layout.list_announcement, data) {
 
+    var fullData: MutableList<Announcement> = ArrayList()
+
     init {
-        animationEnable = false
         setEmptyView(ViewEmptyViewBinding.inflate(layoutInflater).root)
-        addChildClickViewIds(R.id.btnDelete, R.id.cvRoot)
+        fullData = data
+        animationEnable = true
+        addChildClickViewIds(R.id.cvRoot, R.id.btnDelete)
     }
+
+    fun updateData(data: List<Announcement>) {
+        fullData = data.toMutableList()
+        setNewInstance(data.toMutableList())
+    }
+
+    fun reset() = setNewInstance(fullData)
+    fun filter(search: String) = setNewInstance(
+        fullData.filter {
+            it.title?.contains(search, ignoreCase = true) == true
+        }.toMutableList()
+    )
 
     override fun convert(
         holder: BaseDataBindingHolder<ListAnnouncementBinding>,

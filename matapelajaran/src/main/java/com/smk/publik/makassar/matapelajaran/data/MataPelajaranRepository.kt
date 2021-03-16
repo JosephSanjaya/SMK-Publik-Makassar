@@ -24,7 +24,7 @@ class MataPelajaranRepository(private val commonRepository: CommonRepository) {
 
     suspend fun buatMataPelajaran(nama: String, deskripsi: String) = flow {
         emit(State.Loading())
-        val push = Firebase.database.reference.child("mata_pelajaran").push()
+        val push = Firebase.database.reference.child(MataPelajaran.REF).push()
         push.setValue(MataPelajaran.Detail(id = push.key, nama = nama, deskripsi = deskripsi))
             .await()
         emit(State.Success(push.key))
@@ -32,17 +32,18 @@ class MataPelajaranRepository(private val commonRepository: CommonRepository) {
 
     @ExperimentalCoroutinesApi
     fun uploadMateri(idMatpel: String, file: File) = commonRepository.uploadFile(
-        Firebase.storage.reference.child("materi").child(idMatpel)
+        Firebase.storage.reference.child(MataPelajaran.MATERI_REF).child(idMatpel)
             .child(Uri.fromFile(file).lastPathSegment.toString()),
         file
     )
 
     suspend fun tambahMateri(idMatpel: String, kelas: String, materi: MataPelajaran.Materi) = flow {
         emit(State.Loading())
-        val pushedMateri = Firebase.database.reference.child("materi").push()
+        val pushedMateri = Firebase.database.reference.child(MataPelajaran.MATERI_REF).push()
         pushedMateri.setValue(materi)
         val push =
-            Firebase.database.reference.child("mata_pelajaran").child(idMatpel).child("materi")
+            Firebase.database.reference.child(MataPelajaran.REF).child(idMatpel)
+                .child(MataPelajaran.MATERI_REF)
                 .child(kelas).push()
         push.setValue(MataPelajaran.Materi(id = pushedMateri.key, materi.judul)).await()
         emit(State.Success(push.key))
@@ -64,7 +65,8 @@ class MataPelajaranRepository(private val commonRepository: CommonRepository) {
                     closeException(error.toException())
                 }
             }
-            Firebase.database.reference.child("mata_pelajaran").child(idMatpel).child("materi")
+            Firebase.database.reference.child(MataPelajaran.REF).child(idMatpel)
+                .child(MataPelajaran.MATERI_REF)
                 .child(kelas).addListenerForSingleValueEvent(listener)
             awaitClose { Firebase.database.reference.removeEventListener(listener) }
         }
@@ -84,7 +86,8 @@ class MataPelajaranRepository(private val commonRepository: CommonRepository) {
                 closeException(error.toException())
             }
         }
-        Firebase.database.reference.child("mata_pelajaran").addListenerForSingleValueEvent(listener)
+        Firebase.database.reference.child(MataPelajaran.REF)
+            .addListenerForSingleValueEvent(listener)
         awaitClose { Firebase.database.reference.removeEventListener(listener) }
     }
 }

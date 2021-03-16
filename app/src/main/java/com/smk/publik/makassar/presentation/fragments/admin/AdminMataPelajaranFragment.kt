@@ -37,8 +37,7 @@ class AdminMataPelajaranFragment :
     MataPelajaranObserver.Interfaces,
     SwipeRefreshLayout.OnRefreshListener,
     BaseOnAdapterClick,
-    BaseOnClickView
-{
+    BaseOnClickView {
 
     private val mViewModel: MataPelajaranViewModel by viewModel()
     private val binding by viewBinding(FragmentAdminListDataBinding::bind)
@@ -55,8 +54,12 @@ class AdminMataPelajaranFragment :
     }
     private var mQuery = MutableLiveData("")
     private val addDialog by lazy {
-        requireContext().makeCustomViewDialog(DialogAddMatapelajaranBinding::inflate, isTransparent = true, isBottomDialog = true).apply {
-            first.btnAction.setOnClickListener(this@AdminMataPelajaranFragment)
+        requireContext().makeCustomViewDialog(
+            DialogAddMatapelajaranBinding::inflate,
+            isTransparent = true,
+            isBottomDialog = true
+        ).apply {
+            first.listener = this@AdminMataPelajaranFragment
         }
     }
     private val mValidator by lazy {
@@ -98,26 +101,36 @@ class AdminMataPelajaranFragment :
         onRefresh()
         binding.etSearch.addTextChangedListener {
             mHandler.removeCallbacksAndMessages(null)
-            mHandler.postDelayed({
-                mQuery.postValue(it.toString())
-            }, 700)
+            mHandler.postDelayed(
+                {
+                    mQuery.postValue(it.toString())
+                },
+                700
+            )
         }
-        mQuery.observe(viewLifecycleOwner, {
-            when {
-                it.isNullOrBlank() || it == "null" -> adapter.reset()
-                else -> adapter.filter(it)
+        mQuery.observe(
+            viewLifecycleOwner,
+            {
+                when {
+                    it.isNullOrBlank() || it == "null" -> adapter.reset()
+                    else -> adapter.filter(it)
+                }
             }
-        })
+        )
         binding.listener = this
         binding.btnBuat.text = "Tambah Mata Pelajaran"
         super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onClick(p0: View?) {
-        when(p0) {
+        when (p0) {
             binding.btnBuat -> addDialog.second.show()
-            addDialog.first.btnAction -> if(mValidator.validate().success()) {
-                mViewModel.buatMataPelajaran(addDialog.first.etTitle.text.toString(), addDialog.first.etDescription.text.toString())
+            addDialog.first.btnClose -> addDialog.second.dismiss()
+            addDialog.first.btnAction -> if (mValidator.validate().success()) {
+                mViewModel.buatMataPelajaran(
+                    addDialog.first.etTitle.text.toString(),
+                    addDialog.first.etDescription.text.toString()
+                )
             }
         }
         super.onClick(p0)
@@ -125,9 +138,11 @@ class AdminMataPelajaranFragment :
 
     override fun onItemChildClick(adapter: BaseQuickAdapter<*, *>, view: View, position: Int) {
         if (adapter is MataPelajaranAdapter) {
-            when(view.id) {
-                R.id.btnDelete -> {}
-                R.id.cvRoot -> {}
+            when (view.id) {
+                R.id.btnDelete -> {
+                }
+                R.id.cvRoot -> {
+                }
             }
         }
         super.onItemChildClick(adapter, view, position)

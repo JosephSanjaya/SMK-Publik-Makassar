@@ -5,6 +5,7 @@ import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.smk.publik.makassar.account.domain.Users
 import com.smk.publik.makassar.core.domain.State
 import com.smk.publik.makassar.core.utils.closeException
 import com.smk.publik.makassar.core.utils.offerSafe
@@ -27,8 +28,12 @@ class VerifyRepository {
         user?.sendEmailVerification(
             ActionCodeSettings.newBuilder()
                 .setHandleCodeInApp(true)
-                .setAndroidPackageName(AppUtils.getAppPackageName(), true, "1.0")
-                .setUrl("https://smkpublikmakassar.page.link/verify?uid=${user.uid}")
+                .setAndroidPackageName(
+                    AppUtils.getAppPackageName(),
+                    true,
+                    AppUtils.getAppVersionName()
+                )
+                .setUrl("${Users.VERIFY_URL}${user.uid}")
                 .build()
         )?.addOnCompleteListener {
             if (it.isSuccessful) {
@@ -36,7 +41,7 @@ class VerifyRepository {
             } else {
                 closeException(Throwable(it.exception))
             }
-        } ?: closeException(Throwable("User tidak ditemukan, silahkan login terlebih dahulu!"))
+        } ?: closeException(Throwable(Users.MSG_USER_NOT_FOUND))
         awaitClose()
     }
 
